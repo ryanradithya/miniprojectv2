@@ -23,6 +23,12 @@ class AccountFragment : Fragment() {
         val tvEmail: TextView = v.findViewById(R.id.tv_email)
 //        val btnLogout: Button = v.findViewById(R.id.btn_logout)
         val btnEdit: Button = v.findViewById(R.id.btn_edit)
+        val navView = requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
+        val headerView = navView.getHeaderView(0) // 0 = index header
+        val headerTitle = headerView.findViewById<TextView>(R.id.header_title)
+        val headerSubtitle = headerView.findViewById<TextView>(R.id.header_subtitle)
+
+
 
         // Data dummy akun
         tvUsername.text = "John Doe"
@@ -55,6 +61,9 @@ class AccountFragment : Fragment() {
                     if (newName.isNotBlank() && newEmail.isNotBlank()) {
                         tvUsername.text = newName
                         tvEmail.text = newEmail
+                        val headerTitle = requireActivity().findViewById<TextView>(R.id.header_title)
+                        headerTitle.text = newName
+                        headerSubtitle.text = newEmail
                         Toast.makeText(requireContext(), "Akun berhasil diperbarui", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), "Nama & Email tidak boleh kosong", Toast.LENGTH_SHORT).show()
