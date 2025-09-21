@@ -43,7 +43,7 @@ class ProductAdapter(
                     putInt("product_price", product.price)
                 }
                 Log.d("ProductAdapter", "Navigasi ke detail dengan bundle: $b")
-                it.findNavController().navigate(R.id.productDetailFragment, b)
+                it.findNavController().navigate(R.id.action_home_to_cart, b)
             } catch (e: Exception) {
                 Log.e("ProductAdapter", "Error saat navigate", e)
             }

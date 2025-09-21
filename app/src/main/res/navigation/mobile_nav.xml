@@ -13,8 +13,14 @@
         android:label="Home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_home_to_product"
-            app:destination="@id/productDetailFragment" />
+            android:id="@+id/action_home_to_cart"
+            app:destination="@id/productDetailFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <!-- Product Detail -->
@@ -22,7 +28,17 @@
         android:id="@+id/productDetailFragment"
         android:name="com.example.miniprojectv2.ProductDetailFragment"
         android:label="Product"
-        tools:layout="@layout/fragment_product_detail" />
+        tools:layout="@layout/fragment_product_detail" >
+        <action
+            android:id="@+id/action_p_to_cart"
+            app:destination="@id/cartFragment"
+            app:popUpTo="@id/productDetailFragment"
+            app:popUpToInclusive="false"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
 
     <!-- Cart -->
     <fragment
