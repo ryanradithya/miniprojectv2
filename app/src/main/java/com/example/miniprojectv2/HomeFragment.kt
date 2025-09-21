@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -39,9 +40,28 @@ class HomeFragment : Fragment() {
         }
         viewPager.adapter = adapter
 
+        // Kurangi sensitivitas swipe
+        viewPager.reduceDragSensitivity(10) // semakin besar angkanya, semakin "berat" swipe
+
         // Hubungkan TabLayout dengan ViewPager
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = if (position == 0) "Beli" else "Jual"
         }.attach()
+    }
+
+    // Extension function untuk mengurangi sensitivitas ViewPager2
+    private fun ViewPager2.reduceDragSensitivity(factor: Int) {
+        try {
+            val recyclerViewField = ViewPager2::class.java.getDeclaredField("mRecyclerView")
+            recyclerViewField.isAccessible = true
+            val recyclerView = recyclerViewField.get(this) as RecyclerView
+
+            val touchSlopField = RecyclerView::class.java.getDeclaredField("mTouchSlop")
+            touchSlopField.isAccessible = true
+            val touchSlop = touchSlopField.get(recyclerView) as Int
+            touchSlopField.set(recyclerView, touchSlop * factor)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

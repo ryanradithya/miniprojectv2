@@ -49,7 +49,7 @@ class ProductDetailFragment : Fragment() {
             }
             Toast.makeText(requireContext(), "Produk \"$name\" ditambahkan ke keranjang!", Toast.LENGTH_SHORT).show()
             // pindah ke cart
-            findNavController().navigate(R.id.cartFragment)
+            findNavController().navigate(R.id.action_p_to_cart)
         }
 
         return v
