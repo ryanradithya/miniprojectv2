@@ -1,162 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/home_title"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Rekomendasi untukmu"
-        android:textSize="20sp"
-        android:padding="8dp" />
+        app:tabIndicatorColor="@color/purple_500"
+        app:tabSelectedTextColor="@color/purple_500"
+        app:tabTextColor="@android:color/darker_gray"/>
 
-    <!-- Scroll horizontal -->
-    <HorizontalScrollView
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <!-- product tile 1 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/product_tile_1"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                card_view:cardCornerRadius="12dp"
-                card_view:cardElevation="6dp"
-                card_view:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <ImageView
-                        android:id="@+id/product1_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Gambar produk"
-                        android:src="@drawable/ic_product_placeholder" />
-
-                    <TextView
-                        android:id="@+id/product1_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Kamera Analog A"
-                        android:textStyle="bold"
-                        android:textSize="14sp"
-                        android:paddingTop="4dp" />
-
-                    <TextView
-                        android:id="@+id/product1_price"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Rp 1.200.000"
-                        android:textSize="12sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- product tile 2 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/product_tile_2"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                card_view:cardCornerRadius="12dp"
-                card_view:cardElevation="6dp"
-                card_view:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <ImageView
-                        android:id="@+id/product2_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Gambar produk"
-                        android:src="@drawable/ic_product_placeholder" />
-
-                    <TextView
-                        android:id="@+id/product2_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Kamera Analog B"
-                        android:textStyle="bold"
-                        android:textSize="14sp"
-                        android:paddingTop="4dp" />
-
-                    <TextView
-                        android:id="@+id/product2_price"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Rp 900.000"
-                        android:textSize="12sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- product tile 3 -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/product_tile_3"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:clickable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                card_view:cardCornerRadius="12dp"
-                card_view:cardElevation="6dp"
-                card_view:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <ImageView
-                        android:id="@+id/product3_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Gambar produk"
-                        android:src="@drawable/ic_product_placeholder" />
-
-                    <TextView
-                        android:id="@+id/product3_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Kamera Analog C"
-                        android:textStyle="bold"
-                        android:textSize="14sp"
-                        android:paddingTop="4dp" />
-
-                    <TextView
-                        android:id="@+id/product3_price"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Rp 750.000"
-                        android:textSize="12sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-    </HorizontalScrollView>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 </LinearLayout>
+
+
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:card_view="http://schemas.android.com/apk/res-auto"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:orientation="vertical"-->
+<!--    android:padding="16dp">-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/home_title"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Rekomendasi untukmu"-->
+<!--        android:textSize="20sp"-->
+<!--        android:padding="8dp" />-->
+
+<!--    &lt;!&ndash; Scroll horizontal &ndash;&gt;-->
+<!--    <HorizontalScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:scrollbars="none">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            &lt;!&ndash; product tile 1 &ndash;&gt;-->
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:id="@+id/product_tile_1"-->
+<!--                android:layout_width="160dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="12dp"-->
+<!--                android:clickable="true"-->
+<!--                android:foreground="?android:attr/selectableItemBackground"-->
+<!--                card_view:cardCornerRadius="12dp"-->
+<!--                card_view:cardElevation="6dp"-->
+<!--                card_view:cardUseCompatPadding="true">-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:padding="8dp">-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/product1_image"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="120dp"-->
+<!--                        android:scaleType="centerCrop"-->
+<!--                        android:contentDescription="Gambar produk"-->
+<!--                        android:src="@drawable/ic_product_placeholder" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/product1_title"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Kamera Analog A"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:textSize="14sp"-->
+<!--                        android:paddingTop="4dp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/product1_price"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Rp 1.200.000"-->
+<!--                        android:textSize="12sp" />-->
+<!--                </LinearLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
+<!--            &lt;!&ndash; product tile 2 &ndash;&gt;-->
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:id="@+id/product_tile_2"-->
+<!--                android:layout_width="160dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="12dp"-->
+<!--                android:clickable="true"-->
+<!--                android:foreground="?android:attr/selectableItemBackground"-->
+<!--                card_view:cardCornerRadius="12dp"-->
+<!--                card_view:cardElevation="6dp"-->
+<!--                card_view:cardUseCompatPadding="true">-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:padding="8dp">-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/product2_image"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="120dp"-->
+<!--                        android:scaleType="centerCrop"-->
+<!--                        android:contentDescription="Gambar produk"-->
+<!--                        android:src="@drawable/ic_product_placeholder" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/product2_title"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Kamera Analog B"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:textSize="14sp"-->
+<!--                        android:paddingTop="4dp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/product2_price"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Rp 900.000"-->
+<!--                        android:textSize="12sp" />-->
+<!--                </LinearLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
+<!--            &lt;!&ndash; product tile 3 &ndash;&gt;-->
+<!--            <androidx.cardview.widget.CardView-->
+<!--                android:id="@+id/product_tile_3"-->
+<!--                android:layout_width="160dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="12dp"-->
+<!--                android:clickable="true"-->
+<!--                android:foreground="?android:attr/selectableItemBackground"-->
+<!--                card_view:cardCornerRadius="12dp"-->
+<!--                card_view:cardElevation="6dp"-->
+<!--                card_view:cardUseCompatPadding="true">-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="vertical"-->
+<!--                    android:padding="8dp">-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/product3_image"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="120dp"-->
+<!--                        android:scaleType="centerCrop"-->
+<!--                        android:contentDescription="Gambar produk"-->
+<!--                        android:src="@drawable/ic_product_placeholder" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/product3_title"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Kamera Analog C"-->
+<!--                        android:textStyle="bold"-->
+<!--                        android:textSize="14sp"-->
+<!--                        android:paddingTop="4dp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/product3_price"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Rp 750.000"-->
+<!--                        android:textSize="12sp" />-->
+<!--                </LinearLayout>-->
+<!--            </androidx.cardview.widget.CardView>-->
+
+<!--        </LinearLayout>-->
+<!--    </HorizontalScrollView>-->
+<!--</LinearLayout>-->
