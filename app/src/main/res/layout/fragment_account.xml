@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp">
+    android:padding="24dp">
 
+    <!-- Foto profil -->
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@mipmap/ic_launcher_round"
+        android:contentDescription="Profile Picture"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Nama pengguna -->
     <TextView
-        android:id="@+id/account_title"
+        android:id="@+id/tv_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Halaman Akun"
+        android:text="Nama Pengguna"
         android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
 
+    <!-- Email pengguna -->
     <TextView
-        android:id="@+id/account_desc"
+        android:id="@+id/tv_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:text="Di sini nanti akan tampil informasi akun Anda."
-        android:textSize="14sp"/>
+        android:text="email@example.com"
+        android:textSize="16sp"
+        android:layout_marginBottom="24dp"/>
 
+    <!-- Tombol edit -->
+    <Button
+        android:id="@+id/btn_edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Edit Account"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Tombol logout -->
+<!--    <Button-->
+<!--        android:id="@+id/btn_logout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Logout"/>-->
 </LinearLayout>
