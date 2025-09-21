@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_nav"
+    app:startDestination="@id/homeFragment">
+
+
+    <!-- Home (tile list) -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.miniprojectv2.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home_to_product"
+            app:destination="@id/productDetailFragment" />
+    </fragment>
+
+    <!-- Product Detail -->
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.example.miniprojectv2.ProductDetailFragment"
+        android:label="Product"
+        tools:layout="@layout/fragment_product_detail" />
+
+    <!-- Cart -->
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.miniprojectv2.CartFragment"
+        android:label="Cart"
+        tools:layout="@layout/fragment_cart" />
+
+    <!-- Transactions -->
+    <fragment
+        android:id="@+id/transactionsFragment"
+        android:name="com.example.miniprojectv2.TransactionsFragment"
+        android:label="Transactions"
+        tools:layout="@layout/fragment_transactions" />
+
+    <!-- Account -->
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.example.miniprojectv2.AccountFragment"
+        android:label="Account"
+        tools:layout="@layout/fragment_account" />
+</navigation>
