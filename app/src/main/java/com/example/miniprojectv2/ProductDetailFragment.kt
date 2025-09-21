@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 
@@ -46,6 +47,7 @@ class ProductDetailFragment : Fragment() {
             } else {
                 CartManager.items.add(CartItem(name, price))
             }
+            Toast.makeText(requireContext(), "Produk \"$name\" ditambahkan ke keranjang!", Toast.LENGTH_SHORT).show()
             // pindah ke cart
             findNavController().navigate(R.id.cartFragment)
         }

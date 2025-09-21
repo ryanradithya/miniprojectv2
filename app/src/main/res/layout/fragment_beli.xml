@@ -1,164 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <!-- Judul Rekomendasi -->
+    <TextView
+        android:id="@+id/rekomendasi_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:text="Rekomendasi untukmu"
+        android:textSize="18sp"
+        android:padding="8dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Rekomendasi untukmu"
-            android:textSize="20sp"
-            android:padding="8dp"/>
+    <!-- RecyclerView Horizontal -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rekomendasi_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        android:padding="8dp" />
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
+    <TextView
+        android:id="@+id/belanja_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Belanja Sekarang"
+        android:textSize="18sp"
+        android:padding="8dp" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+    <!-- RecyclerView Vertical (produk utama) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/product_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp" />
 
-                <!-- product tile 1 -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/product_tile_1"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    card_view:cardCornerRadius="12dp"
-                    card_view:cardElevation="6dp"
-                    card_view:cardUseCompatPadding="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageView
-                            android:id="@+id/product1_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:contentDescription="Gambar produk"
-                            android:src="@drawable/ic_product_placeholder" />
-
-                        <TextView
-                            android:id="@+id/product1_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Kamera Analog A"
-                            android:textStyle="bold"
-                            android:textSize="14sp"
-                            android:paddingTop="4dp" />
-
-                        <TextView
-                            android:id="@+id/product1_price"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Rp 1.200.000"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- product tile 2 -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/product_tile_2"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    card_view:cardCornerRadius="12dp"
-                    card_view:cardElevation="6dp"
-                    card_view:cardUseCompatPadding="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageView
-                            android:id="@+id/product2_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:contentDescription="Gambar produk"
-                            android:src="@drawable/ic_product_placeholder" />
-
-                        <TextView
-                            android:id="@+id/product2_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Kamera Analog B"
-                            android:textStyle="bold"
-                            android:textSize="14sp"
-                            android:paddingTop="4dp" />
-
-                        <TextView
-                            android:id="@+id/product2_price"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Rp 900.000"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- product tile 3 -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/product_tile_3"
-                    android:layout_width="160dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    card_view:cardCornerRadius="12dp"
-                    card_view:cardElevation="6dp"
-                    card_view:cardUseCompatPadding="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp">
-
-                        <ImageView
-                            android:id="@+id/product3_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:contentDescription="Gambar produk"
-                            android:src="@drawable/ic_product_placeholder" />
-
-                        <TextView
-                            android:id="@+id/product3_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Kamera Analog C"
-                            android:textStyle="bold"
-                            android:textSize="14sp"
-                            android:paddingTop="4dp" />
-
-                        <TextView
-                            android:id="@+id/product3_price"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Rp 750.000"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-            </LinearLayout>
-        </HorizontalScrollView>    </LinearLayout>
-</ScrollView>
+</LinearLayout>
