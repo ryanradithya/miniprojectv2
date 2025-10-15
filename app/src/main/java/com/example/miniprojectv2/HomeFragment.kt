@@ -40,7 +40,7 @@ class HomeFragment : Fragment() {
         }
         viewPager.adapter = adapter
 
-        // Kurangi sensitivitas swipe
+        // Kurangi sensitivitas swipe agar tidak nabrak
         viewPager.reduceDragSensitivity(10) // semakin besar angkanya, semakin "berat" swipe
 
         // Hubungkan TabLayout dengan ViewPager

@@ -34,7 +34,7 @@ class JualFragment : Fragment() {
                 val newProduct = Product(name, price, R.drawable.ic_product_placeholder)
                 ProductRepository.addProduct(newProduct)
 
-                // ✅ feedback ke user
+                // feedback ke user
                 Toast.makeText(requireContext(), "Produk \"$name\" berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
 
                 // Kosongkan input setelah simpan
