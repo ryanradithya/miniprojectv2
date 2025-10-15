@@ -60,11 +60,11 @@ class ProductAdapter(
         holder.title?.text = product.name
         holder.price?.text = "Rp ${product.price}"
 
-        // Gambar produk (bisa dari URI atau drawable)
-        if (product.imageUri != null) {
+        // Gambar produk (bisa dari URI atau fallback placeholder)
+        if (!product.imageUri.isNullOrEmpty()) {
             holder.image?.setImageURI(Uri.parse(product.imageUri))
         } else {
-            holder.image?.setImageResource(product.imageRes)
+            holder.image?.setImageResource(R.drawable.ic_product_placeholder)
         }
 
         // Mode Seller (tampilkan tombol edit & delete)
@@ -109,7 +109,7 @@ class ProductAdapter(
             holder.card?.setOnClickListener(null) // Nonaktifkan klik untuk buka detail
 
         } else {
-            // Mode Pembeli (hanya klik untuk lihat detail)
+            // Mode Pembeli (klik buka detail)
             holder.btnEdit?.visibility = View.GONE
             holder.btnDelete?.visibility = View.GONE
 
