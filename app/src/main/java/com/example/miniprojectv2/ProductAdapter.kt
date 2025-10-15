@@ -41,6 +41,9 @@ class ProductAdapter(
                 val b = Bundle().apply {
                     putString("product_name", product.name)
                     putInt("product_price", product.price)
+                    putString("product_description", product.description)
+                    putInt("product_stock", product.stock)
+                    putInt("product_image", product.imageRes)
                 }
                 Log.d("ProductAdapter", "Navigasi ke detail dengan bundle: $b")
                 it.findNavController().navigate(R.id.productDetailFragment, b)

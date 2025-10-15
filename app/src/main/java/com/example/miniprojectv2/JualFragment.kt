@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 
 class JualFragment : Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,28 +25,41 @@ class JualFragment : Fragment() {
 
         val nameInput = view.findViewById<EditText>(R.id.input_name)
         val priceInput = view.findViewById<EditText>(R.id.input_price)
+        val stockInput = view.findViewById<EditText>(R.id.input_stock)
+        val descInput = view.findViewById<EditText>(R.id.input_desc)
         val btn = view.findViewById<Button>(R.id.btn_add)
 
         btn.setOnClickListener {
             val name = nameInput.text.toString().trim()
             val price = priceInput.text.toString().toIntOrNull() ?: 0
+            val stock = stockInput.text.toString().toIntOrNull() ?: 0
+            val description = descInput.text.toString().trim()
 
-            if (name.isNotBlank() && price > 0) {
-                val newProduct = Product(name, price, R.drawable.ic_product_placeholder)
-                ProductRepository.addProduct(newProduct)
-
-                // feedback ke user
-                Toast.makeText(requireContext(), "Produk \"$name\" berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
-
-                // Kosongkan input setelah simpan
-                nameInput.text.clear()
-                priceInput.text.clear()
-
-                // Kembali ke tab Beli (pop back ke fragment sebelumnya)
-                findNavController().popBackStack()
-            } else {
-                Toast.makeText(requireContext(), "Nama & harga harus valid!", Toast.LENGTH_SHORT).show()
+            if (name.isBlank() || price <= 0 || stock <= 0 || description.isBlank()) {
+                Toast.makeText(requireContext(), "Isi semua data dengan benar!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            val newProduct = Product(
+                name = name,
+                price = price,
+                imageRes = R.drawable.ic_product_placeholder,
+                stock = stock,
+                description = description
+            )
+
+            ProductRepository.addProduct(newProduct)
+
+            Toast.makeText(requireContext(), "Produk \"$name\" berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
+
+            // Kosongkan input
+            nameInput.text.clear()
+            priceInput.text.clear()
+            stockInput.text.clear()
+            descInput.text.clear()
+
+            // Kembali ke fragment sebelumnya (misalnya tab Beli)
+            findNavController().popBackStack()
         }
     }
 }
