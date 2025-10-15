@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:padding="24dp">
 
-    <!-- Foto profil -->
     <ImageView
         android:id="@+id/profile_image"
         android:layout_width="100dp"
@@ -15,7 +14,6 @@
         android:contentDescription="Profile Picture"
         android:layout_marginBottom="16dp" />
 
-    <!-- Nama pengguna -->
     <TextView
         android:id="@+id/tv_username"
         android:layout_width="wrap_content"
@@ -25,7 +23,6 @@
         android:textStyle="bold"
         android:layout_marginBottom="8dp"/>
 
-    <!-- Email pengguna -->
     <TextView
         android:id="@+id/tv_email"
         android:layout_width="wrap_content"
@@ -34,7 +31,6 @@
         android:textSize="16sp"
         android:layout_marginBottom="24dp"/>
 
-    <!-- Tombol edit -->
     <Button
         android:id="@+id/btn_edit"
         android:layout_width="match_parent"
@@ -42,10 +38,12 @@
         android:text="Edit Account"
         android:layout_marginBottom="12dp"/>
 
-    <!-- Tombol logout -->
-<!--    <Button-->
-<!--        android:id="@+id/btn_logout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Logout"/>-->
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:backgroundTint="@color/purple_500"
+        android:textColor="@android:color/white" />
+
 </LinearLayout>
