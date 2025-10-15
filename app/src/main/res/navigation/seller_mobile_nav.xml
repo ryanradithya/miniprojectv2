@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/seller_nav"
+    app:startDestination="@id/beliFragment">
+
+    <!-- Daftar Produk / Home Penjual -->
+    <fragment
+        android:id="@+id/beliFragment"
+        android:name="com.example.miniprojectv2.BeliFragment"
+        android:label="Daftar Produk"
+        tools:layout="@layout/fragment_beli">
+
+        <action
+            android:id="@+id/action_beli_to_jualFragment"
+            app:destination="@id/jualFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <!-- Tambah / Edit Produk -->
+    <fragment
+        android:id="@+id/jualFragment"
+        android:name="com.example.miniprojectv2.JualFragment"
+        android:label="Tambah Produk"
+        tools:layout="@layout/fragment_jual"/>
+</navigation>

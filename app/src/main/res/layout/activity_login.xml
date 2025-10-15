@@ -4,41 +4,77 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="24dp"
-    android:background="@color/white"
+    android:background="?attr/colorSurface"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
 
     <TextView
-        android:text="Login ke Aplikasi"
+        android:text="@string/login_ke_aplikasi"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <!--    light-dark theme unresponsive-->
+
+    <!--    <EditText-->
+<!--        android:id="@+id/username_input"-->
+<!--        android:autofillHints="username"-->
+<!--        android:hint="@string/username"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:inputType="text"-->
+<!--        android:padding="12dp"-->
+<!--        android:background="@android:drawable/edit_text"-->
+<!--        android:layout_marginBottom="16dp" />-->
+
+<!--    light-dark theme responsive-->
     <EditText
         android:id="@+id/username_input"
-        android:hint="Username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:background="@android:drawable/edit_text"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:hint="@string/username"
+        android:inputType="text"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="12dp"
+        android:background="@drawable/edittext_background"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="15sp" />
 
+    <!--    light-dark theme unresponsive-->
+
+    <!--    <EditText-->
+<!--        android:id="@+id/password_input"-->
+<!--        android:autofillHints=""-->
+<!--        android:hint="@string/password"-->
+<!--        android:inputType="textPassword"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="12dp"-->
+<!--        android:background="@android:drawable/edit_text"-->
+<!--        android:layout_marginBottom="24dp" />-->
+
+    <!--    light-dark theme responsive-->
     <EditText
         android:id="@+id/password_input"
-        android:hint="Password"
-        android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:background="@android:drawable/edit_text"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="24dp"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="12dp"
+        android:background="@drawable/edittext_background"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="15sp" />
+
 
     <Button
         android:id="@+id/login_button"
-        android:text="Login"
+        android:text="@string/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp" />

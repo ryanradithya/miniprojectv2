@@ -61,4 +61,27 @@
         android:name="com.example.miniprojectv2.AccountFragment"
         android:label="Account"
         tools:layout="@layout/fragment_account" />
+
+    <!-- Penjual -->
+    <fragment
+        android:id="@+id/jualFragment"
+        android:name="com.example.miniprojectv2.JualFragment"
+        android:label="Jual Produk"
+        tools:layout="@layout/fragment_jual" />
+
+
+    <fragment
+        android:id="@+id/beliFragment"
+        android:name="com.example.miniprojectv2.BeliFragment"
+        android:label="Beli"
+        tools:layout="@layout/fragment_beli">
+
+        <action
+            android:id="@+id/action_beli_to_productDetailFragment"
+            app:destination="@id/productDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 </navigation>
