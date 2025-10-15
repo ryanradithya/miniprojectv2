@@ -29,12 +29,12 @@ class LoginActivity : AppCompatActivity() {
                     finish()
                 }
 
-//                username == "Penjual" && password == "Sell123" -> {
-//                    Toast.makeText(this, "Login Penjual berhasil!", Toast.LENGTH_SHORT).show()
-//                    val intent = Intent(this, SellerActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
-//                }
+                username == "Penjual" && password == "Sell123" -> {
+                    Toast.makeText(this, "Login Penjual berhasil!", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, SellerActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
 
                 else -> {
                     Toast.makeText(this, "Username atau password salah!", Toast.LENGTH_SHORT).show()

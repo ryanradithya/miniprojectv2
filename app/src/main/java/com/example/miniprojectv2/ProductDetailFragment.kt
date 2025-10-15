@@ -1,5 +1,6 @@
 package com.example.miniprojectv2
 
+import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -28,7 +29,7 @@ class ProductDetailFragment : Fragment() {
         val name = arguments?.getString("product_name") ?: "Produk"
         val price = arguments?.getInt("product_price") ?: 0
         val description = arguments?.getString("product_description") ?: "Tidak ada deskripsi produk!"
-        val imageRes = arguments?.getInt("product_image") ?: R.drawable.ic_product_placeholder
+        val imageUriString = arguments?.getString("product_image_uri")
 
         // Bind view
         val imageView: ImageView = v.findViewById(R.id.product_image)
@@ -38,19 +39,23 @@ class ProductDetailFragment : Fragment() {
         val btnAdd: Button = v.findViewById(R.id.btn_add_cart)
         val btnPlus: TextView = v.findViewById(R.id.btn_plus)
         val btnMinus: TextView = v.findViewById(R.id.btn_minus)
-
         val tvQty: TextView = v.findViewById(R.id.tv_qty)
 
         // Set data
         tvTitle.text = name
         tvPrice.text = "Rp $price"
         tvDesc.text = description
-        imageView.setImageResource(imageRes)
+
+        // Set gambar
+        if (!imageUriString.isNullOrEmpty()) {
+            imageView.setImageURI(Uri.parse(imageUriString))
+        } else {
+            imageView.setImageResource(R.drawable.ic_product_placeholder)
+        }
 
         // Deskripsi expandable
         tvDesc.maxLines = 2
         tvDesc.ellipsize = TextUtils.TruncateAt.END
-
         var isExpanded = false
         tvDesc.setOnClickListener {
             isExpanded = !isExpanded

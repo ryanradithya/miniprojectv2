@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 class BeliFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,11 +24,18 @@ class BeliFragment : Fragment() {
         val rekomendasiRecycler = view.findViewById<RecyclerView>(R.id.rekomendasi_recycler)
         rekomendasiRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        rekomendasiRecycler.adapter = ProductAdapter(ProductRepository.rekomendasiProduk, isRekomendasi = true)
+        rekomendasiRecycler.adapter = ProductAdapter(
+            ProductRepository.rekomendasiProduk.toMutableList(),
+            isRekomendasi = true,
+            isSeller = false
+        )
 
         // Setup produk utama (vertical)
         val productRecycler = view.findViewById<RecyclerView>(R.id.product_recycler)
         productRecycler.layoutManager = LinearLayoutManager(requireContext())
-        productRecycler.adapter = ProductAdapter(ProductRepository.produkUtama)
+        productRecycler.adapter = ProductAdapter(
+            ProductRepository.produkUtama.toMutableList(),
+            isSeller = false
+        )
     }
 }

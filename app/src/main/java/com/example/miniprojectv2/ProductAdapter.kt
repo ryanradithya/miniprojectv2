@@ -1,30 +1,41 @@
 package com.example.miniprojectv2
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 
 class ProductAdapter(
-    private val items: List<Product>,
-    private val isRekomendasi: Boolean = false   // <-- default false (produk utama)
+    private val items: MutableList<Product>, // harus mutable supaya bisa remove
+    private val isRekomendasi: Boolean = false,
+    private val isSeller: Boolean = false
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
-    class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val card: CardView? = view.findViewById(R.id.product_tile) ?: view.findViewById(R.id.rekomendasi_tile)
         val title: TextView? = view.findViewById(R.id.product_title) ?: view.findViewById(R.id.rekomendasi_title)
         val price: TextView? = view.findViewById(R.id.product_price) ?: view.findViewById(R.id.rekomendasi_price)
         val image: ImageView? = view.findViewById(R.id.product_image) ?: view.findViewById(R.id.rekomendasi_image)
+
+        val btnEdit: ImageButton? = view.findViewById(R.id.btn_edit)
+        val btnDelete: ImageButton? = view.findViewById(R.id.btn_delete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        val layout = if (isRekomendasi) R.layout.item_rekomendasi else R.layout.item_product
+        val layout = when {
+            isRekomendasi -> R.layout.item_rekomendasi
+            isSeller -> R.layout.item_product_seller
+            else -> R.layout.item_product
+        }
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
         return ProductViewHolder(view)
     }
@@ -33,22 +44,66 @@ class ProductAdapter(
         val product = items[position]
         holder.title?.text = product.name
         holder.price?.text = "Rp ${product.price}"
-        holder.image?.setImageResource(product.imageRes)
 
-        holder.card?.setOnClickListener {
-            Log.d("ProductAdapter", "Klik produk: ${product.name}, harga: ${product.price}")
-            try {
-                val b = Bundle().apply {
+        // 🔹 Tampilkan gambar dari URI, fallback ke placeholder
+        if (product.imageUri != null) {
+            holder.image?.setImageURI(Uri.parse(product.imageUri))
+        } else {
+            holder.image?.setImageResource(R.drawable.ic_product_placeholder)
+        }
+
+        if (isSeller) {
+            holder.btnEdit?.visibility = View.VISIBLE
+            holder.btnDelete?.visibility = View.VISIBLE
+
+            holder.btnEdit?.setOnClickListener {
+                Log.d("ProductAdapter", "Edit produk: ${product.name}")
+                val bundle = Bundle().apply {
+                    putString("edit_mode", "true")
                     putString("product_name", product.name)
                     putInt("product_price", product.price)
-                    putString("product_description", product.description)
                     putInt("product_stock", product.stock)
-                    putInt("product_image", product.imageRes)
+                    putString("product_description", product.description)
+                    putString("product_category", product.category)
+                    putString("product_image_uri", product.imageUri) // kirim URI sebagai String
                 }
-                Log.d("ProductAdapter", "Navigasi ke detail dengan bundle: $b")
-                it.findNavController().navigate(R.id.productDetailFragment, b)
-            } catch (e: Exception) {
-                Log.e("ProductAdapter", "Error saat navigate", e)
+                it.findNavController().navigate(R.id.jualFragment, bundle)
+            }
+
+            holder.btnDelete?.setOnClickListener {
+                Log.d("ProductAdapter", "Hapus produk: ${product.name}")
+                val removed = ProductRepository.removeProduct(product)
+                if (removed) {
+                    items.removeAt(position)
+                    notifyItemRemoved(position)
+                    Toast.makeText(holder.itemView.context, "Produk dihapus", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(holder.itemView.context, "Gagal menghapus produk", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            holder.card?.setOnClickListener(null)
+
+        } else {
+            // Mode pembeli
+            holder.btnEdit?.visibility = View.GONE
+            holder.btnDelete?.visibility = View.GONE
+
+            holder.card?.setOnClickListener {
+                Log.d("ProductAdapter", "Klik produk: ${product.name}")
+                try {
+                    val b = Bundle().apply {
+                        putString("product_name", product.name)
+                        putInt("product_price", product.price)
+                        putString("product_description", product.description)
+                        putInt("product_stock", product.stock)
+                        putString("product_category", product.category)
+                        putString("product_image_uri", product.imageUri)
+                    }
+                    it.findNavController().navigate(R.id.productDetailFragment, b)
+                } catch (e: Exception) {
+                    Log.e("ProductAdapter", "Error saat navigate", e)
+                }
             }
         }
     }

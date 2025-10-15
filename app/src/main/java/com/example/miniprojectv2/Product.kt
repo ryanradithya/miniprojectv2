@@ -3,7 +3,8 @@ package com.example.miniprojectv2
 data class Product(
     val name: String,
     val price: Int,
-    val imageRes: Int, // pakai drawable resource ->> id aset
+    val imageUri: String? = null,
     val stock: Int,
-    val description: String
+    val description: String,
+    val category: String = ""
 )
