@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class CheckoutFragment : Fragment() {
     override fun onCreateView(
@@ -40,7 +41,12 @@ class CheckoutFragment : Fragment() {
 
                 // hapus item yang sudah di-checkout
                 CartManager.items.removeAll(selectedItems)
-                findNavController().navigate(R.id.action_checkout_to_transaction)
+
+                // 🚀 Navigasi ke halaman transaksi, kirim argumen
+                val bundle = Bundle().apply {
+                    putBoolean("from_checkout", true)
+                }
+                findNavController().navigate(R.id.action_checkout_to_transaction, bundle)
             }
         }
 
