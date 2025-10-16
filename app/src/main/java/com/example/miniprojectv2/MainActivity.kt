@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         val bottomNav: BottomNavigationView = findViewById(R.id.bottom_nav)
         bottomNav.setupWithNavController(navController)
 
-        // 🔥 Atur visibilitas bottom nav
+        //tambahin disini, buat hilangin navbar di 1 halaman
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.cartFragment,
@@ -76,7 +76,6 @@ class MainActivity : AppCompatActivity() {
                 else -> bottomNav.visibility = View.VISIBLE
             }
         }
-
     }
 
     // supaya tombol back/up jalan

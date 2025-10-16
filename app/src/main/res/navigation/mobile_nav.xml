@@ -79,6 +79,13 @@
         android:label="Transactions"
         tools:layout="@layout/fragment_transactions" />
 
+    <fragment
+        android:id="@+id/detailPesananFragment"
+        android:name="com.example.miniprojectv2.DetailPesananFragment"
+        android:label="Detail Pesanan"
+        tools:layout="@layout/fragment_detail_pesanan" />
+
+
     <!-- Account -->
     <fragment
         android:id="@+id/accountFragment"

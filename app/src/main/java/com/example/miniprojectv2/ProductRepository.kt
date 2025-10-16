@@ -1,6 +1,12 @@
 package com.example.miniprojectv2
 
+import com.google.type.Date
+import java.text.SimpleDateFormat
+import java.util.Locale
+
 object ProductRepository {
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
     // Contoh ulasan dummy
     private val reviewListA = listOf(
         Review("John Doe", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 5f, "2025-10-10"),
@@ -145,6 +151,30 @@ object ProductRepository {
     fun updateProduct(oldProduct: Product, newProduct: Product) {
         val index = produkUtama.indexOf(oldProduct)
         if (index != -1) produkUtama[index] = newProduct
+    }
+
+    fun findProductByName(name: String): Product? {
+        return produkUtama.find { it.name == name }
+    }
+    fun addReviewToProduct(productName: String, reviewer: String, comment: String, rating: Float): Boolean {
+        val product = findProductByName(productName) ?: return false
+
+        // Cegah user menulis ulang review
+        if (product.reviews.any { it.reviewerName == reviewer }) return false
+
+        val newReview = Review(reviewer, comment, rating, dateFormat.format(java.util.Date()))
+        val updatedReviews = product.reviews.toMutableList().apply { add(newReview) }
+
+        // Hitung ulang rata-rata rating
+        val newAvg = updatedReviews.map { it.rating }.average().toFloat()
+
+        val updatedProduct = product.copy(
+            reviews = updatedReviews,
+            rating = newAvg
+        )
+
+        updateProduct(product, updatedProduct)
+        return true
     }
 
     // ✅ Menghapus semua produk utama (opsional)

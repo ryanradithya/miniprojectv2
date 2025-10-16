@@ -74,7 +74,7 @@ class TransactionsFragment : Fragment() {
                     }
 
                     val tvExpedition = TextView(requireContext()).apply {
-                        text = "Expedition: ${trx.expedition}" // show selected delivery service
+                        text = "Expedition: ${trx.expedition}"
                         setPadding(0, 0, 0, 8)
                     }
 
@@ -95,12 +95,12 @@ class TransactionsFragment : Fragment() {
 
                     layout.addView(tvTitle)
                     layout.addView(tvPrice)
-                    layout.addView(tvExpedition) // add expedition
+                    layout.addView(tvExpedition)
                     layout.addView(tvStatus)
                     if (trx.trackingNumber != null) layout.addView(tvTracking)
                     layout.addView(tvDate)
 
-                    // Confirm Delivery button
+                    // Tombol konfirmasi penerimaan barang
                     if (trx.status == "Pesanan Dikirim") {
                         val btnConfirm = Button(requireContext()).apply {
                             text = "Confirm Delivery"
@@ -114,6 +114,24 @@ class TransactionsFragment : Fragment() {
                     }
 
                     card.addView(layout)
+
+                    // 🔹 Buat card bisa diklik → buka DetailPesananFragment
+                    card.setOnClickListener {
+                        val bundle = Bundle().apply {
+                            putString("product_name", trx.itemName)
+                            putInt("product_price", trx.totalPrice / trx.qty)
+                            putInt("product_qty", trx.qty)
+                            putInt("product_total", trx.totalPrice)
+                            putString("product_status", trx.status)
+                            putString("product_expedition", trx.expedition)
+                            putString("product_tracking", trx.trackingNumber)
+                            putString("product_date", trx.date)
+                        }
+                        findNavController().navigate(R.id.detailPesananFragment, bundle)
+                    }
+
+
+
                     transactionList.addView(card)
                 }
             }
