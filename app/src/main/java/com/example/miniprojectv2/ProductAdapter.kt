@@ -141,8 +141,12 @@ class ProductAdapter(
     // 🔹 Update Data (untuk Filter)
     // =========================
     fun updateData(newList: List<Product>) {
-        items.clear()
-        items.addAll(newList)
+        (items as MutableList).apply {
+            clear()
+            addAll(newList)
+        }
         notifyDataSetChanged()
     }
+
+
 }
