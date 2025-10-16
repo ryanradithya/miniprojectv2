@@ -46,7 +46,29 @@
         android:id="@+id/cartFragment"
         android:name="com.example.miniprojectv2.CartFragment"
         android:label="Cart"
-        tools:layout="@layout/fragment_cart" />
+        tools:layout="@layout/fragment_cart">
+        <action
+            android:id="@+id/action_cart_to_checkout"
+            app:destination="@id/checkoutFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+    </fragment>
+
+    <!-- Checkout -->
+    <fragment
+        android:id="@+id/checkoutFragment"
+        android:name="com.example.miniprojectv2.CheckoutFragment"
+        android:label="Checkout"
+        tools:layout="@layout/fragment_checkout">
+        <action
+            android:id="@+id/action_checkout_to_transaction"
+            app:destination="@id/transactionsFragment" />
+    </fragment>
+
+
 
     <!-- Transactions -->
     <fragment

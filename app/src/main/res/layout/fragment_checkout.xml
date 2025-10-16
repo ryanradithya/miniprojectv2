@@ -6,10 +6,10 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/cart_title"
+        android:id="@+id/checkout_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Keranjang Anda"
+        android:text="Checkout"
         android:textSize="20sp"
         android:textStyle="bold"
         android:paddingBottom="12dp"/>
@@ -20,16 +20,27 @@
         android:layout_weight="1">
 
         <LinearLayout
-            android:id="@+id/cart_list"
+            android:id="@+id/checkout_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"/>
     </ScrollView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_checkout"
+    <TextView
+        android:id="@+id/checkout_total"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Checkout"
-        android:layout_marginTop="16dp"/>
+        android:text="Total: Rp 0"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btn_confirm_checkout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Konfirmasi Checkout"
+        android:backgroundTint="@color/purple_500"
+        android:textColor="@android:color/white" />
 </LinearLayout>
