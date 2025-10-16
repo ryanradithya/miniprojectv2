@@ -1,14 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
-        android:id="@+id/nav_list_produk"
+        android:id="@+id/beliFragment"
         android:icon="@drawable/ic_list"
-        android:title="Produk Saya" />
+        android:title="List Produk" />
 
     <item
-        android:id="@+id/nav_tambah_produk"
+        android:id="@+id/jualFragment"
         android:icon="@drawable/ic_add"
         android:title="Tambah Produk" />
-
 </menu>
