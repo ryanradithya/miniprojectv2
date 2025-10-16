@@ -48,6 +48,9 @@ class BeliFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // cek apakah seller atau bukan
+        val isSeller = activity?.intent?.getBooleanExtra("isSeller", false) ?: false
+
         // Rekomendasi (horizontal)
         val rekomendasiRecycler = view.findViewById<RecyclerView>(R.id.rekomendasi_recycler)
         rekomendasiRecycler.layoutManager =
@@ -57,7 +60,7 @@ class BeliFragment : Fragment() {
 
         // Produk utama (vertical)
         productRecycler = view.findViewById(R.id.product_recycler)
-        adapter = ProductAdapter(allProducts.toMutableList())
+        adapter = ProductAdapter(allProducts.toMutableList(), isSeller = isSeller)
         productRecycler.layoutManager = LinearLayoutManager(requireContext())
         productRecycler.adapter = adapter
 

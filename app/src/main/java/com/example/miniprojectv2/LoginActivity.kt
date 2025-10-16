@@ -31,7 +31,9 @@ class LoginActivity : AppCompatActivity() {
 
                 username == "Penjual" && password == "Sell123" -> {
                     Toast.makeText(this, "Login Penjual berhasil!", Toast.LENGTH_SHORT).show()
+
                     val intent = Intent(this, SellerActivity::class.java)
+                    intent.putExtra("isSeller", true) // mark this as seller login
                     startActivity(intent)
                     finish()
                 }
