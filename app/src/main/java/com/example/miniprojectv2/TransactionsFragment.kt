@@ -25,67 +25,102 @@ class TransactionsFragment : Fragment() {
 
         val fromCheckout = arguments?.getBoolean("from_checkout", false) ?: false
 
-        // 🧭 Atur visibilitas tombol & navbar
-        if (fromCheckout) {
-            btnBack.visibility = View.VISIBLE
-            bottomNav.visibility = View.GONE
-        } else {
-            btnBack.visibility = View.GONE
-            bottomNav.visibility = View.VISIBLE
-        }
+        // Atur visibilitas tombol & navbar
+        btnBack.visibility = if (fromCheckout) View.VISIBLE else View.GONE
+        bottomNav.visibility = if (fromCheckout) View.GONE else View.VISIBLE
 
-        // 🧾 Tampilkan transaksi
-        transactionList.removeAllViews()
-        if (TransactionManager.transactions.isEmpty()) {
-            val tv = TextView(requireContext()).apply {
-                text = "Belum ada transaksi"
-                textSize = 16f
-                setPadding(16, 16, 16, 16)
-            }
-            transactionList.addView(tv)
-        } else {
-            TransactionManager.transactions.forEach { trx ->
-                val card = CardView(requireContext()).apply {
-                    radius = 16f
-                    cardElevation = 6f
-                    useCompatPadding = true
-                    setContentPadding(24, 24, 24, 24)
-                    val params = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    )
-                    params.setMargins(0, 0, 0, 24)
-                    layoutParams = params
-                }
+        val prefs = requireContext().getSharedPreferences("UserPrefs", 0)
+        val activeUser = prefs.getString("active_username", "")
 
-                val layout = LinearLayout(requireContext()).apply {
-                    orientation = LinearLayout.VERTICAL
-                }
+        fun refreshList() {
+            transactionList.removeAllViews()
+            val buyerTransactions = TransactionManager.getTransactionsForBuyer(activeUser ?: "")
 
-                val tvTitle = TextView(requireContext()).apply {
-                    text = "Checkout: ${trx.itemName} x${trx.qty}"
+            if (buyerTransactions.isEmpty()) {
+                val tv = TextView(requireContext()).apply {
+                    text = "Belum ada transaksi"
                     textSize = 16f
-                    setPadding(0, 0, 0, 8)
+                    setPadding(16, 16, 16, 16)
                 }
+                transactionList.addView(tv)
+            } else {
+                buyerTransactions.forEach { trx ->
+                    val card = CardView(requireContext()).apply {
+                        radius = 16f
+                        cardElevation = 6f
+                        useCompatPadding = true
+                        setContentPadding(24, 24, 24, 24)
+                        val params = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        )
+                        params.setMargins(0, 0, 0, 24)
+                        layoutParams = params
+                    }
 
-                val tvPrice = TextView(requireContext()).apply {
-                    text = "Total: Rp ${trx.totalPrice}"
-                    setPadding(0, 0, 0, 8)
+                    val layout = LinearLayout(requireContext()).apply {
+                        orientation = LinearLayout.VERTICAL
+                    }
+
+                    val tvTitle = TextView(requireContext()).apply {
+                        text = "${trx.itemName} x${trx.qty}"
+                        textSize = 16f
+                        setPadding(0, 0, 0, 8)
+                    }
+
+                    val tvPrice = TextView(requireContext()).apply {
+                        text = "Total: Rp ${trx.totalPrice}"
+                        setPadding(0, 0, 0, 8)
+                    }
+
+                    val tvExpedition = TextView(requireContext()).apply {
+                        text = "Expedition: ${trx.expedition}" // show selected delivery service
+                        setPadding(0, 0, 0, 8)
+                    }
+
+                    val tvStatus = TextView(requireContext()).apply {
+                        text = "Status: ${trx.status}"
+                        setPadding(0, 0, 0, 8)
+                    }
+
+                    val tvTracking = TextView(requireContext()).apply {
+                        text = trx.trackingNumber?.let { "Resi: $it" } ?: ""
+                        setPadding(0, 0, 0, 8)
+                    }
+
+                    val tvDate = TextView(requireContext()).apply {
+                        text = "Tanggal: ${trx.date}"
+                        setPadding(0, 0, 0, 8)
+                    }
+
+                    layout.addView(tvTitle)
+                    layout.addView(tvPrice)
+                    layout.addView(tvExpedition) // add expedition
+                    layout.addView(tvStatus)
+                    if (trx.trackingNumber != null) layout.addView(tvTracking)
+                    layout.addView(tvDate)
+
+                    // Confirm Delivery button
+                    if (trx.status == "Pesanan Dikirim") {
+                        val btnConfirm = Button(requireContext()).apply {
+                            text = "Confirm Delivery"
+                            setOnClickListener {
+                                TransactionManager.updateStatus(trx, "Pesanan Selesai")
+                                Toast.makeText(requireContext(), "Pesanan diterima!", Toast.LENGTH_SHORT).show()
+                                refreshList()
+                            }
+                        }
+                        layout.addView(btnConfirm)
+                    }
+
+                    card.addView(layout)
+                    transactionList.addView(card)
                 }
-
-                val tvDate = TextView(requireContext()).apply {
-                    text = "Tanggal: ${trx.date}"
-                }
-
-                layout.addView(tvTitle)
-                layout.addView(tvPrice)
-                layout.addView(tvDate)
-                card.addView(layout)
-                transactionList.addView(card)
             }
         }
 
-        // 🔙 Tombol kembali ke Home
+        refreshList()
+
         btnBack.setOnClickListener {
             findNavController().navigate(R.id.homeFragment)
             bottomNav.visibility = View.VISIBLE

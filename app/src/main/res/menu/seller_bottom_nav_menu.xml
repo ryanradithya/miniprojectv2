@@ -10,6 +10,11 @@
         android:title="Tambah Produk" />
 
     <item
+        android:id="@+id/ordersFragment"
+        android:icon="@drawable/ic_orders"
+        android:title="Pesanan" />
+
+    <item
         android:id="@+id/accountFragment"
         android:icon="@drawable/ic_person"
         android:title="Akun" />

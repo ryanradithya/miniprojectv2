@@ -28,7 +28,17 @@
         android:label="Tambah Produk"
         tools:layout="@layout/fragment_jual">
         <action
-            android:id="@+id/action_jualFragment_to_accountFragment"
+            android:id="@+id/action_jualFragment_to_ordersFragment"
+            app:destination="@id/ordersFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.example.miniprojectv2.OrdersFragment"
+        android:label="Pesanan"
+        tools:layout="@layout/fragment_orders" >
+        <action
+            android:id="@+id/action_ordersFragment_to_accountFragment"
             app:destination="@id/accountFragment" />
     </fragment>
 
