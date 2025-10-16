@@ -93,7 +93,6 @@
         android:label="Jual Produk"
         tools:layout="@layout/fragment_jual" />
 
-
     <fragment
         android:id="@+id/beliFragment"
         android:name="com.example.miniprojectv2.BeliFragment"
@@ -108,4 +107,5 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+
 </navigation>

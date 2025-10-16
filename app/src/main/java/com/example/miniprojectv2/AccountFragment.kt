@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import com.example.miniprojectv2.SellerActivity
 
 class AccountFragment : Fragment() {
 
@@ -22,6 +23,7 @@ class AccountFragment : Fragment() {
         val tvEmail: TextView = v.findViewById(R.id.tv_email)
         val btnLogout: Button = v.findViewById(R.id.btn_logout)
         val btnEdit: Button = v.findViewById(R.id.btn_edit)
+        val btnAddExpedition: Button = v.findViewById(R.id.btn_add_expedition) // new button
 
         // Coba cari nav_view (pembeli) atau nav_view_seller (penjual)
         val navView = requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(
@@ -31,9 +33,8 @@ class AccountFragment : Fragment() {
         // Siapkan variabel untuk header (null-safe)
         var headerTitle: TextView? = null
         var headerSubtitle: TextView? = null
-
-        if (navView != null) {
-            val headerView = navView.getHeaderView(0)
+        navView?.let {
+            val headerView = it.getHeaderView(0)
             headerTitle = headerView.findViewById(R.id.header_title)
             headerSubtitle = headerView.findViewById(R.id.header_subtitle)
         }
@@ -57,9 +58,6 @@ class AccountFragment : Fragment() {
             username = prefs.getString("user_username", "Ryan") ?: "Ryan"
             email = prefs.getString("user_email", "ryan@example.com") ?: "ryan@example.com"
         }
-
-//        username = prefs.getString("active_username", "ryan") ?: "nULL"
-//        email = prefs.getString("active_email", "ryan@example.com") ?: "nULL"
 
         // Tampilkan di UI
         tvUsername.text = username
@@ -132,6 +130,34 @@ class AccountFragment : Fragment() {
                 }
                 .setNegativeButton("Batal", null)
                 .show()
+        }
+
+        // ==========================
+        // Button Tambah Expedisi (Seller Only)
+        // ==========================
+        if (isSeller) {
+            btnAddExpedition.visibility = View.VISIBLE
+            btnAddExpedition.setOnClickListener {
+                val input = EditText(requireContext())
+                input.hint = "Nama Expedisi Baru"
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Tambah Expedisi")
+                    .setView(input)
+                    .setPositiveButton("Tambah") { _, _ ->
+                        val newExpedition = input.text.toString().trim()
+                        if (newExpedition.isNotEmpty()) {
+                            (activity as? SellerActivity)?.addDeliveryExpedition(newExpedition)
+                            Toast.makeText(requireContext(), "Expedisi '$newExpedition' berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Nama expedisi tidak boleh kosong!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    .setNegativeButton("Batal", null)
+                    .show()
+            }
+        } else {
+            btnAddExpedition.visibility = View.GONE
         }
 
         return v
