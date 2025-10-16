@@ -16,6 +16,13 @@
         android:padding="8dp"
         android:layout_marginBottom="12dp">
 
+        <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white" />
         <!-- TextBox pencarian -->
         <EditText
             android:id="@+id/search_input"

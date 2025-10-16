@@ -1,6 +1,7 @@
 package com.example.miniprojectv2
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,7 +26,29 @@ class BeliFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_beli, container, false)
+        val v = inflater.inflate(R.layout.fragment_beli, container, false)
+
+        val btnLogout: Button = v.findViewById(R.id.btn_logout)
+
+
+        btnLogout.setOnClickListener {
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Konfirmasi Logout")
+                .setMessage("Apakah Anda yakin ingin logout?")
+                .setPositiveButton("Ya") { _, _ ->
+                    Toast.makeText(requireContext(), "Logout berhasil!", Toast.LENGTH_SHORT).show()
+
+                    // Arahkan ke LoginActivity
+                    val intent = Intent(requireContext(), LoginActivity::class.java)
+                    intent.flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                }
+                .setNegativeButton("Batal", null)
+                .show()
+        }
+
+        return v
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,4 +132,5 @@ class BeliFragment : Fragment() {
             .setNegativeButton("Batal", null)
             .show()
     }
+
 }

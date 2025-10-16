@@ -57,18 +57,24 @@ class JualFragment : Fragment() {
                     stock = args.getInt("product_stock"),
                     description = args.getString("product_description") ?: "",
                     category = args.getString("product_category") ?: "Lainnya",
-                    imageUri = args.getString("product_image_uri") // URI dari bundle
+                    imageUri = args.getString("product_image_uri")
                 )
 
-                // isi form
+                // Isi form
                 nameInput.setText(productToEdit?.name)
                 priceInput.setText(productToEdit?.price.toString())
                 stockInput.setText(productToEdit?.stock.toString())
                 descInput.setText(productToEdit?.description)
+
                 selectedImageUri = productToEdit?.imageUri?.let { Uri.parse(it) }
-                if (selectedImageUri != null) {
-                    imagePreview.setImageURI(selectedImageUri)
-                } else {
+                try {
+                    if (selectedImageUri != null) {
+                        imagePreview.setImageURI(selectedImageUri)
+                    } else {
+                        imagePreview.setImageResource(R.drawable.ic_product_placeholder)
+                    }
+                } catch (e: SecurityException) {
+                    e.printStackTrace()
                     imagePreview.setImageResource(R.drawable.ic_product_placeholder)
                 }
 
@@ -81,7 +87,11 @@ class JualFragment : Fragment() {
 
         // Pilih gambar
         btnSelectImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT) // ✅ safer than ACTION_PICK
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.type = "image/*"
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
 
@@ -135,12 +145,30 @@ class JualFragment : Fragment() {
         }
     }
 
-    // hasil pilih gambar
+    // Hasil pilih gambar
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             selectedImageUri = data.data
-            imagePreview.setImageURI(selectedImageUri)
+            selectedImageUri?.let { uri ->
+                try {
+                    // ✅ Persist permission so URI stays valid after relog/restart
+                    requireContext().contentResolver.takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    )
+                } catch (e: SecurityException) {
+                    e.printStackTrace()
+                }
+
+                // ✅ Show image safely
+                try {
+                    imagePreview.setImageURI(uri)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    imagePreview.setImageResource(R.drawable.ic_product_placeholder)
+                }
+            }
         }
     }
 }
