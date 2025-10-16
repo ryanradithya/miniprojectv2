@@ -18,14 +18,14 @@ class TransactionsFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_transactions, container, false)
 
-        val transactionList: LinearLayout = v.findViewById(R.id.transactions_list)
+        // ganti id ke transactions_container (LinearLayout di dalam ScrollView)
+        val transactionContainer: LinearLayout = v.findViewById(R.id.transactions_container)
         val btnBack: ImageButton = v.findViewById(R.id.btn_back_transactions)
         val bottomNav = (requireActivity() as MainActivity)
             .findViewById<BottomNavigationView>(R.id.bottom_nav)
 
         val fromCheckout = arguments?.getBoolean("from_checkout", false) ?: false
 
-        // 🧭 Atur visibilitas tombol & navbar
         if (fromCheckout) {
             btnBack.visibility = View.VISIBLE
             bottomNav.visibility = View.GONE
@@ -34,15 +34,16 @@ class TransactionsFragment : Fragment() {
             bottomNav.visibility = View.VISIBLE
         }
 
-        // 🧾 Tampilkan transaksi
-        transactionList.removeAllViews()
+        // kosongkan container dulu
+        transactionContainer.removeAllViews()
+
         if (TransactionManager.transactions.isEmpty()) {
             val tv = TextView(requireContext()).apply {
                 text = "Belum ada transaksi"
                 textSize = 16f
                 setPadding(16, 16, 16, 16)
             }
-            transactionList.addView(tv)
+            transactionContainer.addView(tv)
         } else {
             TransactionManager.transactions.forEach { trx ->
                 val card = CardView(requireContext()).apply {
@@ -81,11 +82,10 @@ class TransactionsFragment : Fragment() {
                 layout.addView(tvPrice)
                 layout.addView(tvDate)
                 card.addView(layout)
-                transactionList.addView(card)
+                transactionContainer.addView(card)
             }
         }
 
-        // 🔙 Tombol kembali ke Home
         btnBack.setOnClickListener {
             findNavController().navigate(R.id.homeFragment)
             bottomNav.visibility = View.VISIBLE
@@ -95,3 +95,4 @@ class TransactionsFragment : Fragment() {
         return v
     }
 }
+

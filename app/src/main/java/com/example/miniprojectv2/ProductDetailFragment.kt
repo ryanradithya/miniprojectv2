@@ -69,7 +69,12 @@ class ProductDetailFragment : Fragment() {
             isExpanded = !isExpanded
             tvDesc.maxLines = if (isExpanded) Int.MAX_VALUE else 2
             tvDesc.ellipsize = if (isExpanded) null else TextUtils.TruncateAt.END
+
+            // 🔹 Tambahan penting biar TextView di-update
+            tvDesc.requestLayout()
+            tvDesc.invalidate()
         }
+
 
         // 🔹 Quantity
         var quantity = 1

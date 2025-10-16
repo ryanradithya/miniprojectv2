@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingTop="16dp"
-    android:paddingHorizontal="16dp"
-    >
+    android:paddingHorizontal="16dp">
 
     <!-- 🔙 Tombol kembali & judul -->
     <LinearLayout
@@ -35,13 +34,21 @@
             android:layout_marginStart="16dp" />
     </LinearLayout>
 
-    <!-- Daftar transaksi -->
-    <LinearLayout
-        android:id="@+id/transactions_list"
+    <!-- Daftar transaksi: gunakan ScrollView + inner LinearLayout -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingTop="16dp" />
+        android:fillViewport="true"
+        android:layout_marginTop="12dp">
+
+        <LinearLayout
+            android:id="@+id/transactions_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp" />
+    </ScrollView>
 
 </LinearLayout>

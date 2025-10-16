@@ -37,7 +37,7 @@ object ProductRepository {
             price = 1200000,
             imageUri = "android.resource://com.example.miniprojectv2/drawable/kamera_a",
             stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae lacus lobortis, rutrum metus nec, congue turpis. Donec non convallis libero. Phasellus facilisis egestas eros id vulputate. Nam pretium sollicitudin arcu, a varius purus sodales a. Vivamus tincidunt, velit in.",
             category = "Kamera Analog",
             rating = 4.7f,
             reviews = reviewListA

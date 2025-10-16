@@ -1,24 +1,27 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:paddingBottom="100dp"
+    android:clipToPadding="false"
+    android:fillViewport="true">
 
-    <LinearLayout
+
+<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Gambar produk -->
+        <!-- Gambar produk (rasio 1:1) -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp">
 
             <ImageView
                 android:id="@+id/product_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:background="@drawable/bg_fotoproduk" />
@@ -48,61 +51,69 @@
             android:id="@+id/product_stock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000"
+            android:textColor="#000000"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
-        <!-- Deskripsi -->
+        <!-- Deskripsi (expandable) -->
         <TextView
             android:id="@+id/product_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#555"
-            android:textSize="14sp"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:clickable="true"
             android:focusable="true"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="12dp"
+            android:scrollHorizontally="false"
+            android:singleLine="false" />
 
 
-        <!-- 🔹 Container untuk Rating dan Review -->
+    <!-- 🔹 Container untuk Rating dan Review -->
         <LinearLayout
             android:id="@+id/rating_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="12dp"
+            android:background="@drawable/bg_card"
+            android:layout_marginBottom="16dp">
 
+            <!-- 🔸 Baris rata-rata rating -->
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:gravity="center_vertical">
+
                 <TextView
                     android:id="@+id/tv_average_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="4.5"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginEnd="6dp"
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"/>
+                    android:textColor="@android:color/black" />
+
                 <LinearLayout
                     android:id="@+id/rating_stars"
-                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="8dp" />
             </LinearLayout>
 
+            <!-- 🔸 Daftar review -->
             <LinearLayout
                 android:id="@+id/review_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="12dp" />
         </LinearLayout>
 
-        <!-- Tambah / Kurang + Tombol Tambah ke Keranjang -->
+        <!-- Tambah/Kurang + Tombol Tambah ke Keranjang -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="50dp"
@@ -144,6 +155,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless" />
         </LinearLayout>
 
+        <!-- Tombol keranjang -->
         <Button
             android:id="@+id/btn_add_cart"
             android:layout_width="match_parent"
