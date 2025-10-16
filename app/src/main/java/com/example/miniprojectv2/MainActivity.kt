@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.homeFragment,
+                R.id.jualFragment,
+                R.id.beliFragment,
                 R.id.transactionsFragment,
                 R.id.accountFragment
             ),
@@ -53,10 +55,13 @@ class MainActivity : AppCompatActivity() {
         // 🔥 Atur visibilitas bottom nav
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.cartFragment -> bottomNav.visibility = View.GONE
+                R.id.cartFragment,
+                R.id.checkoutFragment,
+                R.id.transactionsFragment -> bottomNav.visibility = View.GONE
                 else -> bottomNav.visibility = View.VISIBLE
             }
         }
+
     }
 
     // supaya tombol back/up jalan

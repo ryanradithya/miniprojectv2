@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class TransactionsFragment : Fragment() {
     override fun onCreateView(
@@ -21,6 +20,7 @@ class TransactionsFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_transactions, container, false)
 
         val transactionList: LinearLayout = v.findViewById(R.id.transactions_list)
+        val btnGoToBeli: Button = v.findViewById(R.id.btn_go_to_beli)
         transactionList.removeAllViews()
 
         if (TransactionManager.transactions.isEmpty()) {
@@ -64,6 +64,12 @@ class TransactionsFragment : Fragment() {
                 transactionList.addView(card)
             }
         }
+
+        // Navigasi ke BeliFragment
+        btnGoToBeli.setOnClickListener {
+            findNavController().navigate(R.id.beliFragment)
+        }
+
         return v
     }
 }

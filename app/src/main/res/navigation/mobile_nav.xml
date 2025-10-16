@@ -65,8 +65,11 @@
         tools:layout="@layout/fragment_checkout">
         <action
             android:id="@+id/action_checkout_to_transaction"
-            app:destination="@id/transactionsFragment" />
+            app:destination="@id/transactionsFragment"
+            app:popUpTo="@id/checkoutFragment"
+            app:popUpToInclusive="true" />
     </fragment>
+
 
 
 
