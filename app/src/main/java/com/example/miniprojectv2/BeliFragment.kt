@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -27,22 +28,7 @@ class BeliFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_beli, container, false)
 
-//        val btnLogout: Button = v.findViewById(R.id.btn_logout)
-//        btnLogout.setOnClickListener {
-//            androidx.appcompat.app.AlertDialog.Builder(requireContext())
-//                .setTitle("Konfirmasi Logout")
-//                .setMessage("Apakah Anda yakin ingin logout?")
-//                .setPositiveButton("Ya") { _, _ ->
-//                    Toast.makeText(requireContext(), "Logout berhasil!", Toast.LENGTH_SHORT).show()
-//
-//                    val intent = Intent(requireContext(), LoginActivity::class.java)
-//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//                    startActivity(intent)
-//                }
-//                .setNegativeButton("Batal", null)
-//                .show()
-//        }
-
+        // return the view
         return v
     }
 
@@ -82,6 +68,23 @@ class BeliFragment : Fragment() {
         val btnFilter = view.findViewById<ImageButton>(R.id.btn_filter)
         btnFilter.setOnClickListener {
             showFilterDialog()
+        }
+
+        // 🛒 Tombol Cart (hanya muncul kalau bukan seller)
+        val btnCart = view.findViewById<ImageButton>(R.id.btn_cart)
+        if (isSeller) {
+            btnCart.visibility = View.GONE
+        } else {
+            btnCart.visibility = View.VISIBLE
+            btnCart.setOnClickListener {
+                Log.d("BeliFragment", "Cart button clicked")
+                try {
+                    findNavController().navigate(R.id.cartFragment)
+                } catch (e: Exception) {
+                    Log.e("BeliFragment", "Navigation to cart failed: ${e.message}")
+                    Toast.makeText(requireContext(), "Gagal membuka keranjang", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -143,7 +146,8 @@ class BeliFragment : Fragment() {
                 currentFilter = options[which]
             }
             .setPositiveButton("Terapkan") { dialog, _ ->
-                val searchText = view?.findViewById<EditText>(R.id.search_input)?.text?.toString() ?: ""
+                val searchText =
+                    view?.findViewById<EditText>(R.id.search_input)?.text?.toString() ?: ""
                 filterProducts(searchText, currentFilter)
                 dialog.dismiss()
             }

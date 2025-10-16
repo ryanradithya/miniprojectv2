@@ -93,15 +93,15 @@ class MainActivity : AppCompatActivity() {
     // handle klik icon top appbar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_cart -> {
-                Log.d("MainActivity", "Cart icon clicked")
-                findNavController(R.id.nav_host_fragment).navigate(R.id.cartFragment)
-                true
-            }
-            R.id.action_search -> {
-                Log.d("MainActivity", "Search icon clicked")
-                true
-            }
+//            R.id.action_cart -> {
+//                Log.d("MainActivity", "Cart icon clicked")
+//                findNavController(R.id.nav_host_fragment).navigate(R.id.cartFragment)
+//                true
+//            }
+//            R.id.action_search -> {
+//                Log.d("MainActivity", "Search icon clicked")
+//                true
+//            }
             else -> item.onNavDestinationSelected(findNavController(R.id.nav_host_fragment))
                     || super.onOptionsItemSelected(item)
         }
