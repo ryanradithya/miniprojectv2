@@ -33,6 +33,10 @@ class ProductAdapter(
         val image: ImageView? =
             view.findViewById(R.id.product_image) ?: view.findViewById(R.id.rekomendasi_image)
 
+        val stock: TextView? =
+            view.findViewById(R.id.product_stock) ?: view.findViewById(R.id.rekomendasi_stock)
+
+
         // Tombol khusus untuk mode Seller
         val btnEdit: ImageButton? = view.findViewById(R.id.btn_edit)
         val btnDelete: ImageButton? = view.findViewById(R.id.btn_delete)
@@ -59,6 +63,8 @@ class ProductAdapter(
 
         holder.title?.text = product.name
         holder.price?.text = "Rp ${product.price}"
+        holder.stock?.text = "Stock: ${product.stock}"
+
 
         // Gambar produk (bisa dari URI atau fallback placeholder)
         if (!product.imageUri.isNullOrEmpty()) {

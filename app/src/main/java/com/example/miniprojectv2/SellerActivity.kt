@@ -23,6 +23,11 @@ class SellerActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.seller_toolbar)
         setSupportActionBar(toolbar)
 
+        val isSeller = intent.getBooleanExtra("isSeller", false)
+        if (isSeller) {
+            supportActionBar?.title = "Dashboard Penjual"
+        }
+
         // NavController setup
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_seller) as NavHostFragment
@@ -56,4 +61,5 @@ class SellerActivity : AppCompatActivity() {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+
 }
