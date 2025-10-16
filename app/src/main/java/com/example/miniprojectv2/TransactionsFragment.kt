@@ -19,18 +19,31 @@ class TransactionsFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_transactions, container, false)
 
         val transactionList: LinearLayout = v.findViewById(R.id.transactions_list)
-        val btnGoToBeli: Button = v.findViewById(R.id.btn_go_to_beli)
-        transactionList.removeAllViews()
+        val btnBack: ImageButton = v.findViewById(R.id.btn_back_transactions)
+        val bottomNav = (requireActivity() as MainActivity)
+            .findViewById<BottomNavigationView>(R.id.bottom_nav)
 
-        // 🧾 Jika tidak ada transaksi, tampilkan teks
+        val fromCheckout = arguments?.getBoolean("from_checkout", false) ?: false
+
+        // 🧭 Atur visibilitas tombol & navbar
+        if (fromCheckout) {
+            btnBack.visibility = View.VISIBLE
+            bottomNav.visibility = View.GONE
+        } else {
+            btnBack.visibility = View.GONE
+            bottomNav.visibility = View.VISIBLE
+        }
+
+        // 🧾 Tampilkan transaksi
+        transactionList.removeAllViews()
         if (TransactionManager.transactions.isEmpty()) {
-            val tv = TextView(requireContext())
-            tv.text = "Belum ada transaksi"
-            tv.textSize = 16f
-            tv.setPadding(16, 16, 16, 16)
+            val tv = TextView(requireContext()).apply {
+                text = "Belum ada transaksi"
+                textSize = 16f
+                setPadding(16, 16, 16, 16)
+            }
             transactionList.addView(tv)
         } else {
-            // 🧾 Tampilkan setiap transaksi sebagai CardView
             TransactionManager.transactions.forEach { trx ->
                 val card = CardView(requireContext()).apply {
                     radius = 16f
@@ -67,21 +80,16 @@ class TransactionsFragment : Fragment() {
                 layout.addView(tvTitle)
                 layout.addView(tvPrice)
                 layout.addView(tvDate)
-
                 card.addView(layout)
                 transactionList.addView(card)
             }
         }
 
-        // 🛒 Tombol "Beli Lagi"
-        btnGoToBeli.setOnClickListener {
-            // Navigasi ke HomeFragment (bukan Checkout lagi)
-            val navController = findNavController()
-            navController.navigate(R.id.homeFragment)
-
-            // 🔥 Update state bottom navigation agar ikon Home aktif
-            (requireActivity() as MainActivity).findViewById<BottomNavigationView>(R.id.bottom_nav)
-                .selectedItemId = R.id.homeFragment
+        // 🔙 Tombol kembali ke Home
+        btnBack.setOnClickListener {
+            findNavController().navigate(R.id.homeFragment)
+            bottomNav.visibility = View.VISIBLE
+            bottomNav.selectedItemId = R.id.homeFragment
         }
 
         return v
