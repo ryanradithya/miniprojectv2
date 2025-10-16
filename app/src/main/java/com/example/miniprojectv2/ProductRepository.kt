@@ -1,73 +1,131 @@
 package com.example.miniprojectv2
 
 object ProductRepository {
+    // Contoh ulasan dummy
+    private val reviewListA = listOf(
+        Review("John Doe", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 5f, "2025-10-10"),
+        Review("Jane Smith", "Produk sesuai deskripsi, hasil foto memuaskan!", 4.5f, "2025-10-12")
+    )
+
+    private val reviewListB = listOf(
+        Review("John Wick", "Bagus, tapi pengiriman agak lama.", 4f, "2025-10-13"),
+        Review("Alice Johnson", "Kualitas build mantap, recommended.", 5f, "2025-10-11")
+    )
+
+    private val reviewListC = listOf(
+        Review("Tony Stark", "Desain klasik, berfungsi dengan baik.", 4.8f, "2025-10-14")
+    )
+
+    private val reviewListRoll = listOf(
+        Review("Bruce Wayne", "Film warna cerah dan tajam.", 5f, "2025-10-09"),
+        Review("Clark Kent", "Hasil foto vintage banget, suka!", 4.7f, "2025-10-10")
+    )
+
+    private val reviewListLensa = listOf(
+        Review("Natasha Romanoff", "Bokeh halus, fokus cepat!", 5f, "2025-10-15"),
+        Review("Peter Parker", "Kualitas tajam di harga segini, worth it.", 4.9f, "2025-10-14")
+    )
+
+    private val reviewListTas = listOf(
+        Review("Steve Rogers", "Tasnya kuat dan desainnya keren.", 4.8f, "2025-10-13")
+    )
+
     // Produk utama (mutable supaya bisa ditambah)
     val produkUtama = mutableListOf(
         Product(
-            "Kamera Analog A",
-            1200000,
-            "android.resource://com.example.miniprojectv2/drawable/kamera_a",
-            10,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor. Suspendisse pretium facilisis tincidunt. Phasellus non pretium nisi. Nunc lacus nisi, eleifend.",
-            "Kamera Analog"),
+            name = "Kamera Analog A",
+            price = 1200000,
+            imageUri = "android.resource://com.example.miniprojectv2/drawable/kamera_a",
+            stock = 10,
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
+            category = "Kamera Analog",
+            rating = 4.7f,
+            reviews = reviewListA
+        ),
         Product(
-            "Kamera Analog B",
-            900000,
-            "android.resource://com.example.miniprojectv2/drawable/kamera_a",
-            10,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor. Suspendisse pretium facilisis tincidunt. Phasellus non pretium nisi. Nunc lacus nisi, eleifend.",
-            "Kamera Analog"),
+            name = "Kamera Analog B",
+            price = 900000,
+            imageUri = "android.resource://com.example.miniprojectv2/drawable/kamera_a",
+            stock = 10,
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
+            category = "Kamera Analog",
+            rating = 4.4f,
+            reviews = reviewListB
+        ),
         Product(
-            "Kamera Analog C",
-            750000,
-            "android.resource://com.example.miniprojectv2/drawable/kamera_a",
-            10,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor. Suspendisse pretium facilisis tincidunt. Phasellus non pretium nisi. Nunc lacus nisi, eleifend.",
-            "Kamera Analog"),
-        Product("Film Kodak Gold",
-            120000,
-            "android.resource://com.example.miniprojectv2/drawable/roll_a",
-            10,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor. Suspendisse pretium facilisis tincidunt. Phasellus non pretium nisi. Nunc lacus nisi, eleifend.",
-            "Roll Film"),
+            name = "Kamera Analog C",
+            price = 750000,
+            imageUri = "android.resource://com.example.miniprojectv2/drawable/kamera_a",
+            stock = 10,
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
+            category = "Kamera Analog",
+            rating = 4.8f,
+            reviews = reviewListC
+        ),
         Product(
-            "Lensa 50mm f/1.8",
-            850000,
-            "android.resource://com.example.miniprojectv2/drawable/lensa_1",
-            10,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor. Suspendisse pretium facilisis tincidunt. Phasellus non pretium nisi. Nunc lacus nisi, eleifend.",
-            "Lensa Analog"),
+            name = "Film Kodak Gold",
+            price = 120000,
+            imageUri = "android.resource://com.example.miniprojectv2/drawable/roll_a",
+            stock = 10,
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
+            category = "Roll Film",
+            rating = 4.9f,
+            reviews = reviewListRoll
+        ),
         Product(
-            "Tas Kamera Vintage",
-            90000,
-            "android.resource://com.example.miniprojectv2/drawable/tas_1",
-            10,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor. Suspendisse pretium facilisis tincidunt. Phasellus non pretium nisi. Nunc lacus nisi, eleifend.",
-            "Tas Kamera")
+            name = "Lensa 50mm f/1.8",
+            price = 850000,
+            imageUri = "android.resource://com.example.miniprojectv2/drawable/lensa_1",
+            stock = 10,
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
+            category = "Lensa Analog",
+            rating = 4.95f,
+            reviews = reviewListLensa
+        ),
+        Product(
+            name = "Tas Kamera Vintage",
+            price = 90000,
+            imageUri = "android.resource://com.example.miniprojectv2/drawable/tas_1",
+            stock = 10,
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
+            category = "Tas Kamera",
+            rating = 4.8f,
+            reviews = reviewListTas
+        )
     )
 
-    // Produk rekomendasi (fix, tidak bisa diubah runtime, jadi pakai list biasa)
+    // Produk rekomendasi
     val rekomendasiProduk = listOf(
-        Product("Film Kodak Gold",
-            120000,
-            "android.resource://com.example.miniprojectv2/drawable/roll_a",
-            10,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor. Suspendisse pretium facilisis tincidunt. Phasellus non pretium nisi. Nunc lacus nisi, eleifend.",
-            "Roll Film"),
         Product(
-            "Lensa 50mm f/1.8",
-            850000,
-            "android.resource://com.example.miniprojectv2/drawable/lensa_1",
-            10,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor. Suspendisse pretium facilisis tincidunt. Phasellus non pretium nisi. Nunc lacus nisi, eleifend.",
-            "Lensa Analog"),
+            name = "Film Kodak Gold",
+            price = 120000,
+            imageUri = "android.resource://com.example.miniprojectv2/drawable/roll_a",
+            stock = 10,
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            category = "Roll Film",
+            rating = 4.9f,
+            reviews = reviewListRoll
+        ),
         Product(
-            "Tas Kamera Vintage",
-            90000,
-            "android.resource://com.example.miniprojectv2/drawable/tas_1",
-            10,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor. Suspendisse pretium facilisis tincidunt. Phasellus non pretium nisi. Nunc lacus nisi, eleifend.",
-            "Tas Kamera")
+            name = "Lensa 50mm f/1.8",
+            price = 850000,
+            imageUri = "android.resource://com.example.miniprojectv2/drawable/lensa_1",
+            stock = 10,
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            category = "Lensa Analog",
+            rating = 4.95f,
+            reviews = reviewListLensa
+        ),
+        Product(
+            name = "Tas Kamera Vintage",
+            price = 90000,
+            imageUri = "android.resource://com.example.miniprojectv2/drawable/tas_1",
+            stock = 10,
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            category = "Tas Kamera",
+            rating = 4.8f,
+            reviews = reviewListTas
+        )
     )
 
     // ✅ Mendapatkan semua produk utama
@@ -93,5 +151,4 @@ object ProductRepository {
     fun clearProducts() {
         produkUtama.clear()
     }
-
 }

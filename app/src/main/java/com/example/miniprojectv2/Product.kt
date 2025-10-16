@@ -6,5 +6,14 @@ data class Product(
     val imageUri: String? = null,
     val stock: Int,
     val description: String,
-    val category: String = ""
+    val category: String = "",
+    val rating: Float = 0f,
+    val reviews: List<Review> = emptyList()
+)
+
+data class Review(
+    val reviewerName: String,
+    val comment: String,
+    val rating: Float,
+    val date: String
 )

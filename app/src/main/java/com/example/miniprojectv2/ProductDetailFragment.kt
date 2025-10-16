@@ -16,6 +16,9 @@ object CartManager {
 
 data class CartItem(val name: String, val price: Int, var qty: Int = 1)
 
+// contoh struktur review produk
+data class ProductReview(val reviewerName: String, val comment: String, val rating: Float)
+
 class ProductDetailFragment : Fragment() {
 
     override fun onCreateView(
@@ -36,10 +39,16 @@ class ProductDetailFragment : Fragment() {
         val tvPrice: TextView = v.findViewById(R.id.product_price)
         val tvStock: TextView = v.findViewById(R.id.product_stock)
         val tvDesc: TextView = v.findViewById(R.id.product_desc)
-        val btnAdd: View = v.findViewById(R.id.btn_add_cart) // pakai View agar aman untuk Button / ImageButton
+        val btnAdd: View = v.findViewById(R.id.btn_add_cart)
         val btnPlus: TextView = v.findViewById(R.id.btn_plus)
         val btnMinus: TextView = v.findViewById(R.id.btn_minus)
         val tvQty: TextView = v.findViewById(R.id.tv_qty)
+
+        // 🔹 View tambahan untuk rating & review
+        val ratingContainer: LinearLayout = v.findViewById(R.id.rating_container)
+        val tvAverageRating: TextView = v.findViewById(R.id.tv_average_rating)
+        val ratingStars: LinearLayout = v.findViewById(R.id.rating_stars)
+        val reviewContainer: LinearLayout = v.findViewById(R.id.review_container)
 
         tvTitle.text = name
         tvPrice.text = "Rp $price"
@@ -52,6 +61,7 @@ class ProductDetailFragment : Fragment() {
             imageView.setImageResource(R.drawable.ic_product_placeholder)
         }
 
+        // 🔹 Expand/collapse deskripsi
         tvDesc.maxLines = 2
         tvDesc.ellipsize = TextUtils.TruncateAt.END
         var isExpanded = false
@@ -61,6 +71,7 @@ class ProductDetailFragment : Fragment() {
             tvDesc.ellipsize = if (isExpanded) null else TextUtils.TruncateAt.END
         }
 
+        // 🔹 Quantity
         var quantity = 1
         fun updateQty() { tvQty.text = quantity.toString() }
         btnPlus.setOnClickListener { quantity++; updateQty() }
@@ -78,6 +89,53 @@ class ProductDetailFragment : Fragment() {
 
             Toast.makeText(requireContext(), "Ditambahkan $quantity × \"$name\" ke keranjang!", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_p_to_cart)
+        }
+
+        // 🔹 Dummy review untuk demo
+        val reviews = listOf(
+            ProductReview("Andi", "Produk sangat bagus, pengiriman cepat banget!", 4.5f),
+            ProductReview("Budi", "Cukup puas, tapi kemasan agak rusak saat datang.", 3.8f),
+            ProductReview("Citra", "Kualitas premium, sesuai harga!", 5.0f)
+        )
+
+        // 🔹 Hitung rata-rata rating
+        val avgRating = reviews.map { it.rating }.average().toFloat()
+        tvAverageRating.text = String.format("%.1f", avgRating)
+
+        // 🔹 Bintang rating
+        ratingStars.removeAllViews()
+        val fullStars = avgRating.toInt()
+        val halfStar = (avgRating - fullStars) >= 0.5f
+        for (i in 1..5) {
+            val star = ImageView(requireContext())
+            when {
+                i <= fullStars -> star.setImageResource(R.drawable.ic_star_full)
+                i == fullStars + 1 && halfStar -> star.setImageResource(R.drawable.ic_star_half)
+                else -> star.setImageResource(R.drawable.ic_star_empty)
+            }
+            val size = (20 * resources.displayMetrics.density).toInt()
+            val params = LinearLayout.LayoutParams(size, size)
+            params.setMargins(4, 0, 4, 0)
+            star.layoutParams = params
+            ratingStars.addView(star)
+        }
+
+        // 🔹 Tampilkan review per card
+        reviewContainer.removeAllViews()
+        for (review in reviews) {
+            val card = inflater.inflate(R.layout.item_review_card, reviewContainer, false)
+            val tvReviewer = card.findViewById<TextView>(R.id.tv_reviewer_name)
+            val tvComment = card.findViewById<TextView>(R.id.tv_comment)
+            val tvRating = card.findViewById<TextView>(R.id.tv_review_rating)
+
+            tvReviewer.text = review.reviewerName
+            tvComment.text = review.comment
+            tvRating.text = "⭐ ${review.rating}"
+
+            tvComment.maxLines = 2
+            tvComment.ellipsize = TextUtils.TruncateAt.END
+
+            reviewContainer.addView(card)
         }
 
         return v
