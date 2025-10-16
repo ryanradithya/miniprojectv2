@@ -94,24 +94,4 @@ object ProductRepository {
         produkUtama.clear()
     }
 
-    fun updateStock(productName: String, quantity: Int): Boolean {
-        // Cari produk berdasarkan nama
-        val product = produkUtama.find { it.name == productName }
-
-        // Jika produk ditemukan
-        return if (product != null) {
-            // Pastikan stok cukup
-            if (product.stock >= quantity) {
-                // Kurangi stok produk
-                val updatedProduct = product.copy(stock = product.stock - quantity)
-                updateProduct(product, updatedProduct)
-                true // Berhasil update
-            } else {
-                false // Gagal karena stok tidak cukup
-            }
-        } else {
-            false // Produk tidak ditemukan
-        }
-    }
-
 }
