@@ -181,4 +181,17 @@ object ProductRepository {
     fun clearProducts() {
         produkUtama.clear()
     }
+
+    //kurangin stok
+    fun reduceStock(productName: String, qty: Int): Boolean {
+        val product = produkUtama.find { it.name == productName }
+        return if (product != null && product.stock >= qty) {
+            val updated = product.copy(stock = product.stock - qty)
+            updateProduct(product, updated)
+            true
+        } else {
+            false
+        }
+    }
+
 }

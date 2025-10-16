@@ -46,7 +46,6 @@ class CheckoutFragment : Fragment() {
         listLayout.addView(tvExpeditionLabel)
         listLayout.addView(spinner)
 
-        // Adapter setup (initially empty)
         spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf())
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = spinnerAdapter
@@ -60,20 +59,41 @@ class CheckoutFragment : Fragment() {
 
             val selectedExpedition = spinner.selectedItem?.toString() ?: ""
 
+            // 🔹 Cek stok sebelum transaksi
+            for (item in selectedItems) {
+                val product = ProductRepository.findProductByName(item.name)
+                if (product == null) {
+                    Toast.makeText(requireContext(), "Produk ${item.name} tidak ditemukan!", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                if (product.stock < item.qty) {
+                    Toast.makeText(requireContext(), "Stok ${item.name} tidak mencukupi!", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+            }
+
+            //Proses transaksi dan update stok
             selectedItems.forEach { item ->
+                val product = ProductRepository.findProductByName(item.name)
+                product?.let {
+                    it.stock -= item.qty  // Kurangi stok produk sesuai jumlah dibeli
+                }
+
                 TransactionManager.addTransaction(
                     item.name,
                     item.qty,
                     item.price,
                     buyerUsername,
-                    selectedExpedition // store buyer-selected expedition
+                    selectedExpedition
                 )
             }
 
             Toast.makeText(requireContext(), "Checkout berhasil!", Toast.LENGTH_SHORT).show()
+
+            // 🔹 Hapus dari keranjang
             CartManager.items.removeAll(selectedItems)
 
-            // Navigate to buyer transaction list
+            // 🔹 Kembali ke halaman transaksi seperti sistem kamu
             val bundle = Bundle().apply { putBoolean("from_checkout", true) }
             findNavController().navigate(R.id.action_checkout_to_transaction, bundle)
         }
@@ -88,6 +108,5 @@ class CheckoutFragment : Fragment() {
         spinnerAdapter.clear()
         spinnerAdapter.addAll(expeditions)
         spinnerAdapter.notifyDataSetChanged()
-
     }
 }

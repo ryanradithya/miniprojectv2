@@ -21,12 +21,11 @@ class CartFragment : Fragment() {
         val cartList: LinearLayout = v.findViewById(R.id.cart_list)
         val btnCheckout: MaterialButton = v.findViewById(R.id.btn_checkout)
 
-        // Local list to hold selected items for checkout
         val selectedItems = mutableListOf<CartItem>()
 
         fun refreshCart() {
             cartList.removeAllViews()
-            selectedItems.clear() // ✅ clear old selections each time we refresh
+            selectedItems.clear()
 
             if (CartManager.items.isEmpty()) {
                 val tv = TextView(requireContext())
@@ -49,11 +48,21 @@ class CartFragment : Fragment() {
                 val btnPlus = itemView.findViewById<Button>(R.id.btn_plus_cart)
                 val btnDelete = itemView.findViewById<ImageButton>(R.id.btn_delete_cart)
 
+                val product = ProductRepository.findProductByName(item.name)
+                val stock = product?.stock ?: 0
+
                 tvName.text = item.name
                 tvQty.text = item.qty.toString()
                 tvPrice.text = "Rp ${item.price * item.qty}"
 
-                // Checkbox listener
+                // 🔹 Jika stok habis, nonaktifkan pilihan dan tombol plus
+                if (stock == 0) {
+                    cbSelect.isEnabled = false
+                    btnPlus.isEnabled = false
+                    tvName.text = "${item.name} (Stok habis)"
+                    tvName.setTextColor(resources.getColor(android.R.color.darker_gray, null))
+                }
+
                 cbSelect.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
                         if (!selectedItems.contains(item)) selectedItems.add(item)
@@ -62,14 +71,19 @@ class CartFragment : Fragment() {
                     }
                 }
 
-                // Quantity plus
+                // 🔹 Tombol tambah qty
                 btnPlus.setOnClickListener {
-                    item.qty++
-                    tvQty.text = item.qty.toString()
-                    tvPrice.text = "Rp ${item.price * item.qty}"
+                    val currentStock = ProductRepository.findProductByName(item.name)?.stock ?: 0
+                    if (item.qty < currentStock) {
+                        item.qty++
+                        tvQty.text = item.qty.toString()
+                        tvPrice.text = "Rp ${item.price * item.qty}"
+                    } else {
+                        Toast.makeText(requireContext(), "Stok tidak mencukupi!", Toast.LENGTH_SHORT).show()
+                    }
                 }
 
-                // Quantity minus
+                // 🔹 Tombol kurang qty
                 btnMinus.setOnClickListener {
                     if (item.qty > 1) {
                         item.qty--
@@ -78,7 +92,7 @@ class CartFragment : Fragment() {
                     }
                 }
 
-                // Delete item
+                // 🔹 Tombol hapus
                 btnDelete.setOnClickListener {
                     AlertDialog.Builder(requireContext())
                         .setTitle("Hapus Produk")
@@ -95,17 +109,15 @@ class CartFragment : Fragment() {
             }
         }
 
-        // Initial render
         refreshCart()
 
-        // Checkout button
+        // 🔹 Tombol checkout → pindah ke CheckoutFragment (tidak ubah alur)
         btnCheckout.setOnClickListener {
             if (selectedItems.isEmpty()) {
                 Toast.makeText(requireContext(), "Pilih produk untuk checkout", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Pass a copy to avoid mutation issues
             val bundle = Bundle().apply {
                 putSerializable("selected_items", ArrayList(selectedItems.map { it.copy() }))
             }
