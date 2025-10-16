@@ -24,7 +24,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tabLayout = view.findViewById<TabLayout>(R.id.tabLayout)
+//        val tabLayout = view.findViewById<TabLayout>(R.id.tabLayout)
         val viewPager = view.findViewById<ViewPager2>(R.id.viewPager)
 
         // Adapter untuk ViewPager
@@ -44,9 +44,9 @@ class HomeFragment : Fragment() {
         viewPager.reduceDragSensitivity(10) // semakin besar angkanya, semakin "berat" swipe
 
         // Hubungkan TabLayout dengan ViewPager
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = if (position == 0) "Beli" else "Jual"
-        }.attach()
+//        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+//            tab.text = if (position == 0) "Beli" else "Jual"
+//        }.attach()
     }
 
     // Extension function untuk mengurangi sensitivitas ViewPager2
