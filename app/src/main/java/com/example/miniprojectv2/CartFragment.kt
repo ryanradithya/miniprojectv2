@@ -12,8 +12,6 @@ import com.google.android.material.button.MaterialButton
 
 class CartFragment : Fragment() {
 
-    private val selectedItems = mutableListOf<CartItem>()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -23,8 +21,13 @@ class CartFragment : Fragment() {
         val cartList: LinearLayout = v.findViewById(R.id.cart_list)
         val btnCheckout: MaterialButton = v.findViewById(R.id.btn_checkout)
 
+        // Local list to hold selected items for checkout
+        val selectedItems = mutableListOf<CartItem>()
+
         fun refreshCart() {
             cartList.removeAllViews()
+            selectedItems.clear() // ✅ clear old selections each time we refresh
+
             if (CartManager.items.isEmpty()) {
                 val tv = TextView(requireContext())
                 tv.text = "Keranjang kosong"
@@ -34,8 +37,10 @@ class CartFragment : Fragment() {
             }
 
             btnCheckout.visibility = View.VISIBLE
+
             CartManager.items.forEach { item ->
                 val itemView = layoutInflater.inflate(R.layout.item_cart, cartList, false)
+
                 val cbSelect = itemView.findViewById<CheckBox>(R.id.checkbox_select)
                 val tvName = itemView.findViewById<TextView>(R.id.cart_item_name)
                 val tvPrice = itemView.findViewById<TextView>(R.id.cart_item_price)
@@ -45,20 +50,26 @@ class CartFragment : Fragment() {
                 val btnDelete = itemView.findViewById<ImageButton>(R.id.btn_delete_cart)
 
                 tvName.text = item.name
-                tvPrice.text = "Rp ${item.price * item.qty}"
                 tvQty.text = item.qty.toString()
+                tvPrice.text = "Rp ${item.price * item.qty}"
 
+                // Checkbox listener
                 cbSelect.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) selectedItems.add(item)
-                    else selectedItems.remove(item)
+                    if (isChecked) {
+                        if (!selectedItems.contains(item)) selectedItems.add(item)
+                    } else {
+                        selectedItems.remove(item)
+                    }
                 }
 
+                // Quantity plus
                 btnPlus.setOnClickListener {
                     item.qty++
                     tvQty.text = item.qty.toString()
                     tvPrice.text = "Rp ${item.price * item.qty}"
                 }
 
+                // Quantity minus
                 btnMinus.setOnClickListener {
                     if (item.qty > 1) {
                         item.qty--
@@ -67,6 +78,7 @@ class CartFragment : Fragment() {
                     }
                 }
 
+                // Delete item
                 btnDelete.setOnClickListener {
                     AlertDialog.Builder(requireContext())
                         .setTitle("Hapus Produk")
@@ -83,16 +95,19 @@ class CartFragment : Fragment() {
             }
         }
 
+        // Initial render
         refreshCart()
 
+        // Checkout button
         btnCheckout.setOnClickListener {
             if (selectedItems.isEmpty()) {
                 Toast.makeText(requireContext(), "Pilih produk untuk checkout", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            // Pass a copy to avoid mutation issues
             val bundle = Bundle().apply {
-                putSerializable("selected_items", ArrayList(selectedItems))
+                putSerializable("selected_items", ArrayList(selectedItems.map { it.copy() }))
             }
             findNavController().navigate(R.id.action_cart_to_checkout, bundle)
         }
