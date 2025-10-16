@@ -4,9 +4,21 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:layout_marginTop="?attr/actionBarSize">
 
-    <!-- 🔍 Search Bar di Paling Atas -->
+    <!-- 🔘 Tombol Logout di Baris Sendiri -->
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:backgroundTint="@color/purple_500"
+        android:textColor="@android:color/white"
+        android:layout_gravity="end"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 🔍 Search Bar di Bawah Tombol Logout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,13 +28,6 @@
         android:padding="8dp"
         android:layout_marginBottom="12dp">
 
-        <Button
-            android:id="@+id/btn_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Logout"
-            android:backgroundTint="@color/purple_500"
-            android:textColor="@android:color/white" />
         <!-- TextBox pencarian -->
         <EditText
             android:id="@+id/search_input"

@@ -8,8 +8,7 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import java.text.SimpleDateFormat
-import java.util.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class TransactionsFragment : Fragment() {
     override fun onCreateView(
@@ -23,18 +22,27 @@ class TransactionsFragment : Fragment() {
         val btnGoToBeli: Button = v.findViewById(R.id.btn_go_to_beli)
         transactionList.removeAllViews()
 
+        // 🧾 Jika tidak ada transaksi, tampilkan teks
         if (TransactionManager.transactions.isEmpty()) {
             val tv = TextView(requireContext())
             tv.text = "Belum ada transaksi"
+            tv.textSize = 16f
+            tv.setPadding(16, 16, 16, 16)
             transactionList.addView(tv)
         } else {
+            // 🧾 Tampilkan setiap transaksi sebagai CardView
             TransactionManager.transactions.forEach { trx ->
-                // Buat CardView
                 val card = CardView(requireContext()).apply {
                     radius = 16f
                     cardElevation = 6f
                     useCompatPadding = true
                     setContentPadding(24, 24, 24, 24)
+                    val params = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                    params.setMargins(0, 0, 0, 24)
+                    layoutParams = params
                 }
 
                 val layout = LinearLayout(requireContext()).apply {
@@ -65,9 +73,15 @@ class TransactionsFragment : Fragment() {
             }
         }
 
-        // Navigasi ke BeliFragment
+        // 🛒 Tombol "Beli Lagi"
         btnGoToBeli.setOnClickListener {
-            findNavController().navigate(R.id.beliFragment)
+            // Navigasi ke HomeFragment (bukan Checkout lagi)
+            val navController = findNavController()
+            navController.navigate(R.id.homeFragment)
+
+            // 🔥 Update state bottom navigation agar ikon Home aktif
+            (requireActivity() as MainActivity).findViewById<BottomNavigationView>(R.id.bottom_nav)
+                .selectedItemId = R.id.homeFragment
         }
 
         return v
