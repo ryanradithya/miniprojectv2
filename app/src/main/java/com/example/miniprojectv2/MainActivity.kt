@@ -71,7 +71,8 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.cartFragment,
                 R.id.checkoutFragment,
-                R.id.transactionsFragment -> bottomNav.visibility = View.GONE
+                R.id.transactionsFragment,
+                R.id.productDetailFragment -> bottomNav.visibility = View.GONE
                 else -> bottomNav.visibility = View.VISIBLE
             }
         }
