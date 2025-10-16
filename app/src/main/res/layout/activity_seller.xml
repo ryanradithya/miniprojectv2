@@ -1,26 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/drawer_layout_seller"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- NavHostFragment untuk Navigation Component -->
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_seller"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <!-- Konten utama -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        app:navGraph="@navigation/seller_mobile_nav"
-        app:defaultNavHost="true" />
+        android:layout_height="match_parent">
 
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav_seller"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:menu="@menu/seller_bottom_nav_menu" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-</LinearLayout>
+            <!-- Toolbar -->
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/seller_toolbar"
+                android:layout_width="0dp"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                android:title="Seller Dashboard"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- NavHostFragment -->
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/nav_host_seller"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:navGraph="@navigation/seller_mobile_nav"
+                app:defaultNavHost="true"
+                app:layout_constraintTop_toBottomOf="@id/seller_toolbar"
+                app:layout_constraintBottom_toTopOf="@id/bottom_nav_seller"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Bottom Navigation -->
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_nav_seller"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:menu="@menu/seller_bottom_nav_menu"
+                app:itemIconTint="@color/bottom_nav_color"
+                app:itemTextColor="@color/bottom_nav_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- Drawer Menu -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view_seller"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
