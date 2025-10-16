@@ -1,6 +1,7 @@
 package com.example.miniprojectv2
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -26,21 +27,21 @@ class BeliFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_beli, container, false)
 
-        val btnLogout: Button = v.findViewById(R.id.btn_logout)
-        btnLogout.setOnClickListener {
-            androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Konfirmasi Logout")
-                .setMessage("Apakah Anda yakin ingin logout?")
-                .setPositiveButton("Ya") { _, _ ->
-                    Toast.makeText(requireContext(), "Logout berhasil!", Toast.LENGTH_SHORT).show()
-
-                    val intent = Intent(requireContext(), LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                }
-                .setNegativeButton("Batal", null)
-                .show()
-        }
+//        val btnLogout: Button = v.findViewById(R.id.btn_logout)
+//        btnLogout.setOnClickListener {
+//            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+//                .setTitle("Konfirmasi Logout")
+//                .setMessage("Apakah Anda yakin ingin logout?")
+//                .setPositiveButton("Ya") { _, _ ->
+//                    Toast.makeText(requireContext(), "Logout berhasil!", Toast.LENGTH_SHORT).show()
+//
+//                    val intent = Intent(requireContext(), LoginActivity::class.java)
+//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                    startActivity(intent)
+//                }
+//                .setNegativeButton("Batal", null)
+//                .show()
+//        }
 
         return v
     }
@@ -49,7 +50,8 @@ class BeliFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // cek apakah seller atau bukan
-        val isSeller = activity?.intent?.getBooleanExtra("isSeller", false) ?: false
+        val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val isSeller = prefs.getBoolean("isSeller", false)
 
         // Rekomendasi (horizontal)
         val rekomendasiRecycler = view.findViewById<RecyclerView>(R.id.rekomendasi_recycler)

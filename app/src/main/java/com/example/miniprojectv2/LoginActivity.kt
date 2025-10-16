@@ -16,34 +16,53 @@ class LoginActivity : AppCompatActivity() {
         val passwordInput = findViewById<EditText>(R.id.password_input)
         val loginButton = findViewById<Button>(R.id.login_button)
         val signupText = findViewById<TextView>(R.id.textView5)
-        val forgotText = findViewById<TextView>(R.id.textView3) // ✅ new line
+        val forgotText = findViewById<TextView>(R.id.textView3)
 
+        // ✅ Use same name as AccountFragment
         val prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
-        // Load saved or default creds
+        // Load saved/default credentials
         val userUsername = prefs.getString("user_username", "Ryan")
         val userPassword = prefs.getString("user_password", "Ryan123")
+        val userEmail = prefs.getString("user_email", "ryan@example.com")
 
         val sellerUsername = prefs.getString("seller_username", "Penjual")
         val sellerPassword = prefs.getString("seller_password", "Sell123")
+        val sellerEmail = prefs.getString("seller_email", "penjual@example.com")
 
         loginButton.setOnClickListener {
             val username = usernameInput.text.toString().trim()
             val password = passwordInput.text.toString().trim()
 
             when {
+                // ✅ User Login
                 username == userUsername && password == userPassword -> {
                     Toast.makeText(this, "Login sukses sebagai User!", Toast.LENGTH_SHORT).show()
+
+                    // Save session info
+                    prefs.edit()
+                        .putBoolean("isSeller", false)
+                        .putString("active_username", userUsername)
+                        .putString("active_email", userEmail)
+                        .apply()
+
                     val intent = Intent(this, MainActivity::class.java)
-                    intent.putExtra("isSeller", false)
                     startActivity(intent)
                     finish()
                 }
 
+                // ✅ Seller Login
                 username == sellerUsername && password == sellerPassword -> {
                     Toast.makeText(this, "Login sukses sebagai Seller!", Toast.LENGTH_SHORT).show()
+
+                    // Save session info
+                    prefs.edit()
+                        .putBoolean("isSeller", true)
+                        .putString("active_username", sellerUsername)
+                        .putString("active_email", sellerEmail)
+                        .apply()
+
                     val intent = Intent(this, SellerActivity::class.java)
-                    intent.putExtra("isSeller", true)
                     startActivity(intent)
                     finish()
                 }
@@ -54,7 +73,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // ✅ Both "Sign up" and "Forgot password?" go to RegisterActivity
+        // Go to Register
         val goToRegister = Intent(this, RegisterActivity::class.java)
         signupText.setOnClickListener { startActivity(goToRegister) }
         forgotText.setOnClickListener { startActivity(goToRegister) }

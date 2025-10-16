@@ -8,4 +8,9 @@
         android:id="@+id/jualFragment"
         android:icon="@drawable/ic_add"
         android:title="Tambah Produk" />
+
+    <item
+        android:id="@+id/accountFragment"
+        android:icon="@drawable/ic_person"
+        android:title="Akun" />
 </menu>

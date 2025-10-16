@@ -1,10 +1,12 @@
 package com.example.miniprojectv2
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -41,11 +43,23 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.drawer_layout) // hubungkan dengan drawer
         )
 
+        val prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val username = prefs.getString("active_username", "John Doe")
+        val email = prefs.getString("active_email", "johndoe@example.com")
+
+        val navView = findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
+        val headerView = navView.getHeaderView(0)
+        val headerTitle = headerView.findViewById<TextView>(R.id.header_title)
+        val headerSubtitle = headerView.findViewById<TextView>(R.id.header_subtitle)
+
+        headerTitle.text = username
+        headerSubtitle.text = email
+
+
         // Hubungkan toolbar dengan navController
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         // Hubungkan drawer navigation dengan navController
-        val navView: NavigationView = findViewById(R.id.nav_view)
         navView.setupWithNavController(navController)
 
         // Hubungkan bottom navigation dengan navController
