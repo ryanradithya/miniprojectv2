@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#421497"
+    android:background="#0C3B2E"
     tools:context=".LoginActivity">
 
     <!-- White rounded bottom half with elevation -->
@@ -35,7 +35,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="24dp"
                 android:text="Login"
-                android:textColor="@color/black"
+                android:textColor="#0C3B2E"
                 android:textSize="34sp"
                 android:textStyle="bold" />
 
@@ -102,7 +102,7 @@
                 android:text="LOG IN"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
-                app:backgroundTint="@color/purple_500"
+                app:backgroundTint="#6D9773"
                 app:cornerRadius="16dp"
                 app:elevation="6dp" />
 
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Sign up"
-                    android:textColor="#2147FA"
+                    android:textColor="#FFBA00"
                     android:textStyle="bold" />
             </LinearLayout>
 

@@ -36,6 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Edit Account"
+        android:backgroundTint="#6D9773"
         android:layout_marginBottom="12dp"/>
 
     <Button
@@ -50,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Logout"
-        android:backgroundTint="@color/purple_500"
+        android:backgroundTint="#6D9773"
         android:textColor="@android:color/white" />
 
 </LinearLayout>

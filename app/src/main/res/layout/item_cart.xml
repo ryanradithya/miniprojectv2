@@ -19,7 +19,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
         <TextView
             android:id="@+id/cart_item_name"
@@ -49,7 +50,8 @@
             android:text="-"
             android:minWidth="36dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:backgroundTint="#6D9773"/>
 
         <TextView
             android:id="@+id/tv_qty_cart"
@@ -64,7 +66,8 @@
             android:text="+"
             android:minWidth="36dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:backgroundTint="#6D9773"/>
     </LinearLayout>
 
     <ImageButton

@@ -161,7 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TAMBAH KE KERANJANG"
-            android:backgroundTint="#6200EE"
+            android:backgroundTint="#6D9773"
             android:textColor="@android:color/white"
             android:textAllCaps="true" />
     </LinearLayout>
