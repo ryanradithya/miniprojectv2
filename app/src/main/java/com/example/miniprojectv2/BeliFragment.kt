@@ -2,7 +2,6 @@ package com.example.miniprojectv2
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,100 +19,97 @@ class BeliFragment : Fragment() {
     private lateinit var productRecycler: RecyclerView
     private var allProducts = ProductRepository.produkUtama.toMutableList()
     private var currentFilter: String = "Semua Harga"
+    private var currentCategory: String = "Semua Produk"
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val v = inflater.inflate(R.layout.fragment_beli, container, false)
+        // restore kategori jika ada
+        savedInstanceState?.getString("currentCategory")?.let {
+            currentCategory = it
+        }
+        return inflater.inflate(R.layout.fragment_beli, container, false)
+    }
 
-        // return the view
-        return v
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("currentCategory", currentCategory)
+        outState.putString("currentFilter", currentFilter) // opsional kalau mau restore filter harga juga
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // cek apakah seller atau bukan
         val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val isSeller = prefs.getBoolean("isSeller", false)
 
-        // Rekomendasi (horizontal)
+        // Setup Rekomendasi Produk (horizontal)
         val rekomendasiRecycler = view.findViewById<RecyclerView>(R.id.rekomendasi_recycler)
         rekomendasiRecycler.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rekomendasiRecycler.adapter =
             ProductAdapter(ProductRepository.rekomendasiProduk.toMutableList(), isRekomendasi = true)
 
-        // Produk utama (vertical)
+        //Setup Produk Utama (vertical)
         productRecycler = view.findViewById(R.id.product_recycler)
         adapter = ProductAdapter(allProducts.toMutableList(), isSeller = isSeller)
         productRecycler.layoutManager = LinearLayoutManager(requireContext())
         productRecycler.adapter = adapter
 
-        // Search input
+        // Search Bar
         val searchInput = view.findViewById<EditText>(R.id.search_input)
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val q = s?.toString() ?: ""
-                filterProducts(q, currentFilter)
+                filterProducts(q, currentFilter, currentCategory)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        // Tombol filter
+        //  Tombol Filter Harga
         val btnFilter = view.findViewById<ImageButton>(R.id.btn_filter)
-        btnFilter.setOnClickListener {
-            showFilterDialog()
-        }
+        btnFilter.setOnClickListener { showFilterDialog() }
 
-        // 🛒 Tombol Cart (hanya muncul kalau bukan seller)
+        // Tombol Cart (hanya untuk pembeli)
         val btnCart = view.findViewById<ImageButton>(R.id.btn_cart)
         if (isSeller) {
             btnCart.visibility = View.GONE
         } else {
             btnCart.visibility = View.VISIBLE
             btnCart.setOnClickListener {
-                Log.d("BeliFragment", "Cart button clicked")
                 try {
                     findNavController().navigate(R.id.cartFragment)
                 } catch (e: Exception) {
                     Log.e("BeliFragment", "Navigation to cart failed: ${e.message}")
-                    Toast.makeText(requireContext(), "Gagal membuka keranjang", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Gagal membuka keranjang", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
+
+        // Kategori Navbar
+        setupCategoryButtons(view)
     }
 
-    // Refresh otomatis setiap fragment aktif lagi
     override fun onResume() {
         super.onResume()
-
-        // Ambil data terbaru dari repository
         allProducts = ProductRepository.produkUtama.toMutableList()
-
-        Log.d("BeliFragment", "onResume dipanggil, produk: ${allProducts.size}")
         adapter.updateData(allProducts)
 
-        // Terapkan kembali filter & search jika sebelumnya ada
         val searchText = view?.findViewById<EditText>(R.id.search_input)?.text?.toString() ?: ""
-        filterProducts(searchText, currentFilter)
+        filterProducts(searchText, currentFilter, currentCategory)
     }
 
-    // Filter produk berdasarkan nama & harga
-    private fun filterProducts(query: String, priceFilter: String) {
+    // Filter Produk
+    private fun filterProducts(query: String, priceFilter: String, category: String) {
         val qTrim = query.trim()
-        if (qTrim.isEmpty() && priceFilter == "Semua Harga") {
-            adapter.updateData(allProducts)
-            return
-        }
 
         val filtered = allProducts.filter { product ->
-            val matchQuery =
-                if (qTrim.isEmpty()) true else product.name.contains(qTrim, ignoreCase = true)
+            val matchQuery = if (qTrim.isEmpty()) true else product.name.contains(qTrim, ignoreCase = true)
             val matchPrice = when (priceFilter) {
                 "Di bawah 100rb" -> product.price < 100_000
                 "100rb - 300rb" -> product.price in 100_000..300_000
@@ -122,7 +118,12 @@ class BeliFragment : Fragment() {
                 "Di atas 1jt" -> product.price > 1_000_000
                 else -> true
             }
-            matchQuery && matchPrice
+            val matchCategory = when (category) {
+                "Semua Produk" -> true
+                else -> product.category.equals(category, ignoreCase = true)
+            }
+
+            matchQuery && matchPrice && matchCategory
         }
 
         adapter.updateData(filtered)
@@ -146,12 +147,75 @@ class BeliFragment : Fragment() {
                 currentFilter = options[which]
             }
             .setPositiveButton("Terapkan") { dialog, _ ->
-                val searchText =
-                    view?.findViewById<EditText>(R.id.search_input)?.text?.toString() ?: ""
-                filterProducts(searchText, currentFilter)
+                val searchText = view?.findViewById<EditText>(R.id.search_input)?.text?.toString() ?: ""
+                filterProducts(searchText, currentFilter, currentCategory)
                 dialog.dismiss()
             }
             .setNegativeButton("Batal", null)
             .show()
+    }
+
+    // Navbar Kategori
+    private fun setupCategoryButtons(view: View) {
+        val layout = view.findViewById<LinearLayout>(R.id.category_navbar)
+        val categories = listOf("Semua Produk", "Kamera Analog", "Roll Film", "Lensa Analog", "Tas Kamera")
+
+        layout.removeAllViews()
+
+        var activeButton: Button? = null
+
+        categories.forEach { cat ->
+            val btn = Button(requireContext()).apply {
+                text = cat
+                textSize = 14f
+                isAllCaps = false
+                setBackgroundResource(R.drawable.bg_category_normal)
+                setTextColor(resources.getColor(android.R.color.black))
+                val params = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                params.setMargins(8, 0, 8, 0)
+                layoutParams = params
+            }
+
+            // Jika ini tombol yang sesuai currentCategory, jadikan aktif
+            if (cat.equals(currentCategory, ignoreCase = true)) {
+                btn.setBackgroundResource(R.drawable.bg_category_selected)
+                btn.setTextColor(resources.getColor(android.R.color.white))
+                activeButton = btn
+            }
+
+            btn.setOnClickListener {
+                // update state
+                currentCategory = cat
+
+                // ubah warna tombol aktif lama -> normal
+                activeButton?.setBackgroundResource(R.drawable.bg_category_normal)
+                activeButton?.setTextColor(resources.getColor(android.R.color.black))
+
+                // set tombol sekarang jadi selected
+                btn.setBackgroundResource(R.drawable.bg_category_selected)
+                btn.setTextColor(resources.getColor(android.R.color.white))
+                activeButton = btn
+
+                val searchText = view.findViewById<EditText>(R.id.search_input).text.toString()
+                filterProducts(searchText, currentFilter, currentCategory)
+            }
+
+            layout.addView(btn)
+        }
+
+        // Jika tidak ada tombol yang cocok (mis. currentCategory null atau tidak cocok), pilih Semua Produk
+        if (activeButton == null) {
+            // cari tombol pertama (Semua Produk) dan set active
+            val firstChild = layout.getChildAt(0)
+            if (firstChild is Button) {
+                firstChild.setBackgroundResource(R.drawable.bg_category_selected)
+                firstChild.setTextColor(resources.getColor(android.R.color.white))
+                activeButton = firstChild
+                currentCategory = "Semua Produk"
+            }
+        }
     }
 }

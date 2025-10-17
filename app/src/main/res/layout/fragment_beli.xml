@@ -5,16 +5,23 @@
     android:orientation="vertical"
     android:padding="8dp">
 
-    <!-- 🔘 Tombol Logout di Baris Sendiri -->
-    <!--    <Button-->
-    <!--        android:id="@+id/btn_logout"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:text="Logout"-->
-    <!--        android:backgroundTint="@color/purple_500"-->
-    <!--        android:textColor="@android:color/white"-->
-    <!--        android:layout_gravity="end"-->
-    <!--        android:layout_marginBottom="8dp" />-->
+    <!-- Judul Rekomendasi -->
+    <TextView
+        android:id="@+id/rekomendasi_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Rekomendasi Produk"
+        android:textSize="18sp" />
+
+    <!-- RecyclerView Horizontal -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rekomendasi_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        android:padding="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -71,26 +78,6 @@
             app:tint="#555" />
     </LinearLayout>
 
-
-
-    <!-- Judul Rekomendasi -->
-    <TextView
-        android:id="@+id/rekomendasi_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="Rekomendasi untukmu"
-        android:textSize="18sp" />
-
-    <!-- RecyclerView Horizontal -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rekomendasi_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:overScrollMode="never"
-        android:padding="8dp" />
-
     <!-- Judul Belanja -->
     <TextView
         android:id="@+id/belanja_title"
@@ -99,6 +86,21 @@
         android:padding="8dp"
         android:text="Belanja Sekarang"
         android:textSize="18sp" />
+
+    <!--    category -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:id="@+id/category_navbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical" />
+    </HorizontalScrollView>
 
     <!-- RecyclerView Produk Utama -->
     <androidx.recyclerview.widget.RecyclerView

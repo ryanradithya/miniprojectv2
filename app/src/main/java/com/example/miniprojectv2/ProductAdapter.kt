@@ -33,11 +33,10 @@ class ProductAdapter(
         val image: ImageView? =
             view.findViewById(R.id.product_image) ?: view.findViewById(R.id.rekomendasi_image)
 
-        val stock: TextView? =
-            view.findViewById(R.id.product_stock) ?: view.findViewById(R.id.rekomendasi_stock)
+        // 🔹 Hanya layout pembeli yang punya stock
+        val stock: TextView? = view.findViewById(R.id.product_stock)
 
-
-        // Tombol khusus untuk mode Seller
+        // 🔹 Tombol mode seller
         val btnEdit: ImageButton? = view.findViewById(R.id.btn_edit)
         val btnDelete: ImageButton? = view.findViewById(R.id.btn_delete)
     }
@@ -63,17 +62,22 @@ class ProductAdapter(
 
         holder.title?.text = product.name
         holder.price?.text = "Rp ${product.price}"
-        holder.stock?.text = "Stock: ${product.stock}"
 
+        // 🔹 Tampilkan stok hanya jika bukan rekomendasi
+        if (!isRekomendasi) {
+            holder.stock?.text = "Stok: ${product.stock}"
+        } else {
+            holder.stock?.visibility = View.GONE
+        }
 
-        // Gambar produk (bisa dari URI atau fallback placeholder)
+        // 🔹 Gambar produk (URI atau placeholder)
         if (!product.imageUri.isNullOrEmpty()) {
             holder.image?.setImageURI(Uri.parse(product.imageUri))
         } else {
             holder.image?.setImageResource(R.drawable.ic_product_placeholder)
         }
 
-        // Mode Seller (tampilkan tombol edit & delete)
+        // 🔹 Mode Seller
         if (isSeller) {
             holder.btnEdit?.visibility = View.VISIBLE
             holder.btnDelete?.visibility = View.VISIBLE
@@ -98,24 +102,16 @@ class ProductAdapter(
                 if (removed) {
                     items.removeAt(position)
                     notifyItemRemoved(position)
-                    Toast.makeText(
-                        holder.itemView.context,
-                        "Produk dihapus",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(holder.itemView.context, "Produk dihapus", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(
-                        holder.itemView.context,
-                        "Gagal menghapus produk",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(holder.itemView.context, "Gagal menghapus produk", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            holder.card?.setOnClickListener(null) // Nonaktifkan klik untuk buka detail
+            holder.card?.setOnClickListener(null)
 
         } else {
-            // Mode Pembeli (klik buka detail)
+            // 🔹 Mode Pembeli
             holder.btnEdit?.visibility = View.GONE
             holder.btnDelete?.visibility = View.GONE
 
@@ -144,15 +140,11 @@ class ProductAdapter(
     override fun getItemCount(): Int = items.size
 
     // =========================
-    // 🔹 Update Data (untuk Filter)
+    // 🔹 Update Data (Filter)
     // =========================
     fun updateData(newList: List<Product>) {
-        (items as MutableList).apply {
-            clear()
-            addAll(newList)
-        }
+        items.clear()
+        items.addAll(newList)
         notifyDataSetChanged()
     }
-
-
 }
