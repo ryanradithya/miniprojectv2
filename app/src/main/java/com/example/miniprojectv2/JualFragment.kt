@@ -42,7 +42,7 @@ class JualFragment : Fragment() {
         val btnSelectImage = view.findViewById<Button>(R.id.btn_select_image)
         imagePreview = view.findViewById(R.id.image_preview)
 
-        val categories = listOf("Kamera", "Lensa", "Aksesori", "Film", "Lainnya")
+        val categories = listOf("Kamera Analog", "Lensa Analog", "Tas Kamera", "Roll Film", "Lainnya")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
         categorySpinner.adapter = adapter
 
