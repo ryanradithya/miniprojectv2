@@ -45,12 +45,67 @@ class BeliFragment : Fragment() {
         val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val isSeller = prefs.getBoolean("isSeller", false)
 
-        // Setup Rekomendasi Produk (horizontal)
+        //Rekomendasi Produk (Animasi scroll)
         val rekomendasiRecycler = view.findViewById<RecyclerView>(R.id.rekomendasi_recycler)
-        rekomendasiRecycler.layoutManager =
+        val originalList = ProductRepository.rekomendasiProduk.toMutableList()
+        val loopList = (originalList + originalList + originalList).toMutableList()
+        val rekomendasiAdapter = ProductAdapter(loopList, isRekomendasi = true)
+
+        val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        rekomendasiRecycler.adapter =
-            ProductAdapter(ProductRepository.rekomendasiProduk.toMutableList(), isRekomendasi = true)
+        rekomendasiRecycler.layoutManager = layoutManager
+        rekomendasiRecycler.adapter = rekomendasiAdapter
+        val handler = android.os.Handler()
+        var isUserTouching = false
+        val scrollStep = 1
+        val scrollInterval: Long = 10
+        val resumeDelay: Long = 2000
+        val continuousScrollRunnable = object : Runnable {
+            override fun run() {
+                if (!isUserTouching) {
+                    rekomendasiRecycler.scrollBy(scrollStep, 0)
+                    val totalItem = rekomendasiAdapter.itemCount
+                    val firstVisible = layoutManager.findFirstVisibleItemPosition()
+                    if (firstVisible > totalItem / 3 * 2) {
+                        rekomendasiRecycler.scrollToPosition(totalItem / 3)
+                    }
+                }
+                handler.postDelayed(this, scrollInterval)
+            }
+        }
+        rekomendasiRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                when (newState) {
+                    RecyclerView.SCROLL_STATE_DRAGGING -> {
+                        isUserTouching = true
+                        handler.removeCallbacks(continuousScrollRunnable)
+                    }
+                    RecyclerView.SCROLL_STATE_IDLE -> {
+                        isUserTouching = false
+                        handler.removeCallbacks(continuousScrollRunnable)
+                        handler.postDelayed(continuousScrollRunnable, resumeDelay)
+                    }
+                }
+            }
+        })
+        handler.postDelayed(continuousScrollRunnable, 1000)
+        viewLifecycleOwner.lifecycle.addObserver(
+            object : androidx.lifecycle.DefaultLifecycleObserver {
+                override fun onPause(owner: androidx.lifecycle.LifecycleOwner) {
+                    handler.removeCallbacks(continuousScrollRunnable)
+                }
+
+                override fun onResume(owner: androidx.lifecycle.LifecycleOwner) {
+                    handler.postDelayed(continuousScrollRunnable, 1000)
+                }
+
+                override fun onDestroy(owner: androidx.lifecycle.LifecycleOwner) {
+                    handler.removeCallbacks(continuousScrollRunnable)
+                }
+            }
+        )
+
+
 
         //Setup Produk Utama (vertical)
         productRecycler = view.findViewById(R.id.product_recycler)
@@ -90,7 +145,6 @@ class BeliFragment : Fragment() {
                 }
             }
         }
-
         // Kategori Navbar
         setupCategoryButtons(view)
     }
@@ -122,10 +176,8 @@ class BeliFragment : Fragment() {
                 "Semua Produk" -> true
                 else -> product.category.equals(category, ignoreCase = true)
             }
-
             matchQuery && matchPrice && matchCategory
         }
-
         adapter.updateData(filtered)
     }
 
@@ -159,9 +211,7 @@ class BeliFragment : Fragment() {
     private fun setupCategoryButtons(view: View) {
         val layout = view.findViewById<LinearLayout>(R.id.category_navbar)
         val categories = listOf("Semua Produk", "Kamera Analog", "Roll Film", "Lensa Analog", "Tas Kamera")
-
         layout.removeAllViews()
-
         var activeButton: Button? = null
 
         categories.forEach { cat ->
@@ -189,12 +239,9 @@ class BeliFragment : Fragment() {
             btn.setOnClickListener {
                 // update state
                 currentCategory = cat
-
-                // ubah warna tombol aktif lama -> normal
                 activeButton?.setBackgroundResource(R.drawable.bg_category_normal)
                 activeButton?.setTextColor(resources.getColor(android.R.color.black))
 
-                // set tombol sekarang jadi selected
                 btn.setBackgroundResource(R.drawable.bg_category_selected)
                 btn.setTextColor(resources.getColor(android.R.color.white))
                 activeButton = btn
@@ -206,9 +253,7 @@ class BeliFragment : Fragment() {
             layout.addView(btn)
         }
 
-        // Jika tidak ada tombol yang cocok (mis. currentCategory null atau tidak cocok), pilih Semua Produk
         if (activeButton == null) {
-            // cari tombol pertama (Semua Produk) dan set active
             val firstChild = layout.getChildAt(0)
             if (firstChild is Button) {
                 firstChild.setBackgroundResource(R.drawable.bg_category_selected)
