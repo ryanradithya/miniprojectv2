@@ -66,7 +66,9 @@
                 app:boxCornerRadiusBottomEnd="16dp"
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp">
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxStrokeColor="@color/purple_500"
+                app:hintTextColor="@color/purple_200">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/reg_username_input"
@@ -86,7 +88,9 @@
                 app:boxCornerRadiusBottomEnd="16dp"
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp">
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxStrokeColor="@color/purple_500"
+                app:hintTextColor="@color/purple_200">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/reg_password_input"
@@ -103,11 +107,14 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="8dp"
                 app:boxCornerRadiusBottomEnd="16dp"
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
-                app:boxCornerRadiusTopStart="16dp">
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxStrokeColor="@color/purple_500"
+                app:hintTextColor="@color/purple_200">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/reg_email_input"
                     android:layout_width="match_parent"
@@ -116,6 +123,15 @@
                     android:inputType="textEmailAddress"
                     android:textColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="24dp"
+                android:gravity="end"
+                android:text="Already have an account?" />
 
 
             <!-- Save button -->
