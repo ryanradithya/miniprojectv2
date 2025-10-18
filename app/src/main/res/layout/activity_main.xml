@@ -20,12 +20,15 @@
                 android:id="@+id/toolbar"
                 android:layout_width="0dp"
                 android:layout_height="?attr/actionBarSize"
-                android:background="#0C3B2E"
+                android:background="@color/green_primary"
                 app:title="Mini Project"
                 app:titleTextColor="@android:color/white"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:popupTheme="@style/ThemeOverlay.App.Toolbar"
+                app:theme="@style/ThemeOverlay.App.Toolbar" />
+
 
             <!-- NavHostFragment -->
             <androidx.fragment.app.FragmentContainerView

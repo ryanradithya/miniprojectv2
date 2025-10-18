@@ -22,9 +22,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // pakai toolbar dari layout
+// Pakai toolbar dari layout
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+// Set icon burger (menu)
+        toolbar.setNavigationIcon(R.drawable.ic_menu)
+
+// Ubah warnanya jadi putih (kalau pakai vector bisa di-tint)
+        toolbar.navigationIcon?.setTint(getColor(android.R.color.white))
+
+// Biar bisa buka navigation drawer
+        val drawerLayout = findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer_layout)
+        toolbar.setNavigationOnClickListener {
+            drawerLayout.openDrawer(androidx.core.view.GravityCompat.START)
+        }
+
 
         // Ambil navHostFragment dan navController
         val navHostFragment =
