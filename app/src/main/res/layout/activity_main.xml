@@ -22,6 +22,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="#0C3B2E"
                 app:title="Mini Project"
+                app:titleTextColor="@android:color/white"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
@@ -46,8 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 app:menu="@menu/bottom_nav_menu"
-                app:itemIconTint="@color/bottom_nav_color"
-                app:itemTextColor="@color/bottom_nav_color"
+                app:itemIconTint="#0C3B2E"
+                app:itemTextColor="#0C3B2E"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
