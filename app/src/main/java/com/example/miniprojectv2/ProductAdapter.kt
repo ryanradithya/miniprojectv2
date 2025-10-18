@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -82,6 +83,7 @@ class ProductAdapter(
             holder.btnEdit?.visibility = View.VISIBLE
             holder.btnDelete?.visibility = View.VISIBLE
 
+            // Tombol Edit
             holder.btnEdit?.setOnClickListener {
                 Log.d("ProductAdapter", "Edit produk: ${product.name}")
                 val bundle = Bundle().apply {
@@ -96,18 +98,33 @@ class ProductAdapter(
                 it.findNavController().navigate(R.id.jualFragment, bundle)
             }
 
+            // Tombol Delete (dengan konfirmasi)
             holder.btnDelete?.setOnClickListener {
-                Log.d("ProductAdapter", "Hapus produk: ${product.name}")
-                val removed = ProductRepository.removeProduct(product)
-                if (removed) {
-                    items.removeAt(position)
-                    notifyItemRemoved(position)
-                    Toast.makeText(holder.itemView.context, "Produk dihapus", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(holder.itemView.context, "Gagal menghapus produk", Toast.LENGTH_SHORT).show()
-                }
+                val context = holder.itemView.context
+
+                AlertDialog.Builder(context)
+                    .setTitle("Konfirmasi Hapus")
+                    .setMessage("Apakah Anda yakin ingin menghapus produk \"${product.name}\"?")
+                    .setPositiveButton("Ya") { _, _ ->
+                        val currentPosition = holder.adapterPosition
+                        if (currentPosition != RecyclerView.NO_POSITION) {
+                            val removed = ProductRepository.removeProduct(product)
+                            if (removed) {
+                                items.removeAt(currentPosition)
+                                notifyItemRemoved(currentPosition)
+                                notifyItemRangeChanged(currentPosition, items.size)
+                                Toast.makeText(context, "Produk dihapus", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Gagal menghapus produk", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                    .setNegativeButton("Batal", null)
+                    .setCancelable(true)
+                    .show()
             }
 
+            // Nonaktifkan klik kartu di mode seller
             holder.card?.setOnClickListener(null)
 
         } else {
