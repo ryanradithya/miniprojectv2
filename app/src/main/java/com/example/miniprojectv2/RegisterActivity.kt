@@ -1,11 +1,14 @@
 package com.example.miniprojectv2
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -14,6 +17,20 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        val window = window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.my_custom_status_bar)
+
+        val loginText = findViewById<TextView>(R.id.textView3)
+
+        loginText.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish() // optional: closes RegisterActivity so user can’t go back with back button
+        }
+
 
         prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
