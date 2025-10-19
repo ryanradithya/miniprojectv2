@@ -47,5 +47,10 @@
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="android:colorControlNormal">@android:color/white</item>
     </style>
+    <style name="Theme.MyApp.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#0C3B2E</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.MaterialComponents.DayNight.NoActionBar</item>
+    </style>
 
 </resources>

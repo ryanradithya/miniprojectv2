@@ -3,5 +3,21 @@
     <style name="Base.Theme.Miniprojectv2" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">#0C3B2E</item>
+        <item name="colorPrimaryVariant">#6D9773</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+
+        <!-- Warna sekunder -->
+        <item name="colorSecondary">#FFBA00</item>
+        <item name="colorSecondaryVariant">#B46617</item>
+        <item name="colorOnSecondary">@android:color/black</item>
+
+        <!-- Warna fokus & outline komponen -->
+        <item name="colorControlActivated">#0C3B2E</item>
+        <item name="colorOutline">#6D9773</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
     </style>
 </resources>
