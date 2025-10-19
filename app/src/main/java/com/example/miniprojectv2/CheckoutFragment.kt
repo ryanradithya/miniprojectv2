@@ -27,7 +27,7 @@ class CheckoutFragment : Fragment() {
         val prefs = requireContext().getSharedPreferences("UserPrefs", 0)
         val buyerUsername = prefs.getString("active_username", "Guest") ?: "Guest"
 
-        // ===== Show items & total =====
+        //list untuk checkout
         var total = 0
         selectedItems.forEach { item ->
             val tv = TextView(requireContext())
@@ -37,7 +37,7 @@ class CheckoutFragment : Fragment() {
         }
         tvTotal.text = "Total: Rp $total"
 
-        // ===== Delivery Expedition Spinner =====
+        //spinner (ekspedisi)
         val tvExpeditionLabel = TextView(requireContext()).apply {
             text = "Pilih Ekspedisi:"
             textSize = 16f
@@ -50,7 +50,7 @@ class CheckoutFragment : Fragment() {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = spinnerAdapter
 
-        // ===== Confirm checkout =====
+        //Tombol checkout listner
         btnConfirm.setOnClickListener {
             if (selectedItems.isEmpty()) {
                 Toast.makeText(requireContext(), "Keranjang kosong!", Toast.LENGTH_SHORT).show()
@@ -59,7 +59,7 @@ class CheckoutFragment : Fragment() {
 
             val selectedExpedition = spinner.selectedItem?.toString() ?: ""
 
-            // 🔹 Cek stok sebelum transaksi
+            //Cek stok sebelum transaksi
             for (item in selectedItems) {
                 val product = ProductRepository.findProductByName(item.name)
                 if (product == null) {
@@ -90,10 +90,10 @@ class CheckoutFragment : Fragment() {
 
             Toast.makeText(requireContext(), "Checkout berhasil!", Toast.LENGTH_SHORT).show()
 
-            // 🔹 Hapus dari keranjang
+            //Hapus dari keranjang
             CartManager.items.removeAll(selectedItems)
 
-            // 🔹 Kembali ke halaman transaksi seperti sistem kamu
+            //Navigasi ke TransactionFragment
             val bundle = Bundle().apply { putBoolean("from_checkout", true) }
             findNavController().navigate(R.id.action_checkout_to_transaction, bundle)
         }
@@ -101,6 +101,7 @@ class CheckoutFragment : Fragment() {
         return v
     }
 
+    // !! diupdate onresume (penting)
     override fun onResume() {
         super.onResume()
         val prefs = requireContext().getSharedPreferences("ExpeditionPrefs", Context.MODE_PRIVATE)

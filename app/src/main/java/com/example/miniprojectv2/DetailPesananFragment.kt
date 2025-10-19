@@ -44,10 +44,11 @@ class DetailPesananFragment : Fragment() {
         val ratingStars: LinearLayout = v.findViewById(R.id.rating_stars)
         val btnSubmit: Button = v.findViewById(R.id.btn_submit_review)
 
-        // 🔹 Setup rating
+        //Setup rating
         var selectedRating = 0f
         val stars = mutableListOf<ImageView>()
 
+        //Tampilin bintang (ic_star_empty)
         for (i in 1..5) {
             val star = ImageView(requireContext())
             val size = (32 * resources.displayMetrics.density).toInt()
@@ -65,7 +66,7 @@ class DetailPesananFragment : Fragment() {
             ratingStars.addView(star)
         }
 
-        // 🔹 Jika user sudah pernah review produk ini, nonaktifkan input
+        //Jika user sudah pernah review produk ini, nonaktifkan input
         val product = ProductRepository.findProductByName(name)
         val hasReviewed = product?.reviews?.any { it.reviewerName == activeUser } == true
         if (hasReviewed) {
@@ -75,7 +76,7 @@ class DetailPesananFragment : Fragment() {
             Toast.makeText(requireContext(), "Kamu sudah memberi ulasan untuk produk ini.", Toast.LENGTH_SHORT).show()
         }
 
-        // 🔹 Submit review
+        //Submit review
         btnSubmit.setOnClickListener {
             val comment = etReview.text.toString().trim()
             if (selectedRating == 0f || comment.isEmpty()) {
