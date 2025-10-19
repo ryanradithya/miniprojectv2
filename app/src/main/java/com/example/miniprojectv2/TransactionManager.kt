@@ -7,8 +7,8 @@ data class Transaction(
     val qty: Int,
     val totalPrice: Int,
     val buyer: String,
-    val expedition: String,            // new field for delivery service
-    var status: String = "Pesanan Masuk", // default pending
+    val expedition: String,
+    var status: String = "Pesanan Masuk",
     var trackingNumber: String? = null,
     val date: String
 )
@@ -16,7 +16,7 @@ data class Transaction(
 object TransactionManager {
     val transactions = mutableListOf<Transaction>()
 
-    // updated addTransaction to include expedition
+    // tambah transaksi dengan ekspedisi
     fun addTransaction(itemName: String, qty: Int, price: Int, buyer: String, expedition: String) {
         val total = qty * price
         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())

@@ -26,6 +26,7 @@
             android:orientation="vertical"/>
     </ScrollView>
 
+<!--    total harga checkout-->
     <TextView
         android:id="@+id/checkout_total"
         android:layout_width="match_parent"
@@ -36,6 +37,7 @@
         android:paddingTop="12dp"
         android:paddingBottom="12dp"/>
 
+<!--    tombol konfirmasi checkout-->
     <Button
         android:id="@+id/btn_confirm_checkout"
         android:layout_width="match_parent"

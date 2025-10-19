@@ -25,14 +25,13 @@ class ProductDetailFragment : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_product_detail, container, false)
 
-        // 🔹 Ambil data dari argument
+        // ngambil data
         val name = arguments?.getString("product_name") ?: "Produk"
         val price = arguments?.getInt("product_price") ?: 0
         val stock = arguments?.getInt("product_stock") ?: 0
         val description = arguments?.getString("product_description") ?: "Tidak ada deskripsi!"
         val imageUriString = arguments?.getString("product_image_uri")
 
-        // 🔹 Hubungkan View
         val imageView: ImageView = v.findViewById(R.id.product_image)
         val tvTitle: TextView = v.findViewById(R.id.product_title)
         val tvPrice: TextView = v.findViewById(R.id.product_price)
@@ -47,13 +46,13 @@ class ProductDetailFragment : Fragment() {
         val tvAverageRating: TextView = v.findViewById(R.id.tv_average_rating)
         val reviewContainer: LinearLayout = v.findViewById(R.id.review_container)
 
-        // 🔹 Set info produk
+        // info lengkap produk
         tvTitle.text = name
         tvPrice.text = "Rp $price"
         tvStock.text = "Stok : $stock"
         tvDesc.text = description
 
-        // 🔹 Gambar produk
+        // Gambar produk
         if (!imageUriString.isNullOrEmpty()) {
             imageView.setImageURI(Uri.parse(imageUriString))
         } else {
@@ -66,8 +65,7 @@ class ProductDetailFragment : Fragment() {
             Toast.makeText(requireContext(), "Stok habis, tidak bisa dibeli", Toast.LENGTH_SHORT).show()
         }
 
-
-        // 🔹 Expand/collapse deskripsi
+        // deksripsi produk
         tvDesc.maxLines = 2
         tvDesc.ellipsize = TextUtils.TruncateAt.END
         var isExpanded = false
@@ -79,7 +77,7 @@ class ProductDetailFragment : Fragment() {
             tvDesc.invalidate()
         }
 
-        // 🔹 Quantity control
+        // counter produk
         var quantity = 1
         fun updateQty() {
             tvQty.text = quantity.toString()
@@ -94,7 +92,6 @@ class ProductDetailFragment : Fragment() {
                 Toast.makeText(requireContext(), "Stok tidak mencukupi!", Toast.LENGTH_SHORT).show()
             }
         }
-
         // Tombol kurang
         btnMinus.setOnClickListener {
             if (quantity > 1) {
@@ -103,7 +100,7 @@ class ProductDetailFragment : Fragment() {
             }
         }
 
-        // 🔹 Tambah ke keranjang
+        // tombol masuk ke keranjang
         btnAdd.setOnClickListener {
             if (price <= 0) {
                 Toast.makeText(requireContext(), "Harga produk tidak valid!", Toast.LENGTH_SHORT).show()
@@ -130,12 +127,10 @@ class ProductDetailFragment : Fragment() {
             findNavController().navigate(R.id.action_p_to_cart)
         }
 
-
-        // 🔹 Ambil review dari repository
+        //review dan rating produk
         val product = ProductRepository.findProductByName(name)
         val reviews = product?.reviews ?: emptyList()
 
-        // 🔹 Hitung dan tampilkan rating rata-rata
         if (reviews.isEmpty()) {
             tvAverageRating.text = "Belum ada ulasan"
             ratingStars.removeAllViews()
@@ -162,7 +157,7 @@ class ProductDetailFragment : Fragment() {
             }
         }
 
-        // 🔹 Tampilkan review dalam card
+        // card review
         reviewContainer.removeAllViews()
         if (reviews.isEmpty()) {
             val noReview = TextView(requireContext())
@@ -186,7 +181,6 @@ class ProductDetailFragment : Fragment() {
                 reviewContainer.addView(card)
             }
         }
-
         return v
     }
 }

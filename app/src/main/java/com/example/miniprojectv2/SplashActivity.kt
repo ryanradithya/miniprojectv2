@@ -10,7 +10,7 @@ class SplashActivity : AppCompatActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        // Navigate immediately or after a short delay
+        // masuk ke menu utama setelah beberapa saat
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }

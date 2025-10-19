@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:text="Tambah Expedisi"
         android:visibility="gone"
-        android:backgroundTint="#6D9773"/> <!-- default hidden -->
+        android:backgroundTint="#6D9773"/>
 
     <Button
         android:id="@+id/btn_logout"
