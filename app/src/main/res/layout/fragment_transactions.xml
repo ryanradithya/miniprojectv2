@@ -6,7 +6,7 @@
     android:paddingTop="16dp"
     android:paddingHorizontal="16dp">
 
-    <!-- 🔙 Tombol kembali & judul -->
+    <!-- tombol balik -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             android:layout_marginStart="16dp" />
     </LinearLayout>
 
-    <!-- Scrollable container for transactions -->
+    <!-- scroll view -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"

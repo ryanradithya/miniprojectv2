@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Gambar produk (rasio 1:1) -->
+        <!-- Gambar produk -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
-        <!-- Deskripsi (expandable) -->
+        <!-- Deskripsi -->
         <TextView
             android:id="@+id/product_desc"
             android:layout_width="match_parent"
@@ -70,7 +70,7 @@
             android:singleLine="false" />
 
 
-    <!-- 🔹 Container untuk Rating dan Review -->
+    <!-- Container buat rating -->
         <LinearLayout
             android:id="@+id/rating_container"
             android:layout_width="match_parent"
@@ -80,7 +80,6 @@
             android:background="@drawable/bg_card"
             android:layout_marginBottom="16dp">
 
-            <!-- 🔸 Baris rata-rata rating -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -104,7 +103,7 @@
                     android:layout_marginStart="8dp" />
             </LinearLayout>
 
-            <!-- 🔸 Daftar review -->
+            <!-- daftar review -->
             <LinearLayout
                 android:id="@+id/review_container"
                 android:layout_width="match_parent"
@@ -113,7 +112,7 @@
                 android:layout_marginTop="12dp" />
         </LinearLayout>
 
-        <!-- Tambah/Kurang + Tombol Tambah ke Keranjang -->
+        <!-- nambahin tambah sm kurang sm keranjang -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="50dp"
@@ -155,7 +154,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless" />
         </LinearLayout>
 
-        <!-- Tombol keranjang -->
+        <!-- tombol buat cart -->
         <Button
             android:id="@+id/btn_add_cart"
             android:layout_width="match_parent"
