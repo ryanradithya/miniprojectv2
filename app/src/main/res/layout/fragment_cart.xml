@@ -26,6 +26,7 @@
             android:orientation="vertical"/>
     </ScrollView>
 
+<!--    tombol checkout-->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_checkout"
         android:layout_width="match_parent"

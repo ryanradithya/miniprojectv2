@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+<!--        nama produk-->
         <TextView
             android:id="@+id/tv_product_name"
             android:text="Nama Produk"
@@ -18,42 +19,47 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+<!--        harga produk-->
         <TextView
             android:id="@+id/tv_product_price"
             android:text="Rp 0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+<!--        jumlah produk-->
         <TextView
             android:id="@+id/tv_product_qty"
             android:text="x0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
+<!--total harga-->
         <TextView
             android:id="@+id/tv_product_total"
             android:text="Total: Rp 0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+<!--        status pesanan-->
         <TextView
             android:id="@+id/tv_product_status"
             android:text="Status: -"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+<!--        ekspedisi pesanan-->
         <TextView
             android:id="@+id/tv_product_expedition"
             android:text="Expedisi: -"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
+<!--nomor resi-->
         <TextView
             android:id="@+id/tv_product_tracking"
             android:text="Resi: -"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+<!--        tanggal pesanan-->
         <TextView
             android:id="@+id/tv_product_date"
             android:text="Tanggal: -"
@@ -75,14 +81,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"/>
-
+<!--bintang rating-->
         <LinearLayout
             android:id="@+id/rating_stars"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"/>
-
+<!--        kolom tulis review-->
         <EditText
             android:id="@+id/et_review"
             android:hint="Tulis ulasan Anda..."
@@ -93,7 +99,7 @@
             android:background="@android:drawable/edit_text"
             android:padding="8dp"
             android:layout_marginBottom="12dp"/>
-
+<!--        submit review-->
         <Button
             android:id="@+id/btn_submit_review"
             android:text="Kirim Ulasan"
