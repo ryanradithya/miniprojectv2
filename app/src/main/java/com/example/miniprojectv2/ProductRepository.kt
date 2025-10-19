@@ -7,36 +7,31 @@ import java.util.Locale
 object ProductRepository {
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-    // Contoh ulasan dummy
+    // data review dan rating dummy
     private val reviewListA = listOf(
         Review("John Doe", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 5f, "2025-10-10"),
         Review("Jane Smith", "Produk sesuai deskripsi, hasil foto memuaskan!", 4.5f, "2025-10-12")
     )
-
     private val reviewListB = listOf(
         Review("John Wick", "Bagus, tapi pengiriman agak lama.", 4f, "2025-10-13"),
         Review("Alice Johnson", "Kualitas build mantap, recommended.", 5f, "2025-10-11")
     )
-
     private val reviewListC = listOf(
         Review("Tony Stark", "Desain klasik, berfungsi dengan baik.", 4.8f, "2025-10-14")
     )
-
     private val reviewListRoll = listOf(
         Review("Bruce Wayne", "Film warna cerah dan tajam.", 5f, "2025-10-09"),
         Review("Clark Kent", "Hasil foto vintage banget, suka!", 4.7f, "2025-10-10")
     )
-
     private val reviewListLensa = listOf(
         Review("Natasha Romanoff", "Bokeh halus, fokus cepat!", 5f, "2025-10-15"),
         Review("Peter Parker", "Kualitas tajam di harga segini, worth it.", 4.9f, "2025-10-14")
     )
-
     private val reviewListTas = listOf(
         Review("Steve Rogers", "Tasnya kuat dan desainnya keren.", 4.8f, "2025-10-13")
     )
 
-    // Produk utama (mutable supaya bisa ditambah)
+    //daftar produk
     val produkUtama = mutableListOf(
         Product(
             name = "Kamera Analog A",
@@ -100,7 +95,7 @@ object ProductRepository {
         )
     )
 
-    // Produk rekomendasi
+    // rekomendasi produk
     val rekomendasiProduk = listOf(
         Product(
             name = "Film Kodak Gold",
@@ -134,20 +129,19 @@ object ProductRepository {
         )
     )
 
-    // ✅ Mendapatkan semua produk utama
     fun getProducts(): MutableList<Product> = produkUtama
 
-    // ✅ Menambah produk baru
+    // menambah produk baru
     fun addProduct(product: Product) {
         produkUtama.add(product)
     }
 
-    // ✅ Menghapus produk
+    // menghapus produk
     fun removeProduct(product: Product): Boolean {
         return produkUtama.remove(product)
     }
 
-    // ✅ Mengupdate produk
+    // mengupdate produk
     fun updateProduct(oldProduct: Product, newProduct: Product) {
         val index = produkUtama.indexOf(oldProduct)
         if (index != -1) produkUtama[index] = newProduct
@@ -165,7 +159,7 @@ object ProductRepository {
         val newReview = Review(reviewer, comment, rating, dateFormat.format(java.util.Date()))
         val updatedReviews = product.reviews.toMutableList().apply { add(newReview) }
 
-        // Hitung ulang rata-rata rating
+        // update rata-rata rating
         val newAvg = updatedReviews.map { it.rating }.average().toFloat()
 
         val updatedProduct = product.copy(
@@ -177,7 +171,7 @@ object ProductRepository {
         return true
     }
 
-    // ✅ Menghapus semua produk utama (opsional)
+    // menghapus semua produk utama (opsional)
     fun clearProducts() {
         produkUtama.clear()
     }

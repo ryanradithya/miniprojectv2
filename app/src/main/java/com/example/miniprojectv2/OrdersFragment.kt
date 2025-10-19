@@ -9,7 +9,6 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 
 class OrdersFragment : Fragment() {
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -89,7 +88,6 @@ class OrdersFragment : Fragment() {
                             isEnabled = false
                         }
                     }
-
                     setOnClickListener {
                         when (t.status) {
                             "Pesanan Masuk" -> {
@@ -124,14 +122,13 @@ class OrdersFragment : Fragment() {
                 layout.addView(tvTitle)
                 layout.addView(tvBuyer)
                 layout.addView(tvPrice)
-                layout.addView(tvExpedition)   // add expedition info here
+                layout.addView(tvExpedition)
                 layout.addView(tvStatus)
                 layout.addView(actionButton)
                 card.addView(layout)
                 listLayout.addView(card)
             }
         }
-
         refreshOrders()
         return v
     }

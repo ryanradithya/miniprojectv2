@@ -19,14 +19,13 @@ class SellerActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    // Seller info
+    // info penjual
     var sellerUsername: String = "Penjual"
     var sellerEmail: String = "penjual@example.com"
 
-    // Delivery expeditions list (mutable internally)
+    // daftar ekspedisi
     private val _deliveryExpeditions: MutableList<String> = mutableListOf("JNE", "Tiki", "SiCepat")
 
-    // Read-only access for fragments
     val deliveryExpeditions: List<String>
         get() = _deliveryExpeditions
 
@@ -62,7 +61,7 @@ class SellerActivity : AppCompatActivity() {
         bottomNav.setupWithNavController(navController)
         navigationView.setupWithNavController(navController)
 
-        // Header info from SharedPreferences
+        // informasi header
         val prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         sellerUsername = prefs.getString("active_username", sellerUsername) ?: sellerUsername
         sellerEmail = prefs.getString("active_email", sellerEmail) ?: sellerEmail
@@ -82,18 +81,15 @@ class SellerActivity : AppCompatActivity() {
         }
     }
 
-    // Add a new expedition
+    // tambah ekspedisi baru
     fun addDeliveryExpedition(expedition: String) {
         val trimmed = expedition.trim()
         if (trimmed.isNotEmpty() && !_deliveryExpeditions.contains(trimmed)) {
             _deliveryExpeditions.add(trimmed)
-
-            // Save to SharedPreferences
             val prefs = getSharedPreferences("ExpeditionPrefs", Context.MODE_PRIVATE)
             prefs.edit().putStringSet("expeditions_set", _deliveryExpeditions.toSet()).apply()
         }
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         val navHostFragment =

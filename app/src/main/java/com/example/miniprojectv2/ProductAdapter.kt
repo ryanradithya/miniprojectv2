@@ -21,9 +21,7 @@ class ProductAdapter(
     private val isSeller: Boolean = false
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
-    // =========================
-    // 🔹 ViewHolder
-    // =========================
+//    view
     inner class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val card: CardView? =
             view.findViewById(R.id.product_tile) ?: view.findViewById(R.id.rekomendasi_tile)
@@ -34,17 +32,13 @@ class ProductAdapter(
         val image: ImageView? =
             view.findViewById(R.id.product_image) ?: view.findViewById(R.id.rekomendasi_image)
 
-        // 🔹 Hanya layout pembeli yang punya stock
         val stock: TextView? = view.findViewById(R.id.product_stock)
 
-        // 🔹 Tombol mode seller
+//        tombol untuk seller
         val btnEdit: ImageButton? = view.findViewById(R.id.btn_edit)
         val btnDelete: ImageButton? = view.findViewById(R.id.btn_delete)
     }
 
-    // =========================
-    // 🔹 ViewHolder Creation
-    // =========================
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val layout = when {
             isRekomendasi -> R.layout.item_rekomendasi
@@ -55,35 +49,32 @@ class ProductAdapter(
         return ProductViewHolder(view)
     }
 
-    // =========================
-    // 🔹 Data Binding
-    // =========================
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = items[position]
 
         holder.title?.text = product.name
         holder.price?.text = "Rp ${product.price}"
 
-        // 🔹 Tampilkan stok hanya jika bukan rekomendasi
+        // tampilin stok untuk produk
         if (!isRekomendasi) {
             holder.stock?.text = "Stok: ${product.stock}"
         } else {
             holder.stock?.visibility = View.GONE
         }
 
-        // 🔹 Gambar produk (URI atau placeholder)
+        // gambar produk
         if (!product.imageUri.isNullOrEmpty()) {
             holder.image?.setImageURI(Uri.parse(product.imageUri))
         } else {
             holder.image?.setImageResource(R.drawable.ic_product_placeholder)
         }
 
-        // 🔹 Mode Seller
+        // tampilan produk untuk seller
         if (isSeller) {
             holder.btnEdit?.visibility = View.VISIBLE
             holder.btnDelete?.visibility = View.VISIBLE
 
-            // Tombol Edit
+            // tombol Edit
             holder.btnEdit?.setOnClickListener {
                 Log.d("ProductAdapter", "Edit produk: ${product.name}")
                 val bundle = Bundle().apply {
@@ -98,7 +89,7 @@ class ProductAdapter(
                 it.findNavController().navigate(R.id.jualFragment, bundle)
             }
 
-            // Tombol Delete (dengan konfirmasi)
+            // tombol delete produk
             holder.btnDelete?.setOnClickListener {
                 val context = holder.itemView.context
 
@@ -123,12 +114,8 @@ class ProductAdapter(
                     .setCancelable(true)
                     .show()
             }
-
-            // Nonaktifkan klik kartu di mode seller
-            holder.card?.setOnClickListener(null)
-
         } else {
-            // 🔹 Mode Pembeli
+            // tampilan pembeli
             holder.btnEdit?.visibility = View.GONE
             holder.btnDelete?.visibility = View.GONE
 
@@ -151,14 +138,8 @@ class ProductAdapter(
         }
     }
 
-    // =========================
-    // 🔹 Item Count
-    // =========================
+    //counter jumlah produk
     override fun getItemCount(): Int = items.size
-
-    // =========================
-    // 🔹 Update Data (Filter)
-    // =========================
     fun updateData(newList: List<Product>) {
         items.clear()
         items.addAll(newList)

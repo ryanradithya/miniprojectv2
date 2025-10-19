@@ -115,7 +115,7 @@ class TransactionsFragment : Fragment() {
 
                     card.addView(layout)
 
-                    // 🔹 Buat card bisa diklik → buka DetailPesananFragment
+                    // card detail pesanan
                     card.setOnClickListener {
                         val bundle = Bundle().apply {
                             putString("product_name", trx.itemName)
@@ -130,13 +130,10 @@ class TransactionsFragment : Fragment() {
                         findNavController().navigate(R.id.detailPesananFragment, bundle)
                     }
 
-
-
                     transactionList.addView(card)
                 }
             }
         }
-
         refreshList()
 
         btnBack.setOnClickListener {
@@ -144,7 +141,6 @@ class TransactionsFragment : Fragment() {
             bottomNav.visibility = View.VISIBLE
             bottomNav.selectedItemId = R.id.homeFragment
         }
-
         return v
     }
 }

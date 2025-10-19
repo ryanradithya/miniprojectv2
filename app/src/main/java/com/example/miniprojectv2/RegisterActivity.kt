@@ -28,9 +28,8 @@ class RegisterActivity : AppCompatActivity() {
         loginText.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
-            finish() // optional: closes RegisterActivity so user can’t go back with back button
+            finish()
         }
-
 
         prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
@@ -38,7 +37,6 @@ class RegisterActivity : AppCompatActivity() {
         val usernameInput = findViewById<EditText>(R.id.reg_username_input)
         val passwordInput = findViewById<EditText>(R.id.reg_password_input)
         val emailInput = findViewById<EditText>(R.id.reg_email_input)
-
         val saveButton = findViewById<Button>(R.id.save_button)
 
         saveButton.setOnClickListener {
@@ -46,7 +44,6 @@ class RegisterActivity : AppCompatActivity() {
             val newUsername = usernameInput.text.toString().trim()
             val newPassword = passwordInput.text.toString().trim()
             val newEmail = emailInput.text.toString().trim()
-
 
             if (newUsername.isEmpty() || newPassword.isEmpty()) {
                 Toast.makeText(this, "Please fill all fields!", Toast.LENGTH_SHORT).show()
@@ -71,7 +68,7 @@ class RegisterActivity : AppCompatActivity() {
             Log.d("RegisterActivity", "Username: $newUsername, Password: $newPassword, Email: $newEmail, Role: $role")
 
             Toast.makeText(this, "$role credentials updated! $newUsername $newPassword", Toast.LENGTH_SHORT).show()
-            finish() // return to login
+            finish()
         }
     }
 }
