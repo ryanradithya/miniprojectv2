@@ -51,6 +51,7 @@ class BeliFragment : Fragment() {
         val loopList = (originalList + originalList + originalList).toMutableList()
         val rekomendasiAdapter = ProductAdapter(loopList, isRekomendasi = true)
 
+        //recyclerview untuk object pooling
         val layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rekomendasiRecycler.layoutManager = layoutManager

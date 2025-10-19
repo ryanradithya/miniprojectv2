@@ -35,7 +35,7 @@ class BuyerOrdersFragment : Fragment() {
                         (t.trackingNumber?.let { "\nResi: $it" } ?: "")
                 tv.setPadding(8, 8, 8, 8)
 
-                // Allow buyer to mark as "Selesai"
+                // Agar pembeli bisa "Selesai"
                 tv.setOnClickListener {
                     if (t.status == "Pesanan Dikirim") {
                         TransactionManager.updateStatus(t, "Pesanan Selesai")

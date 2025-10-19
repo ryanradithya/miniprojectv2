@@ -132,9 +132,7 @@ class AccountFragment : Fragment() {
                 .show()
         }
 
-        // ==========================
         // Button Tambah Expedisi (Seller Only)
-        // ==========================
         if (isSeller) {
             btnAddExpedition.visibility = View.VISIBLE
             btnAddExpedition.setOnClickListener {

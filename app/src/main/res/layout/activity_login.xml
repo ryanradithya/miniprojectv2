@@ -86,9 +86,9 @@
                     android:textColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Login button -->
+            <!-- Tombol Login -->
 
-            <!-- Horizontal container for Login / OR / Sign up -->
+            <!-- Container horizontal buat Login atau Sign up -->
 
             <TextView
                 android:id="@+id/textView3"

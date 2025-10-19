@@ -30,7 +30,7 @@
         android:gravity="center_vertical"
         android:padding="8dp">
 
-        <!-- 🔍 Search Bar -->
+        <!-- Search Bar -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
                 app:tint="#555" />
         </LinearLayout>
 
-        <!-- 🛒 Cart Icon -->
+        <!-- Cart Icon -->
         <ImageButton
             android:id="@+id/btn_cart"
             android:layout_width="40dp"

@@ -152,7 +152,7 @@ class JualFragment : Fragment() {
             selectedImageUri = data.data
             selectedImageUri?.let { uri ->
                 try {
-                    // ✅ Persist permission so URI stays valid after relog/restart
+                    //Persist image permission (agar tidak crash)
                     requireContext().contentResolver.takePersistableUriPermission(
                         uri,
                         Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -161,7 +161,7 @@ class JualFragment : Fragment() {
                     e.printStackTrace()
                 }
 
-                // ✅ Show image safely
+                //Testing
                 try {
                     imagePreview.setImageURI(uri)
                 } catch (e: Exception) {

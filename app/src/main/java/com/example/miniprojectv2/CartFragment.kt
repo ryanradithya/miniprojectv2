@@ -27,6 +27,7 @@ class CartFragment : Fragment() {
             cartList.removeAllViews()
             selectedItems.clear()
 
+            // Jika keranjang kosong, tampilkan pesan
             if (CartManager.items.isEmpty()) {
                 val tv = TextView(requireContext())
                 tv.text = "Keranjang kosong"
@@ -37,6 +38,7 @@ class CartFragment : Fragment() {
 
             btnCheckout.visibility = View.VISIBLE
 
+            // Tambahkan setiap item ke keranjang
             CartManager.items.forEach { item ->
                 val itemView = layoutInflater.inflate(R.layout.item_cart, cartList, false)
 
@@ -55,7 +57,7 @@ class CartFragment : Fragment() {
                 tvQty.text = item.qty.toString()
                 tvPrice.text = "Rp ${item.price * item.qty}"
 
-                // 🔹 Jika stok habis, nonaktifkan pilihan dan tombol plus
+                // Jika stok habis, nonaktifkan pilihan dan tombol plus
                 if (stock == 0) {
                     cbSelect.isEnabled = false
                     btnPlus.isEnabled = false
@@ -71,7 +73,7 @@ class CartFragment : Fragment() {
                     }
                 }
 
-                // 🔹 Tombol tambah qty
+                // Tombol tambah qty
                 btnPlus.setOnClickListener {
                     val currentStock = ProductRepository.findProductByName(item.name)?.stock ?: 0
                     if (item.qty < currentStock) {
@@ -83,7 +85,7 @@ class CartFragment : Fragment() {
                     }
                 }
 
-                // 🔹 Tombol kurang qty
+                // Tombol kurang qty
                 btnMinus.setOnClickListener {
                     if (item.qty > 1) {
                         item.qty--
@@ -92,7 +94,7 @@ class CartFragment : Fragment() {
                     }
                 }
 
-                // 🔹 Tombol hapus
+                //Tombol hapus
                 btnDelete.setOnClickListener {
                     AlertDialog.Builder(requireContext())
                         .setTitle("Hapus Produk")
@@ -111,7 +113,7 @@ class CartFragment : Fragment() {
 
         refreshCart()
 
-        // 🔹 Tombol checkout → pindah ke CheckoutFragment (tidak ubah alur)
+        //Tombol checkout → pindah ke CheckoutFragment (tidak ubah alur)
         btnCheckout.setOnClickListener {
             if (selectedItems.isEmpty()) {
                 Toast.makeText(requireContext(), "Pilih produk untuk checkout", Toast.LENGTH_SHORT).show()

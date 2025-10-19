@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
         val signupText = findViewById<TextView>(R.id.textView5)
         val forgotText = findViewById<TextView>(R.id.textView3)
 
-        // ✅ Load credentials once here
+        //Load kredensial
         loadCredentials()
 
         loginButton.setOnClickListener {
@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
             val password = passwordInput.text.toString().trim()
 
             when {
-                // ✅ User login
+                //Login
                 username == userUsername && password == userPassword -> {
                     prefs.edit()
                         .putBoolean("isSeller", false)
@@ -63,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
                     finish()
                 }
 
-                // ✅ Seller login
+                //Login (seller)
                 username == sellerUsername && password == sellerPassword -> {
                     prefs.edit()
                         .putBoolean("isSeller", true)
@@ -91,12 +91,13 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // ✅ Whenever the LoginActivity returns to foreground, reload prefs
+    //Load ulang
     override fun onResume() {
         super.onResume()
         loadCredentials()
     }
 
+    //Load kredensial dari SharedPreferences
     private fun loadCredentials() {
         userUsername = prefs.getString("user_username", "Ryan")
         userPassword = prefs.getString("user_password", "Ryan123")
