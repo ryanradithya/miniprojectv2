@@ -64,10 +64,17 @@ class ProductAdapter(
 
         // gambar produk
         if (!product.imageUri.isNullOrEmpty()) {
-            holder.image?.setImageURI(Uri.parse(product.imageUri))
+            try {
+                holder.image?.setImageURI(Uri.parse(product.imageUri))
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // placeholder klo exc
+                holder.image?.setImageResource(R.drawable.ic_product_placeholder)
+            }
         } else {
             holder.image?.setImageResource(R.drawable.ic_product_placeholder)
         }
+
 
         // tampilan produk untuk seller
         if (isSeller) {
