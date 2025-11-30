@@ -3,31 +3,21 @@ package com.example.miniprojectv2
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.util.Patterns
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
+    private val db = FirebaseFirestore.getInstance()
     private lateinit var prefs: android.content.SharedPreferences
-
-    // ✅ Keep these as class-level variables
-    private var userUsername: String? = null
-    private var userPassword: String? = null
-    private var userEmail: String? = null
-
-    private var sellerUsername: String? = null
-    private var sellerPassword: String? = null
-    private var sellerEmail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
 
         val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -42,44 +32,16 @@ class LoginActivity : AppCompatActivity() {
         val signupText = findViewById<TextView>(R.id.textView5)
         val forgotText = findViewById<TextView>(R.id.textView3)
 
-        //Load kredensial
-        loadCredentials()
-
         loginButton.setOnClickListener {
-            val username = usernameInput.text.toString().trim()
+            val userInput = usernameInput.text.toString().trim()   // username ATAU email
             val password = passwordInput.text.toString().trim()
 
-            when {
-                //Login
-                username == userUsername && password == userPassword -> {
-                    prefs.edit()
-                        .putBoolean("isSeller", false)
-                        .putString("active_username", userUsername)
-                        .putString("active_email", userEmail)
-                        .apply()
-
-                    Toast.makeText(this, "Login sukses sebagai User!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                }
-
-                //Login (seller)
-                username == sellerUsername && password == sellerPassword -> {
-                    prefs.edit()
-                        .putBoolean("isSeller", true)
-                        .putString("active_username", sellerUsername)
-                        .putString("active_email", sellerEmail)
-                        .apply()
-
-                    Toast.makeText(this, "Login sukses sebagai Seller!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, SellerActivity::class.java))
-                    finish()
-                }
-
-                else -> {
-                    Toast.makeText(this, "Username atau password salah!", Toast.LENGTH_SHORT).show()
-                }
+            if (userInput.isEmpty() || password.isEmpty()) {
+                toast("Harap isi username/email dan password!")
+                return@setOnClickListener
             }
+
+            loginUser(userInput, password)
         }
 
         signupText.setOnClickListener {
@@ -87,27 +49,67 @@ class LoginActivity : AppCompatActivity() {
         }
 
         forgotText.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
+            Toast.makeText(this, "Fitur lupa password belum tersedia", Toast.LENGTH_SHORT).show()
         }
     }
 
-    //Load ulang
-    override fun onResume() {
-        super.onResume()
-        loadCredentials()
+    // ================= LOGIN KE FIRESTORE =================
+    private fun loginUser(userInput: String, password: String) {
+
+        // Deteksi input sebagai email atau username
+        val isEmail = Patterns.EMAIL_ADDRESS.matcher(userInput).matches()
+        val field = if (isEmail) "email" else "nama"
+
+        db.collection("users")
+            .whereEqualTo(field, userInput)
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    toast("Akun tidak ditemukan.")
+                    return@addOnSuccessListener
+                }
+
+                val doc = result.documents.first()
+                val data = doc.data ?: run {
+                    toast("Data akun tidak valid.")
+                    return@addOnSuccessListener
+                }
+
+                val savedPassword = data["password"] as? String ?: ""
+                val role = data["role"] as? String ?: "buyer"
+                val nama = data["nama"] as? String ?: ""
+                val email = data["email"] as? String ?: ""
+                val uid = doc.id     // sama dengan field "id" yang kita set di Register
+
+                if (password != savedPassword) {
+                    toast("Password salah!")
+                    return@addOnSuccessListener
+                }
+
+                // Simpan session
+                prefs.edit()
+                    .putString("active_username", nama)
+                    .putString("active_email", email)
+                    .putString("active_uid", uid)
+                    .putBoolean("isSeller", role == "seller")
+                    .apply()
+
+                if (role == "seller") {
+                    toast("Login sukses sebagai Seller!")
+                    startActivity(Intent(this, SellerActivity::class.java))
+                } else {
+                    toast("Login sukses sebagai Buyer!")
+                    startActivity(Intent(this, MainActivity::class.java))
+                }
+
+                finish()
+            }
+            .addOnFailureListener {
+                toast("Gagal terhubung ke database: ${it.message}")
+            }
     }
 
-    //Load kredensial dari SharedPreferences
-    private fun loadCredentials() {
-        userUsername = prefs.getString("user_username", "Ryan")
-        userPassword = prefs.getString("user_password", "Ryan123")
-        userEmail = prefs.getString("user_email", "ryan@example.com")
-
-        sellerUsername = prefs.getString("seller_username", "Penjual")
-        sellerPassword = prefs.getString("seller_password", "Sell123")
-        sellerEmail = prefs.getString("seller_email", "penjual@example.com")
-
-        Log.d("LoginActivity", "Loaded User: $userUsername / $userPassword")
-        Log.d("LoginActivity", "Loaded Seller: $sellerUsername / $sellerPassword")
+    private fun toast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }

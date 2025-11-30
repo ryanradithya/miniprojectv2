@@ -1,163 +1,198 @@
 package com.example.miniprojectv2
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import com.example.miniprojectv2.SellerActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountFragment : Fragment() {
+
+    private val db = FirebaseFirestore.getInstance()
+    private lateinit var prefs: android.content.SharedPreferences
+
+    private var userUID: String = ""
+    private var isSeller: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val v = inflater.inflate(R.layout.fragment_account, container, false)
 
         val tvUsername: TextView = v.findViewById(R.id.tv_username)
         val tvEmail: TextView = v.findViewById(R.id.tv_email)
         val btnLogout: Button = v.findViewById(R.id.btn_logout)
         val btnEdit: Button = v.findViewById(R.id.btn_edit)
-        val btnAddExpedition: Button = v.findViewById(R.id.btn_add_expedition) // new button
+        val btnAddExpedition: Button = v.findViewById(R.id.btn_add_expedition)
 
-        // Coba cari nav_view (pembeli) atau nav_view_seller (penjual)
-        val navView = requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(
-            R.id.nav_view
-        ) ?: requireActivity().findViewById(R.id.nav_view_seller)
+        prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
-        // Siapkan variabel untuk header (null-safe)
-        var headerTitle: TextView? = null
-        var headerSubtitle: TextView? = null
-        navView?.let {
-            val headerView = it.getHeaderView(0)
-            headerTitle = headerView.findViewById(R.id.header_title)
-            headerSubtitle = headerView.findViewById(R.id.header_subtitle)
+        userUID = prefs.getString("active_uid", "") ?: ""
+        isSeller = prefs.getBoolean("isSeller", false)
+
+        if (userUID.isEmpty()) {
+            Toast.makeText(requireContext(), "Tidak ada user aktif!", Toast.LENGTH_SHORT).show()
+            return v
         }
 
-        // Ambil SharedPreferences
-        val prefs = requireActivity().getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
+        // Load user dari Firestore
+        loadUserData(tvUsername, tvEmail)
 
-        // Cek apakah login sebagai seller
-        val isSeller = prefs.getBoolean("isSeller", false)
-
-        // Ambil data sesuai tipe akun
-        var username: String
-        var email: String
-
-        Log.d("AccountFragment", "isSeller: $isSeller")
-
-        if (isSeller) {
-            username = prefs.getString("seller_username", "Penjual") ?: "Penjual"
-            email = prefs.getString("seller_email", "penjual@example.com") ?: "penjual@example.com"
-        } else {
-            username = prefs.getString("user_username", "Ryan") ?: "Ryan"
-            email = prefs.getString("user_email", "ryan@example.com") ?: "ryan@example.com"
-        }
-
-        // Tampilkan di UI
-        tvUsername.text = username
-        tvEmail.text = email
-
-        // Update header drawer bila ada
-        headerTitle?.text = username
-        headerSubtitle?.text = email
-
-        // Tombol Edit
+        // Edit profil
         btnEdit.setOnClickListener {
-            val dialogView = LayoutInflater.from(requireContext())
-                .inflate(R.layout.dialog_edit_account, null)
-
-            val etName = dialogView.findViewById<EditText>(R.id.et_edit_name)
-            val etEmail = dialogView.findViewById<EditText>(R.id.et_edit_email)
-
-            etName.setText(tvUsername.text)
-            etEmail.setText(tvEmail.text)
-
-            AlertDialog.Builder(requireContext())
-                .setTitle("Edit Akun")
-                .setView(dialogView)
-                .setPositiveButton("Simpan") { _, _ ->
-                    val newName = etName.text.toString()
-                    val newEmail = etEmail.text.toString()
-
-                    if (newName.isNotBlank() && newEmail.isNotBlank()) {
-                        // Update tampilan
-                        tvUsername.text = newName
-                        tvEmail.text = newEmail
-                        headerTitle?.text = newName
-                        headerSubtitle?.text = newEmail
-
-                        // Simpan ke SharedPreferences
-                        val editor = prefs.edit()
-                        if (isSeller) {
-                            editor.putString("seller_username", newName)
-                            editor.putString("seller_email", newEmail)
-                        } else {
-                            editor.putString("user_username", newName)
-                            editor.putString("user_email", newEmail)
-                        }
-                        editor.apply()
-
-                        Toast.makeText(requireContext(), "Akun berhasil diperbarui", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(requireContext(), "Nama & Email tidak boleh kosong", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                .setNegativeButton("Batal", null)
-                .show()
+            showEditDialog(tvUsername, tvEmail)
         }
 
-        // Tombol Logout
+        // Logout
         btnLogout.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Konfirmasi Logout")
                 .setMessage("Apakah Anda yakin ingin logout?")
                 .setPositiveButton("Ya") { _, _ ->
-                    Toast.makeText(requireContext(), "Logout berhasil!", Toast.LENGTH_SHORT).show()
-
-                    // Reset status login
-                    prefs.edit().remove("isSeller").apply()
-
-                    // Arahkan ke LoginActivity
-                    val intent = Intent(requireContext(), LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
+                    prefs.edit().clear().apply()
+                    startActivity(Intent(requireContext(), LoginActivity::class.java))
+                    requireActivity().finish()
                 }
                 .setNegativeButton("Batal", null)
                 .show()
         }
 
-        // Button Tambah Expedisi (Seller Only)
+        // Tombol tambah ekspedisi khusus seller
         if (isSeller) {
             btnAddExpedition.visibility = View.VISIBLE
             btnAddExpedition.setOnClickListener {
-                val input = EditText(requireContext())
-                input.hint = "Nama Expedisi Baru"
-
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Tambah Expedisi")
-                    .setView(input)
-                    .setPositiveButton("Tambah") { _, _ ->
-                        val newExpedition = input.text.toString().trim()
-                        if (newExpedition.isNotEmpty()) {
-                            (activity as? SellerActivity)?.addDeliveryExpedition(newExpedition)
-                            Toast.makeText(requireContext(), "Expedisi '$newExpedition' berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(requireContext(), "Nama expedisi tidak boleh kosong!", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    .setNegativeButton("Batal", null)
-                    .show()
+                showAddExpeditionDialog()
             }
         } else {
             btnAddExpedition.visibility = View.GONE
         }
 
         return v
+    }
+
+    // ============== LOAD DATA USER DARI FIRESTORE ==============
+    private fun loadUserData(tvName: TextView, tvEmail: TextView) {
+        db.collection("users")
+            .document(userUID)
+            .get()
+            .addOnSuccessListener { doc ->
+                if (!doc.exists()) {
+                    Toast.makeText(requireContext(), "User tidak ditemukan!", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
+
+                val nama = doc.getString("nama") ?: ""
+                val email = doc.getString("email") ?: ""
+
+                tvName.text = nama
+                tvEmail.text = email
+
+                // update header drawer jika ada
+                updateHeader(nama, email)
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Gagal memuat profil: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    // ============== UPDATE HEADER NAV DRAWER ==============
+    private fun updateHeader(nama: String, email: String) {
+        val navViewBuyer =
+            requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(
+                R.id.nav_view
+            )
+        val navViewSeller =
+            requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(
+                R.id.nav_view_seller
+            )
+
+        val navView = navViewBuyer ?: navViewSeller ?: return
+
+        val headerView = navView.getHeaderView(0)
+        val headerTitle = headerView.findViewById<TextView>(R.id.header_title)
+        val headerSubtitle = headerView.findViewById<TextView>(R.id.header_subtitle)
+
+        headerTitle.text = nama
+        headerSubtitle.text = email
+    }
+
+    // ============== DIALOG EDIT NAMA + EMAIL ==============
+    private fun showEditDialog(tvName: TextView, tvEmail: TextView) {
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_edit_account, null)
+
+        val etName = dialogView.findViewById<EditText>(R.id.et_edit_name)
+        val etEmail = dialogView.findViewById<EditText>(R.id.et_edit_email)
+
+        etName.setText(tvName.text)
+        etEmail.setText(tvEmail.text)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Edit Akun")
+            .setView(dialogView)
+            .setPositiveButton("Simpan") { _, _ ->
+                val newName = etName.text.toString().trim()
+                val newEmail = etEmail.text.toString().trim()
+
+                if (newName.isEmpty() || newEmail.isEmpty()) {
+                    Toast.makeText(requireContext(), "Nama & email tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                db.collection("users")
+                    .document(userUID)
+                    .update(
+                        mapOf(
+                            "nama" to newName,
+                            "email" to newEmail
+                        )
+                    )
+                    .addOnSuccessListener {
+                        tvName.text = newName
+                        tvEmail.text = newEmail
+                        updateHeader(newName, newEmail)
+
+                        // sync dengan SharedPreferences
+                        prefs.edit()
+                            .putString("active_username", newName)
+                            .putString("active_email", newEmail)
+                            .apply()
+
+                        Toast.makeText(requireContext(), "Profil diperbarui", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Gagal update profil: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    // ============== DIALOG TAMBAH EKSPEDISI (SELLER) ==============
+    private fun showAddExpeditionDialog() {
+        val input = EditText(requireContext())
+        input.hint = "Nama ekspedisi baru"
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Tambah Ekspedisi")
+            .setView(input)
+            .setPositiveButton("Tambah") { _, _ ->
+                val newExpedition = input.text.toString().trim()
+                if (newExpedition.isEmpty()) {
+                    Toast.makeText(requireContext(), "Nama ekspedisi tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                } else {
+                    (activity as? SellerActivity)?.addDeliveryExpedition(newExpedition)
+                    Toast.makeText(requireContext(), "Ekspedisi '$newExpedition' ditambahkan", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Batal", null)
+            .show()
     }
 }
