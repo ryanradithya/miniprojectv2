@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 
 class BuyerOrdersFragment : Fragment() {
@@ -15,39 +17,89 @@ class BuyerOrdersFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val v = inflater.inflate(R.layout.fragment_orders, container, false)
         val listLayout: LinearLayout = v.findViewById(R.id.orders_list)
 
         val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val buyerUsername = prefs.getString("active_username", "Guest") ?: "Guest"
-        val transactions = TransactionManager.getTransactionsForBuyer(buyerUsername)
 
-        listLayout.removeAllViews()
+        fun refreshOrders() {
 
-        if (transactions.isEmpty()) {
-            val tvEmpty = TextView(requireContext())
-            tvEmpty.text = "Belum ada pesanan."
-            listLayout.addView(tvEmpty)
-        } else {
-            transactions.forEach { t ->
-                val tv = TextView(requireContext())
-                tv.text = "${t.itemName} x${t.qty} — Rp ${t.totalPrice}\nStatus: ${t.status}" +
-                        (t.trackingNumber?.let { "\nResi: $it" } ?: "")
-                tv.setPadding(8, 8, 8, 8)
+            listLayout.removeAllViews()
 
-                // Agar pembeli bisa "Selesai"
-                tv.setOnClickListener {
-                    if (t.status == "Pesanan Dikirim") {
-                        TransactionManager.updateStatus(t, "Pesanan Selesai")
-                        Toast.makeText(requireContext(), "Pesanan selesai!", Toast.LENGTH_SHORT).show()
-                        fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
+            TransactionManager.getTransactionsForBuyer(
+                buyer = buyerUsername,
+                onComplete = { transactions ->
+
+                    if (transactions.isEmpty()) {
+                        val tv = TextView(requireContext())
+                        tv.text = "Belum ada pesanan."
+                        tv.textSize = 16f
+                        tv.setPadding(16, 16, 16, 16)
+                        listLayout.addView(tv)
+                        return@getTransactionsForBuyer
                     }
-                }
 
-                listLayout.addView(tv)
-            }
+                    transactions.forEach { trx ->
+
+                        val firstItem = trx.items.firstOrNull()
+
+                        val tv = TextView(requireContext()).apply {
+
+                            val total = trx.items.sumOf { it.price * it.qty }
+
+                            val sb = StringBuilder()
+
+                            if (firstItem != null) {
+                                sb.append("${firstItem.name} x${firstItem.qty}")
+                            } else {
+                                sb.append("(Item kosong)")
+                            }
+
+                            sb.append("\nTotal: Rp $total")
+                            sb.append("\nExpedisi: ${trx.expedition}")
+                            sb.append("\nStatus: ${trx.status}")
+
+                            if (!trx.trackingNumber.isNullOrEmpty()) {
+                                sb.append("\nResi: ${trx.trackingNumber}")
+                            }
+
+                            sb.append("\nTanggal: ${trx.date}")
+
+                            text = sb.toString()
+                            textSize = 14f
+                            setPadding(16, 16, 16, 16)
+                        }
+
+                        tv.setOnClickListener {
+                            if (trx.status == "Pesanan Dikirim") {
+                                TransactionManager.updateStatus(
+                                    transactionId = trx.transactionId,
+                                    newStatus = "Pesanan Selesai",
+                                    trackingNumber = trx.trackingNumber,
+                                    onComplete = {
+                                        Toast.makeText(requireContext(), "Pesanan selesai!", Toast.LENGTH_SHORT).show()
+                                        refreshOrders()
+                                    }
+                                )
+                            }
+                        }
+
+                        listLayout.addView(tv)
+                    }
+                },
+                onError = {
+                    val tv = TextView(requireContext())
+                    tv.text = "Gagal memuat pesanan."
+                    tv.textSize = 16f
+                    tv.setPadding(16, 16, 16, 16)
+                    listLayout.addView(tv)
+                }
+            )
         }
 
+        refreshOrders()
         return v
     }
 }

@@ -1,191 +1,255 @@
 package com.example.miniprojectv2
 
-import com.google.type.Date
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 object ProductRepository {
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-    // data review dan rating dummy
-    private val reviewListA = listOf(
-        Review("John Doe", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 5f, "2025-10-10"),
-        Review("Jane Smith", "Produk sesuai deskripsi, hasil foto memuaskan!", 4.5f, "2025-10-12")
-    )
-    private val reviewListB = listOf(
-        Review("John Wick", "Bagus, tapi pengiriman agak lama.", 4f, "2025-10-13"),
-        Review("Alice Johnson", "Kualitas build mantap, recommended.", 5f, "2025-10-11")
-    )
-    private val reviewListC = listOf(
-        Review("Tony Stark", "Desain klasik, berfungsi dengan baik.", 4.8f, "2025-10-14")
-    )
-    private val reviewListRoll = listOf(
-        Review("Bruce Wayne", "Film warna cerah dan tajam.", 5f, "2025-10-09"),
-        Review("Clark Kent", "Hasil foto vintage banget, suka!", 4.7f, "2025-10-10")
-    )
-    private val reviewListLensa = listOf(
-        Review("Natasha Romanoff", "Bokeh halus, fokus cepat!", 5f, "2025-10-15"),
-        Review("Peter Parker", "Kualitas tajam di harga segini, worth it.", 4.9f, "2025-10-14")
-    )
-    private val reviewListTas = listOf(
-        Review("Steve Rogers", "Tasnya kuat dan desainnya keren.", 4.8f, "2025-10-13")
-    )
+    private val db = FirebaseFirestore.getInstance()
+    private val col = db.collection("products")
 
-    //daftar produk
-    val produkUtama = mutableListOf(
-        Product(
-            name = "Kamera Analog A",
-            price = 1200000,
-            imageUri = "android.resource://com.example.miniprojectv2/drawable/kamera_a",
-            stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vitae lacus lobortis, rutrum metus nec, congue turpis. Donec non convallis libero. Phasellus facilisis egestas eros id vulputate. Nam pretium sollicitudin arcu, a varius purus sodales a. Vivamus tincidunt, velit in.",
-            category = "Kamera Analog",
-            rating = 4.7f,
-            reviews = reviewListA
-        ),
-        Product(
-            name = "Kamera Analog B",
-            price = 900000,
-            imageUri = "android.resource://com.example.miniprojectv2/drawable/kamera_a",
-            stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
-            category = "Kamera Analog",
-            rating = 4.4f,
-            reviews = reviewListB
-        ),
-        Product(
-            name = "Kamera Analog C",
-            price = 750000,
-            imageUri = "android.resource://com.example.miniprojectv2/drawable/kamera_a",
-            stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
-            category = "Kamera Analog",
-            rating = 4.8f,
-            reviews = reviewListC
-        ),
-        Product(
-            name = "Film Kodak Gold",
-            price = 120000,
-            imageUri = "android.resource://com.example.miniprojectv2/drawable/roll_a",
-            stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
-            category = "Roll Film",
-            rating = 4.9f,
-            reviews = reviewListRoll
-        ),
-        Product(
-            name = "Lensa 50mm f/1.8",
-            price = 850000,
-            imageUri = "android.resource://com.example.miniprojectv2/drawable/lensa_1",
-            stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
-            category = "Lensa Analog",
-            rating = 4.95f,
-            reviews = reviewListLensa
-        ),
-        Product(
-            name = "Tas Kamera Vintage",
-            price = 90000,
-            imageUri = "android.resource://com.example.miniprojectv2/drawable/tas_1",
-            stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed faucibus lorem tortor, sit amet sodales nisl sagittis auctor.",
-            category = "Tas Kamera",
-            rating = 4.8f,
-            reviews = reviewListTas
-        )
-    )
-
-    // rekomendasi produk
-    val rekomendasiProduk = listOf(
-        Product(
-            name = "Film Kodak Gold",
-            price = 120000,
-            imageUri = "android.resource://com.example.miniprojectv2/drawable/roll_a",
-            stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            category = "Roll Film",
-            rating = 4.9f,
-            reviews = reviewListRoll
-        ),
-        Product(
-            name = "Lensa 50mm f/1.8",
-            price = 850000,
-            imageUri = "android.resource://com.example.miniprojectv2/drawable/lensa_1",
-            stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            category = "Lensa Analog",
-            rating = 4.95f,
-            reviews = reviewListLensa
-        ),
-        Product(
-            name = "Tas Kamera Vintage",
-            price = 90000,
-            imageUri = "android.resource://com.example.miniprojectv2/drawable/tas_1",
-            stock = 10,
-            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            category = "Tas Kamera",
-            rating = 4.8f,
-            reviews = reviewListTas
-        )
-    )
-
-    fun getProducts(): MutableList<Product> = produkUtama
-
-    // menambah produk baru
-    fun addProduct(product: Product) {
-        produkUtama.add(product)
+    // =====================================================
+    // GET ALL PRODUCTS
+    // =====================================================
+    fun getProducts(
+        onComplete: (List<Pair<String, Product>>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        col.get()
+            .addOnSuccessListener { result ->
+                val list = result.documents.mapNotNull { doc ->
+                    val product = doc.toObject(Product::class.java)
+                    product?.let { Pair(doc.id, it) }
+                }
+                onComplete(list)
+            }
+            .addOnFailureListener(onError)
     }
 
-    // menghapus produk
-    fun removeProduct(product: Product): Boolean {
-        return produkUtama.remove(product)
+    // =====================================================
+    // ADD PRODUCT
+    // =====================================================
+    fun addProduct(
+        product: Product,
+        onComplete: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        col.add(product)
+            .addOnSuccessListener { onComplete() }
+            .addOnFailureListener(onError)
     }
 
-    // mengupdate produk
-    fun updateProduct(oldProduct: Product, newProduct: Product) {
-        val index = produkUtama.indexOf(oldProduct)
-        if (index != -1) produkUtama[index] = newProduct
+    // =====================================================
+    // FIND PRODUCT ID BY NAME
+    // =====================================================
+    fun findProductIdByName(
+        name: String,
+        onResult: (String?) -> Unit
+    ) {
+        col.whereEqualTo("name", name)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) onResult(null)
+                else onResult(result.documents.first().id)
+            }
+            .addOnFailureListener { onResult(null) }
     }
 
-    fun findProductByName(name: String): Product? {
-        return produkUtama.find { it.name == name }
-    }
-    fun addReviewToProduct(productName: String, reviewer: String, comment: String, rating: Float): Boolean {
-        val product = findProductByName(productName) ?: return false
-
-        // Cegah user menulis ulang review
-        if (product.reviews.any { it.reviewerName == reviewer }) return false
-
-        val newReview = Review(reviewer, comment, rating, dateFormat.format(java.util.Date()))
-        val updatedReviews = product.reviews.toMutableList().apply { add(newReview) }
-
-        // update rata-rata rating
-        val newAvg = updatedReviews.map { it.rating }.average().toFloat()
-
-        val updatedProduct = product.copy(
-            reviews = updatedReviews,
-            rating = newAvg
-        )
-
-        updateProduct(product, updatedProduct)
-        return true
+    // =====================================================
+    // FIND PRODUCT BY NAME (RETURN PRODUCT)
+    // =====================================================
+    fun findProductByName(
+        name: String,
+        onComplete: (Product?) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        col.whereEqualTo("name", name)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) onComplete(null)
+                else onComplete(result.documents.first().toObject(Product::class.java))
+            }
+            .addOnFailureListener(onError)
     }
 
-    // menghapus semua produk utama (opsional)
-    fun clearProducts() {
-        produkUtama.clear()
+    // =====================================================
+    // UPDATE PRODUCT BY DOCUMENT ID
+    // =====================================================
+    fun updateProductById(
+        productId: String,
+        updated: Product,
+        onComplete: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        col.document(productId)
+            .set(updated)
+            .addOnSuccessListener { onComplete() }
+            .addOnFailureListener(onError)
     }
 
-    //kurangin stok
-    fun reduceStock(productName: String, qty: Int): Boolean {
-        val product = produkUtama.find { it.name == productName }
-        return if (product != null && product.stock >= qty) {
-            val updated = product.copy(stock = product.stock - qty)
-            updateProduct(product, updated)
-            true
-        } else {
-            false
-        }
+    // =====================================================
+    // UPDATE PRODUCT BY NAME (OLD METHOD, STILL AVAILABLE)
+    // =====================================================
+    fun updateProduct(
+        name: String,
+        updated: Product,
+        onComplete: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        col.whereEqualTo("name", name)
+            .get()
+            .addOnSuccessListener { result ->
+                for (doc in result) {
+                    col.document(doc.id).set(updated)
+                }
+                onComplete()
+            }
+            .addOnFailureListener(onError)
+    }
+
+    // =====================================================
+    // DELETE PRODUCT (BY NAME)
+    // =====================================================
+    fun deleteProduct(
+        name: String,
+        onComplete: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        col.whereEqualTo("name", name)
+            .get()
+            .addOnSuccessListener { result ->
+                for (doc in result) {
+                    col.document(doc.id).delete()
+                }
+                onComplete()
+            }
+            .addOnFailureListener(onError)
+    }
+
+    // =====================================================
+    // REDUCE STOCK
+    // =====================================================
+    fun reduceStock(
+        productName: String,
+        qty: Int,
+        onComplete: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        col.whereEqualTo("name", productName)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    onError(Exception("Produk tidak ditemukan"))
+                    return@addOnSuccessListener
+                }
+
+                val doc = result.documents.first()
+                val product = doc.toObject(Product::class.java) ?: run {
+                    onError(Exception("Produk invalid"))
+                    return@addOnSuccessListener
+                }
+
+                if (product.stock < qty) {
+                    onError(Exception("Stock tidak cukup"))
+                    return@addOnSuccessListener
+                }
+
+                val updated = product.copy(stock = product.stock - qty)
+
+                col.document(doc.id)
+                    .set(updated)
+                    .addOnSuccessListener { onComplete() }
+                    .addOnFailureListener(onError)
+            }
+            .addOnFailureListener(onError)
+    }
+
+    // =====================================================
+    // ADD REVIEW (SUBCOLLECTION)
+    // =====================================================
+    fun addReviewToProduct(
+        productName: String,
+        reviewer: String,
+        comment: String,
+        rating: Float,
+        onComplete: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        col.whereEqualTo("name", productName)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    onError(Exception("Produk tidak ditemukan"))
+                    return@addOnSuccessListener
+                }
+
+                val productId = result.documents.first().id
+
+                val review = Review(
+                    reviewerName = reviewer,
+                    comment = comment,
+                    rating = rating,
+                    date = System.currentTimeMillis().toString()
+                )
+
+                col.document(productId)
+                    .collection("reviews")
+                    .add(review)
+                    .addOnSuccessListener { onComplete() }
+                    .addOnFailureListener(onError)
+            }
+            .addOnFailureListener(onError)
+    }
+
+    // =====================================================
+    // GET TOP RATED PRODUCTS
+    // =====================================================
+    fun getTopRatedProducts(
+        onComplete: (List<Product>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        col.orderBy("rating", Query.Direction.DESCENDING)
+            .limit(5)
+            .get()
+            .addOnSuccessListener { result ->
+                val list = result.map { it.toObject(Product::class.java) }
+                onComplete(list)
+            }
+            .addOnFailureListener(onError)
+    }
+
+    fun getReviews(
+        productName: String,
+        onComplete: (List<Review>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        db.collection("products")
+            .whereEqualTo("name", productName)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    onComplete(emptyList())
+                    return@addOnSuccessListener
+                }
+
+                val productId = result.documents[0].id
+
+                db.collection("products")
+                    .document(productId)
+                    .collection("reviews")
+                    .get()
+                    .addOnSuccessListener { reviews ->
+                        val list = reviews.map { it.toObject(Review::class.java) }
+                        onComplete(list)
+                    }
+                    .addOnFailureListener(onError)
+            }
+            .addOnFailureListener(onError)
     }
 
 }

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 
 class CheckoutFragment : Fragment() {
 
@@ -21,87 +22,50 @@ class CheckoutFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_checkout, container, false)
         val listLayout: LinearLayout = v.findViewById(R.id.checkout_list)
         val tvTotal: TextView = v.findViewById(R.id.checkout_total)
-        val btnConfirm: Button = v.findViewById(R.id.btn_confirm_checkout)
+        val btnConfirm: MaterialButton = v.findViewById(R.id.btn_confirm_checkout)
 
-        val selectedItems = arguments?.getSerializable("selected_items") as? ArrayList<CartItem> ?: arrayListOf()
-        val prefs = requireContext().getSharedPreferences("UserPrefs", 0)
+        val selectedItems =
+            arguments?.getSerializable("selected_items") as? ArrayList<CartItem> ?: arrayListOf()
+
+        val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val buyerUsername = prefs.getString("active_username", "Guest") ?: "Guest"
 
-        //list untuk checkout
-        var total = 0
+        // Tampilkan ringkasan item checkout
+        var totalCost = 0
         selectedItems.forEach { item ->
             val tv = TextView(requireContext())
-            tv.text = "${item.name} ×${item.qty} — Rp ${item.price * item.qty}"
+            tv.text = "${item.name} × ${item.qty} — Rp ${item.price * item.qty}"
             listLayout.addView(tv)
-            total += item.price * item.qty
+            totalCost += item.price * item.qty
         }
-        tvTotal.text = "Total: Rp $total"
+        tvTotal.text = "Total: Rp $totalCost"
 
-        //spinner (ekspedisi)
-        val tvExpeditionLabel = TextView(requireContext()).apply {
+        // Ekspedisi
+        val tvExpedition = TextView(requireContext()).apply {
             text = "Pilih Ekspedisi:"
             textSize = 16f
         }
         spinner = Spinner(requireContext())
-        listLayout.addView(tvExpeditionLabel)
+        listLayout.addView(tvExpedition)
         listLayout.addView(spinner)
 
         spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf())
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = spinnerAdapter
 
-        //Tombol checkout listner
         btnConfirm.setOnClickListener {
             if (selectedItems.isEmpty()) {
                 Toast.makeText(requireContext(), "Keranjang kosong!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val selectedExpedition = spinner.selectedItem?.toString() ?: ""
-
-            //Cek stok sebelum transaksi
-            for (item in selectedItems) {
-                val product = ProductRepository.findProductByName(item.name)
-                if (product == null) {
-                    Toast.makeText(requireContext(), "Produk ${item.name} tidak ditemukan!", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                if (product.stock < item.qty) {
-                    Toast.makeText(requireContext(), "Stok ${item.name} tidak mencukupi!", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-            }
-
-            //Proses transaksi dan update stok
-            selectedItems.forEach { item ->
-                val product = ProductRepository.findProductByName(item.name)
-                product?.let {
-                    it.stock -= item.qty  // Kurangi stok produk sesuai jumlah dibeli
-                }
-
-                TransactionManager.addTransaction(
-                    item.name,
-                    item.qty,
-                    item.price,
-                    buyerUsername,
-                    selectedExpedition
-                )
-            }
-
-            Toast.makeText(requireContext(), "Checkout berhasil!", Toast.LENGTH_SHORT).show()
-
-            //Hapus dari keranjang
-            CartManager.items.removeAll(selectedItems)
-
-            //Navigasi ke TransactionFragment
-            val bundle = Bundle().apply { putBoolean("from_checkout", true) }
-            findNavController().navigate(R.id.action_checkout_to_transaction, bundle)
+            val expedition = spinner.selectedItem?.toString() ?: ""
+            startCheckout(selectedItems, buyerUsername, expedition)
         }
 
         return v
     }
 
-    // !! diupdate onresume (penting)
     override fun onResume() {
         super.onResume()
         val prefs = requireContext().getSharedPreferences("ExpeditionPrefs", Context.MODE_PRIVATE)
@@ -109,5 +73,123 @@ class CheckoutFragment : Fragment() {
         spinnerAdapter.clear()
         spinnerAdapter.addAll(expeditions)
         spinnerAdapter.notifyDataSetChanged()
+    }
+
+    // ================================
+    // CHECKOUT FIRESTORE AMAN
+    // ================================
+    private fun startCheckout(
+        selectedItems: List<CartItem>,
+        buyer: String,
+        expedition: String
+    ) {
+
+        Toast.makeText(requireContext(), "Memproses checkout...", Toast.LENGTH_SHORT).show()
+
+        // 1) CEK STOK SATU PERSATU
+        var checked = 0
+        selectedItems.forEach { item ->
+            ProductRepository.findProductByName(
+                item.name,
+                onComplete = { product ->
+                    if (product == null) {
+                        Toast.makeText(requireContext(), "Produk ${item.name} tidak ditemukan!", Toast.LENGTH_SHORT).show()
+                        return@findProductByName
+                    }
+
+                    if (product.stock < item.qty) {
+                        Toast.makeText(requireContext(),
+                            "Stok tidak mencukupi untuk ${item.name}", Toast.LENGTH_SHORT).show()
+                        return@findProductByName
+                    }
+
+                    checked++
+                    if (checked == selectedItems.size) {
+                        // Semua stok aman → lanjut proses
+                        reduceAllStock(selectedItems, buyer, expedition)
+                    }
+                },
+                onError = {
+                    Toast.makeText(requireContext(), "Gagal mengambil data produk", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+    }
+
+    // ================================
+    // KURANGI SEMUA STOK (BATAS RACE CONDITION)
+    // ================================
+    private fun reduceAllStock(
+        selectedItems: List<CartItem>,
+        buyer: String,
+        expedition: String
+    ) {
+        var completed = 0
+        val totalItems = selectedItems.size
+
+        selectedItems.forEach { item ->
+            ProductRepository.reduceStock(
+                productName = item.name,
+                qty = item.qty,
+                onComplete = {
+                    completed++
+                    if (completed == totalItems) {
+                        // Semua stok berhasil dikurangi
+                        createOneTransaction(selectedItems, buyer, expedition)
+                    }
+                },
+                onError = {
+                    Toast.makeText(requireContext(), "Gagal update stok ${item.name}", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+    }
+
+    // ================================
+    // BUAT SATU TRANSAKSI FIRESTORE
+    // ================================
+    private fun createOneTransaction(
+        selectedItems: List<CartItem>,
+        buyer: String,
+        expedition: String
+    ) {
+
+        val totalPrice = selectedItems.sumOf { it.price * it.qty }
+        val date = System.currentTimeMillis().toString()
+
+        val data = hashMapOf(
+            "items" to selectedItems.map {
+                mapOf(
+                    "name" to it.name,
+                    "qty" to it.qty,
+                    "price" to it.price
+                )
+            },
+            "totalPrice" to totalPrice,
+            "buyer" to buyer,
+            "expedition" to expedition,
+            "status" to "Pesanan Masuk",
+            "trackingNumber" to null,
+            "date" to date
+        )
+
+        // Simpan transaksi
+        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            .collection("transactions")
+            .add(data)
+            .addOnSuccessListener {
+
+                Toast.makeText(requireContext(), "Checkout berhasil!", Toast.LENGTH_SHORT).show()
+
+                // Kosongkan keranjang
+                CartManager.items.removeAll(selectedItems)
+
+                // Pindah ke halaman transaksi
+                val bundle = Bundle().apply { putBoolean("from_checkout", true) }
+                findNavController().navigate(R.id.action_checkout_to_transaction, bundle)
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Gagal menyimpan transaksi", Toast.LENGTH_SHORT).show()
+            }
     }
 }

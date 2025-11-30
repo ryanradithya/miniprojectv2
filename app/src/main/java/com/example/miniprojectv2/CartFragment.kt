@@ -50,20 +50,45 @@ class CartFragment : Fragment() {
                 val btnPlus = itemView.findViewById<Button>(R.id.btn_plus_cart)
                 val btnDelete = itemView.findViewById<ImageButton>(R.id.btn_delete_cart)
 
-                val product = ProductRepository.findProductByName(item.name)
-                val stock = product?.stock ?: 0
-
                 tvName.text = item.name
                 tvQty.text = item.qty.toString()
                 tvPrice.text = "Rp ${item.price * item.qty}"
 
-                // Jika stok habis, nonaktifkan pilihan dan tombol plus
-                if (stock == 0) {
-                    cbSelect.isEnabled = false
-                    btnPlus.isEnabled = false
-                    tvName.text = "${item.name} (Stok habis)"
-                    tvName.setTextColor(resources.getColor(android.R.color.darker_gray, null))
-                }
+                // kita akan isi stok dari Firestore
+                var stock = 0
+
+                ProductRepository.findProductByName(
+                    item.name,
+                    onComplete = { product ->
+                        stock = product?.stock ?: 0
+
+                        // Jika stok habis, nonaktifkan pilihan dan tombol plus
+                        if (stock == 0) {
+                            cbSelect.isEnabled = false
+                            btnPlus.isEnabled = false
+                            tvName.text = "${item.name} (Stok habis)"
+                            tvName.setTextColor(
+                                resources.getColor(
+                                    android.R.color.darker_gray,
+                                    null
+                                )
+                            )
+                        }
+                    },
+                    onError = {
+                        // jika gagal ambil stok, anggap saja 0 supaya aman
+                        stock = 0
+                        cbSelect.isEnabled = false
+                        btnPlus.isEnabled = false
+                        tvName.text = "${item.name} (Gagal cek stok)"
+                        tvName.setTextColor(
+                            resources.getColor(
+                                android.R.color.darker_gray,
+                                null
+                            )
+                        )
+                    }
+                )
 
                 cbSelect.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
@@ -75,13 +100,25 @@ class CartFragment : Fragment() {
 
                 // Tombol tambah qty
                 btnPlus.setOnClickListener {
-                    val currentStock = ProductRepository.findProductByName(item.name)?.stock ?: 0
-                    if (item.qty < currentStock) {
+                    if (stock == 0) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Stok tidak mencukupi!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setOnClickListener
+                    }
+
+                    if (item.qty < stock) {
                         item.qty++
                         tvQty.text = item.qty.toString()
                         tvPrice.text = "Rp ${item.price * item.qty}"
                     } else {
-                        Toast.makeText(requireContext(), "Stok tidak mencukupi!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Stok tidak mencukupi!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
@@ -94,7 +131,7 @@ class CartFragment : Fragment() {
                     }
                 }
 
-                //Tombol hapus
+                // Tombol hapus
                 btnDelete.setOnClickListener {
                     AlertDialog.Builder(requireContext())
                         .setTitle("Hapus Produk")
@@ -113,10 +150,14 @@ class CartFragment : Fragment() {
 
         refreshCart()
 
-        //Tombol checkout → pindah ke CheckoutFragment (tidak ubah alur)
+        // Tombol checkout → pindah ke CheckoutFragment
         btnCheckout.setOnClickListener {
             if (selectedItems.isEmpty()) {
-                Toast.makeText(requireContext(), "Pilih produk untuk checkout", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Pilih produk untuk checkout",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 

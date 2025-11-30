@@ -95,25 +95,28 @@ class ProductAdapter(
 
                 AlertDialog.Builder(context)
                     .setTitle("Konfirmasi Hapus")
-                    .setMessage("Apakah Anda yakin ingin menghapus produk \"${product.name}\"?")
+                    .setMessage("Hapus produk \"${product.name}\"?")
                     .setPositiveButton("Ya") { _, _ ->
-                        val currentPosition = holder.adapterPosition
-                        if (currentPosition != RecyclerView.NO_POSITION) {
-                            val removed = ProductRepository.removeProduct(product)
-                            if (removed) {
-                                items.removeAt(currentPosition)
-                                notifyItemRemoved(currentPosition)
-                                notifyItemRangeChanged(currentPosition, items.size)
+
+                        ProductRepository.deleteProduct(
+                            product.name,
+                            onComplete = {
+                                val pos = holder.adapterPosition
+                                if (pos != RecyclerView.NO_POSITION) {
+                                    items.removeAt(pos)
+                                    notifyItemRemoved(pos)
+                                }
                                 Toast.makeText(context, "Produk dihapus", Toast.LENGTH_SHORT).show()
-                            } else {
+                            },
+                            onError = {
                                 Toast.makeText(context, "Gagal menghapus produk", Toast.LENGTH_SHORT).show()
                             }
-                        }
+                        )
                     }
                     .setNegativeButton("Batal", null)
-                    .setCancelable(true)
                     .show()
             }
+
         } else {
             // tampilan pembeli
             holder.btnEdit?.visibility = View.GONE

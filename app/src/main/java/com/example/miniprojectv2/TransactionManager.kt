@@ -1,40 +1,95 @@
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+package com.example.miniprojectv2
 
-data class Transaction(
-    val itemName: String,
-    val qty: Int,
-    val totalPrice: Int,
-    val buyer: String,
-    val expedition: String,
-    var status: String = "Pesanan Masuk",
-    var trackingNumber: String? = null,
-    val date: String
-)
+import com.google.firebase.firestore.FirebaseFirestore
 
 object TransactionManager {
-    val transactions = mutableListOf<Transaction>()
 
-    // tambah transaksi dengan ekspedisi
-    fun addTransaction(itemName: String, qty: Int, price: Int, buyer: String, expedition: String) {
-        val total = qty * price
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-        val dateNow = dateFormat.format(Date())
+    private val db = FirebaseFirestore.getInstance()
 
-        transactions.add(Transaction(itemName, qty, total, buyer, expedition, date = dateNow))
+    // TAMBAH TRANSAKSI BARU (1 transaksi = banyak item)
+    fun addTransaction(
+        buyer: String,
+        expedition: String,
+        items: List<TransactionItem>,
+        onComplete: () -> Unit = {},
+        onError: (Exception) -> Unit = {}
+    ) {
+
+        val data = hashMapOf(
+            "buyer" to buyer,
+            "expedition" to expedition,
+            "date" to System.currentTimeMillis().toString(),
+            "status" to "Pesanan Masuk",
+            "trackingNumber" to null,
+            "items" to items
+        )
+
+        db.collection("transactions")
+            .add(data)
+            .addOnSuccessListener { onComplete() }
+            .addOnFailureListener(onError)
     }
 
-    fun updateStatus(transaction: Transaction, newStatus: String, trackingNumber: String? = null) {
-        transaction.status = newStatus
-        if (trackingNumber != null) transaction.trackingNumber = trackingNumber
+    // BUYER: AMBIL TRANSAKSI MILIKNYA
+    fun getTransactionsForBuyer(
+        buyer: String,
+        onComplete: (List<Transaction>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        db.collection("transactions")
+            .whereEqualTo("buyer", buyer)
+            .get()
+            .addOnSuccessListener { result ->
+
+                val list = result.map { doc ->
+                    val trx = doc.toObject(Transaction::class.java)
+                    trx.transactionId = doc.id
+                    trx
+                }
+
+                onComplete(list)
+            }
+            .addOnFailureListener(onError)
     }
 
-    fun getTransactionsForBuyer(buyer: String): List<Transaction> {
-        return transactions.filter { it.buyer == buyer }
+    // SELLER: LIHAT SEMUA TRANSAKSI
+    fun getTransactionsForSeller(
+        onComplete: (List<Transaction>) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        db.collection("transactions")
+            .get()
+            .addOnSuccessListener { result ->
+
+                val list = result.map { doc ->
+                    val trx = doc.toObject(Transaction::class.java)
+                    trx.transactionId = doc.id
+                    trx
+                }
+
+                onComplete(list)
+            }
+            .addOnFailureListener(onError)
     }
 
-    fun getTransactionsForSeller(): List<Transaction> {
-        return transactions
+    // UPDATE STATUS (Diproses, Dikirim, Selesai)
+    fun updateStatus(
+        transactionId: String,
+        newStatus: String,
+        trackingNumber: String? = null,
+        onComplete: () -> Unit = {},
+        onError: (Exception) -> Unit = {}
+    ) {
+
+        val updateData = mapOf(
+            "status" to newStatus,
+            "trackingNumber" to trackingNumber
+        )
+
+        db.collection("transactions")
+            .document(transactionId)
+            .update(updateData)
+            .addOnSuccessListener { onComplete() }
+            .addOnFailureListener(onError)
     }
 }

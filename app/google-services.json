@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "774037551904",
+    "project_id": "umkmmanager01",
+    "storage_bucket": "umkmmanager01.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774037551904:android:2fd70d5faa50038581f545",
+        "android_client_info": {
+          "package_name": "com.example.miniprojectv2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBN752hLLS5xQvn_WfGxvNeJhEYenbExLk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

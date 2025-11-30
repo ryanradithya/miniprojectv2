@@ -6,17 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import java.text.SimpleDateFormat
-import java.util.*
 
 class DetailPesananFragment : Fragment() {
+
+    private var selectedRating = 0f
+    private val starViews = mutableListOf<ImageView>()
+    private var productAlreadyReviewed = false
+    private var allowReview = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val v = inflater.inflate(R.layout.fragment_detail_pesanan, container, false)
 
+        // Ambil data bundle
         val name = arguments?.getString("product_name") ?: ""
         val price = arguments?.getInt("product_price") ?: 0
         val qty = arguments?.getInt("product_qty") ?: 1
@@ -26,10 +32,11 @@ class DetailPesananFragment : Fragment() {
         val date = arguments?.getString("product_date") ?: "-"
         val total = price * qty
 
-        // Ambil nama user aktif
+        // Ambil user aktif
         val prefs = requireContext().getSharedPreferences("UserPrefs", 0)
         val activeUser = prefs.getString("active_username", "User") ?: "User"
 
+        // Set UI awal
         v.findViewById<TextView>(R.id.tv_product_name).text = name
         v.findViewById<TextView>(R.id.tv_product_price).text = "Rp $price"
         v.findViewById<TextView>(R.id.tv_product_qty).text = "x$qty"
@@ -43,10 +50,42 @@ class DetailPesananFragment : Fragment() {
         val ratingStars: LinearLayout = v.findViewById(R.id.rating_stars)
         val btnSubmit: Button = v.findViewById(R.id.btn_submit_review)
 
-        //rating
-        var selectedRating = 0f
-        val stars = mutableListOf<ImageView>()
+        // =======================================
+        // STEP 1: Tentukan apakah user boleh review
+        // =======================================
+        allowReview = status == "Pesanan Selesai"
 
+        if (!allowReview) {
+            disableReview(etReview, btnSubmit)
+        }
+
+        // =======================================
+        // STEP 2: Ambil review lama dari Firestore
+        // =======================================
+        ProductRepository.findProductByName(
+            name,
+            onComplete = { product ->
+                if (product != null) {
+
+                    productAlreadyReviewed =
+                        product.reviews.any { it.reviewerName == activeUser }
+
+                    if (productAlreadyReviewed) {
+                        disableReview(etReview, btnSubmit)
+                        Toast.makeText(requireContext(),
+                            "Kamu sudah mengulas produk ini.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
+            onError = {
+                Toast.makeText(requireContext(),
+                    "Gagal memuat review.", Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        // =======================================
+        // STEP 3: Setup bintang rating
+        // =======================================
         for (i in 1..5) {
             val star = ImageView(requireContext())
             val size = (32 * resources.displayMetrics.density).toInt()
@@ -54,53 +93,62 @@ class DetailPesananFragment : Fragment() {
             params.setMargins(6, 0, 6, 0)
             star.layoutParams = params
             star.setImageResource(R.drawable.ic_star_empty)
+
             star.setOnClickListener {
-                if (status == "Pesanan Selesai") {
-                    selectedRating = i.toFloat()
-                    stars.forEachIndexed { index, s ->
-                        s.setImageResource(if (index < i) R.drawable.ic_star_full else R.drawable.ic_star_empty)
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "Kamu hanya bisa memberi rating setelah pesanan selesai.", Toast.LENGTH_SHORT).show()
+                if (!allowReview || productAlreadyReviewed) {
+                    Toast.makeText(requireContext(),
+                        "Hanya bisa memberi rating setelah pesanan selesai.",
+                        Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                selectedRating = i.toFloat()
+                starViews.forEachIndexed { index, img ->
+                    img.setImageResource(
+                        if (index < i) R.drawable.ic_star_full else R.drawable.ic_star_empty
+                    )
                 }
             }
-            stars.add(star)
+
+            starViews.add(star)
             ratingStars.addView(star)
         }
-        if (status != "Pesanan Selesai") {
-            etReview.isEnabled = false
-            btnSubmit.isEnabled = false
-            stars.forEach { it.isEnabled = false }
-            Toast.makeText(requireContext(), "Kamu bisa memberi ulasan setelah pesanan selesai.", Toast.LENGTH_SHORT).show()
-        }
-        val product = ProductRepository.findProductByName(name)
-        val hasReviewed = product?.reviews?.any { it.reviewerName == activeUser } == true
-        if (hasReviewed) {
-            etReview.isEnabled = false
-            btnSubmit.isEnabled = false
-            stars.forEach { it.isEnabled = false }
-            Toast.makeText(requireContext(), "Kamu sudah memberi ulasan untuk produk ini.", Toast.LENGTH_SHORT).show()
-        }
 
-        // kirim review
+        // =======================================
+        // STEP 4: Kirim review ke Firestore
+        // =======================================
         btnSubmit.setOnClickListener {
             val comment = etReview.text.toString().trim()
+
             if (selectedRating == 0f || comment.isEmpty()) {
-                Toast.makeText(requireContext(), "Isi rating dan komentar dulu!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),
+                    "Isi rating dan komentar dulu!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val success = ProductRepository.addReviewToProduct(name, activeUser, comment, selectedRating)
-            if (success) {
-                Toast.makeText(requireContext(), "Ulasan terkirim! ⭐", Toast.LENGTH_LONG).show()
-                etReview.isEnabled = false
-                btnSubmit.isEnabled = false
-                stars.forEach { it.isEnabled = false }
-            } else {
-                Toast.makeText(requireContext(), "Kamu sudah mengulas produk ini.", Toast.LENGTH_SHORT).show()
-            }
+            ProductRepository.addReviewToProduct(
+                productName = name,
+                reviewer = activeUser,
+                comment = comment,
+                rating = selectedRating,
+                onComplete = {
+                    Toast.makeText(requireContext(),
+                        "Ulasan berhasil dikirim!", Toast.LENGTH_LONG).show()
+                    disableReview(etReview, btnSubmit)
+                },
+                onError = {
+                    Toast.makeText(requireContext(),
+                        "Gagal mengirim ulasan.", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
 
         return v
+    }
+
+    private fun disableReview(et: EditText, btn: Button) {
+        et.isEnabled = false
+        btn.isEnabled = false
+        starViews.forEach { it.isEnabled = false }
     }
 }
