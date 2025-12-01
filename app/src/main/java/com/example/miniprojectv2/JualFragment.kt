@@ -120,11 +120,26 @@ class JualFragment : Fragment() {
             // ===============================
             // UPDATE PRODUK
             // ===============================
-            if (editMode && productIdToEdit != null) {
+//            if (editMode && productIdToEdit != null) {
+//
+//                ProductRepository.updateProductById(
+//                    productIdToEdit!!,
+//                    newProduct,
+//                    onComplete = {
+//                        Toast.makeText(requireContext(), "Produk diperbarui!", Toast.LENGTH_SHORT).show()
+//                        findNavController().popBackStack()
+//                    },
+//                    onError = {
+//                        Toast.makeText(requireContext(), "Gagal update produk", Toast.LENGTH_SHORT).show()
+//                    }
+//                )
+//                return@setOnClickListener
+//            }
+            if (editMode) {
 
-                ProductRepository.updateProductById(
-                    productIdToEdit!!,
-                    newProduct,
+                ProductRepository.updateProduct(
+                    name = productToEdit?.name ?: "",
+                    updated = newProduct,
                     onComplete = {
                         Toast.makeText(requireContext(), "Produk diperbarui!", Toast.LENGTH_SHORT).show()
                         findNavController().popBackStack()
@@ -136,19 +151,22 @@ class JualFragment : Fragment() {
                 return@setOnClickListener
             }
 
+
             // ===============================
             // TAMBAH PRODUK BARU
             // ===============================
-            ProductRepository.addProduct(
-                newProduct,
-                onComplete = {
-                    Toast.makeText(requireContext(), "Produk berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
-                    findNavController().popBackStack()
-                },
-                onError = {
-                    Toast.makeText(requireContext(), "Gagal menambah produk", Toast.LENGTH_SHORT).show()
-                }
-            )
+                                findNavController().popBackStack()
+
+//            ProductRepository.addProduct(
+//                newProduct,
+//                onComplete = {
+//                    Toast.makeText(requireContext(), "Produk berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
+//                    findNavController().popBackStack()
+//                },
+//                onError = {
+//                    Toast.makeText(requireContext(), "Gagal menambah produk", Toast.LENGTH_SHORT).show()
+//                }
+//            )
         }
     }
 
