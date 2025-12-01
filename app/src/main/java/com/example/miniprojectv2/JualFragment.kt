@@ -66,7 +66,13 @@ class JualFragment : Fragment() {
                 descInput.setText(productToEdit!!.description)
 
                 selectedImageUri = productToEdit!!.imageUri?.let { Uri.parse(it) }
-                imagePreview.setImageURI(selectedImageUri)
+                try {
+                    imagePreview.setImageURI(selectedImageUri)
+                }
+                catch(e: Exception)
+                {
+                    imagePreview.setImageResource(R.drawable.ic_product_placeholder)
+                }
 
                 val pos = categories.indexOf(productToEdit!!.category)
                 if (pos != -1) categorySpinner.setSelection(pos)

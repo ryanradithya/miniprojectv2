@@ -89,7 +89,15 @@ class ProductDetailFragment : Fragment() {
         tvDesc.text = productDescription
 
         if (!productImageUri.isNullOrEmpty()) {
-            imageView.setImageURI(Uri.parse(productImageUri))
+            try
+                {
+                    imageView.setImageURI(Uri.parse(productImageUri))
+                }
+                catch(e: Exception)
+                {
+                    imageView.setImageResource(R.drawable.ic_product_placeholder)
+
+                }
         } else {
             imageView.setImageResource(R.drawable.ic_product_placeholder)
         }
