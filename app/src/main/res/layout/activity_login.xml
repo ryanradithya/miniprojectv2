@@ -7,6 +7,24 @@
     android:background="#0C3B2E"
     tools:context=".LoginActivity">
 
+    <!-- ============================= -->
+    <!--  FRAGMENT FOR FORGOT PASSWORD -->
+    <!-- ============================= -->
+
+    <FrameLayout
+        android:id="@+id/login_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- ============================= -->
+    <!--             LOGIN CARD        -->
+    <!-- ============================= -->
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottom_half"
         android:layout_width="0dp"
@@ -60,7 +78,6 @@
                     android:textColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
-
             <!-- Password input -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -84,8 +101,6 @@
                     android:textColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
-
-            <!-- Container horizontal buat Login atau Sign up -->
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
@@ -96,7 +111,6 @@
                 android:text="Forgot password?"
                 android:textColor="@android:color/darker_gray" />
 
-<!--            tombol login-->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/login_button"
                 android:layout_width="match_parent"
@@ -132,11 +146,11 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
-<!--teks umkm manager-->
+
+    <!-- Title UMKM Manager -->
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
