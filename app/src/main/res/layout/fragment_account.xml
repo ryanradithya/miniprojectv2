@@ -11,7 +11,6 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@mipmap/ic_launcher_round"
-        android:contentDescription="Profile Picture"
         android:layout_marginBottom="16dp" />
 
     <TextView
@@ -31,28 +30,132 @@
         android:textSize="16sp"
         android:layout_marginBottom="24dp"/>
 
-    <Button
+
+    <!-- ===============================
+         BUTTON EDIT / TOKOPEDIA STYLE
+    ================================ -->
+    <LinearLayout
         android:id="@+id/btn_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Edit Account"
-        android:backgroundTint="#6D9773"
-        android:layout_marginBottom="12dp"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="14dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_marginBottom="12dp">
 
-    <Button
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_edit_account"
+            android:layout_marginRight="12dp"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:text="Edit Akun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/my_custom_status_bar"/>
+
+            <TextView
+                android:text="Ubah data profil Anda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/my_custom_status_bar"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <!-- ===============================
+         BUTTON TAMBAH EKSPEDISI
+    ================================ -->
+    <LinearLayout
         android:id="@+id/btn_add_expedition"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tambah Expedisi"
-        android:visibility="gone"
-        android:backgroundTint="#6D9773"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="14dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_marginBottom="12dp">
 
-    <Button
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_add_account"
+            android:layout_marginRight="12dp"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:text="Tambah Ekspedisi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/my_custom_status_bar"/>
+
+            <TextView
+                android:text="Tambahkan pilihan ekspedisi baru"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/my_custom_status_bar"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <!-- ===============================
+         BUTTON LOGOUT
+    ================================ -->
+    <LinearLayout
         android:id="@+id/btn_logout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        android:backgroundTint="#6D9773"
-        android:textColor="@android:color/white" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="14dp"
+        android:foreground="?attr/selectableItemBackground">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_logout"
+            android:layout_marginRight="12dp"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:text="Logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/my_custom_status_bar"/>
+
+            <TextView
+                android:text="Keluar dari akun Anda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textColor="@color/my_custom_status_bar"/>
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>
