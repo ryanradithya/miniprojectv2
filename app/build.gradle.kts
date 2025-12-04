@@ -68,5 +68,6 @@ dependencies {
     //firebase
     implementation("com.google.firebase:firebase-firestore-ktx:24.10.1")
 
-
+    //bcrypt
+    implementation("at.favre.lib:bcrypt:0.9.0")
 }

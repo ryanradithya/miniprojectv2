@@ -62,13 +62,16 @@ class RegisterActivity : AppCompatActivity() {
                         return@generateCustomUserId
                     }
 
+                    val hashedPassword = PasswordBcrypt.hashPassword(password)
+
                     val userData = hashMapOf(
                         "id" to customId,
                         "nama" to nama,
                         "email" to email,
-                        "password" to password,
+                        "password" to hashedPassword,
                         "role" to roleKey
                     )
+
 
                     db.collection("users")
                         .document(customId)   // docId = "b1"/"s1"

@@ -81,10 +81,13 @@ class LoginActivity : AppCompatActivity() {
                 val email = data["email"] as? String ?: ""
                 val uid = doc.id     // sama dengan field "id" yang kita set di Register
 
-                if (password != savedPassword) {
+                val isValid = PasswordBcrypt.verifyPassword(password, savedPassword)
+
+                if (!isValid) {
                     toast("Password salah!")
                     return@addOnSuccessListener
                 }
+
 
                 // Simpan session
                 prefs.edit()
