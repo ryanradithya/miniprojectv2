@@ -28,9 +28,9 @@ class AccountFragment : Fragment() {
 
         val tvUsername: TextView = v.findViewById(R.id.tv_username)
         val tvEmail: TextView = v.findViewById(R.id.tv_email)
-        val btnLogout: Button = v.findViewById(R.id.btn_logout)
-        val btnEdit: Button = v.findViewById(R.id.btn_edit)
-        val btnAddExpedition: Button = v.findViewById(R.id.btn_add_expedition)
+        val btnLogout: LinearLayout = v.findViewById(R.id.btn_logout)
+        val btnEdit: LinearLayout = v.findViewById(R.id.btn_edit)
+        val btnAddExpedition: LinearLayout = v.findViewById(R.id.btn_add_expedition)
 
         prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
