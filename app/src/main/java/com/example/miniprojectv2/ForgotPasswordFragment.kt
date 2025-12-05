@@ -1,11 +1,13 @@
 package com.example.miniprojectv2
 
 import android.os.Bundle
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,30 +31,50 @@ class ForgotPasswordFragment : Fragment() {
         val emailInput = view.findViewById<EditText>(R.id.email_input)
         val newPassInput = view.findViewById<EditText>(R.id.new_password_input)
         val resetButton = view.findViewById<Button>(R.id.btn_reset)
+        val backText = view.findViewById<TextView>(R.id.textView_back_login)
+
+        backText.setOnClickListener {
+            // Kembalikan layout login
+            (requireActivity() as LoginActivity).restoreLoginLayout()
+            parentFragmentManager.popBackStack()
+        }
 
         resetButton.setOnClickListener {
-
             val email = emailInput.text.toString().trim()
             val newPassword = newPassInput.text.toString().trim()
 
-            if (email.isEmpty() || newPassword.isEmpty()) {
-                Toast.makeText(requireContext(), "Harap isi semua field!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            // Validasi input
+            if (!validateInputs(email, newPassword)) return@setOnClickListener
 
+            // Update password
             updatePassword(email, newPassword)
         }
     }
 
-    private fun updatePassword(email: String, newPassword: String) {
+    private fun validateInputs(email: String, password: String): Boolean {
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            showToast("Email tidak valid!")
+            return false
+        }
+        if (password.isEmpty() || password.length < 4) {
+            showToast("Password minimal 4 karakter!")
+            return false
+        }
+        return true
+    }
 
+    private fun showToast(msg: String) {
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updatePassword(email: String, newPassword: String) {
         firestore.collection("users")
             .whereEqualTo("email", email)
-        .get()
+            .get()
             .addOnSuccessListener { documents ->
 
                 if (documents.isEmpty) {
-                    Toast.makeText(requireContext(), "Email tidak ditemukan!", Toast.LENGTH_SHORT).show()
+                    showToast("Email tidak ditemukan!")
                     return@addOnSuccessListener
                 }
 
@@ -63,21 +85,18 @@ class ForgotPasswordFragment : Fragment() {
 
                 userDoc.update("password", hashed)
                     .addOnSuccessListener {
-
-                        Toast.makeText(requireContext(), "Password berhasil diubah!", Toast.LENGTH_SHORT).show()
+                        showToast("Password berhasil diubah!")
 
                         // Kembalikan UI login
                         (requireActivity() as LoginActivity).restoreLoginLayout()
-
-                        // Tutup fragment
                         parentFragmentManager.popBackStack()
                     }
                     .addOnFailureListener {
-                        Toast.makeText(requireContext(), "Gagal update password!", Toast.LENGTH_SHORT).show()
+                        showToast("Gagal update password!")
                     }
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "Terjadi kesalahan!", Toast.LENGTH_SHORT).show()
+                showToast("Terjadi kesalahan!")
             }
     }
 }
