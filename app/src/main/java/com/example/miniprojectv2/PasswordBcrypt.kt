@@ -14,4 +14,6 @@ object PasswordBcrypt {
         val result = BCrypt.verifyer().verify(password.toCharArray(), hashed)
         return result.verified
     }
+
+
 }

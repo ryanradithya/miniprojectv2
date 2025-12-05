@@ -1,161 +1,240 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="24dp">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher_round"
-        android:layout_marginBottom="16dp" />
-
-    <TextView
-        android:id="@+id/tv_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nama Pengguna"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <TextView
-        android:id="@+id/tv_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="email@example.com"
-        android:textSize="16sp"
-        android:layout_marginBottom="24dp"/>
-
-
-    <!-- ===============================
-         BUTTON EDIT / TOKOPEDIA STYLE
-    ================================ -->
     <LinearLayout
-        android:id="@+id/btn_edit"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="14dp"
-        android:foreground="?attr/selectableItemBackground"
-        android:layout_marginBottom="12dp">
+        android:padding="24dp">
 
+        <!-- PROFILE -->
         <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_edit_account"
-            android:layout_marginRight="12dp"/>
+            android:id="@+id/profile_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@mipmap/ic_launcher_round"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_username"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:text="Nama Pengguna"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"/>
 
-            <TextView
-                android:text="Edit Akun"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/my_custom_status_bar"/>
+        <TextView
+            android:id="@+id/tv_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="email@example.com"
+            android:textSize="16sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"/>
 
-            <TextView
-                android:text="Ubah data profil Anda"
-                android:layout_width="wrap_content"
+
+        <!-- ===============================
+             HEADER 1: PENGATURAN AKUN
+        ================================ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pengaturan Akun"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#555"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- EDIT AKUN -->
+        <LinearLayout
+            android:id="@+id/btn_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="14dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginBottom="12dp">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_edit_account"
+                android:layout_marginRight="12dp"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/my_custom_status_bar"/>
+                android:layout_weight="1">
+
+                <TextView
+                    android:text="Edit Akun"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/my_custom_status_bar"/>
+
+                <TextView
+                    android:text="Ubah data profil Anda"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/my_custom_status_bar"/>
+            </LinearLayout>
         </LinearLayout>
+
+        <!-- UBH PASSWORD -->
+        <LinearLayout
+            android:id="@+id/btn_change_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="14dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_change_password"
+                android:layout_marginRight="12dp"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:text="Ubah Password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/my_custom_status_bar"/>
+
+                <TextView
+                    android:text="Perbarui kata sandi akun Anda"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/my_custom_status_bar"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <!-- ===============================
+             HEADER 2: PENGATURAN EKSPEDISI
+        ================================ -->
+        <TextView
+            android:id="@+id/header_expedition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pengaturan Ekspedisi"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#555"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- TAMBAH EKSPEDISI -->
+        <LinearLayout
+            android:id="@+id/btn_add_expedition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="14dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_add_account"
+                android:layout_marginRight="12dp"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:text="Tambah Ekspedisi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/my_custom_status_bar"/>
+
+                <TextView
+                    android:text="Tambahkan pilihan ekspedisi baru"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/my_custom_status_bar"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <!-- ===============================
+             HEADER 3: LAINNYA
+        ================================ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lainnya"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#555"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- LOGOUT -->
+        <LinearLayout
+            android:id="@+id/btn_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="14dp"
+            android:foreground="?attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_logout"
+                android:layout_marginRight="12dp"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:text="Logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/my_custom_status_bar"/>
+
+                <TextView
+                    android:text="Keluar dari akun Anda"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/my_custom_status_bar"/>
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
 
-
-    <!-- ===============================
-         BUTTON TAMBAH EKSPEDISI
-    ================================ -->
-    <LinearLayout
-        android:id="@+id/btn_add_expedition"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="14dp"
-        android:foreground="?attr/selectableItemBackground"
-        android:layout_marginBottom="12dp">
-
-        <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_add_account"
-            android:layout_marginRight="12dp"/>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <TextView
-                android:text="Tambah Ekspedisi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/my_custom_status_bar"/>
-
-            <TextView
-                android:text="Tambahkan pilihan ekspedisi baru"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/my_custom_status_bar"/>
-        </LinearLayout>
-    </LinearLayout>
-
-
-    <!-- ===============================
-         BUTTON LOGOUT
-    ================================ -->
-    <LinearLayout
-        android:id="@+id/btn_logout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="14dp"
-        android:foreground="?attr/selectableItemBackground">
-
-        <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_logout"
-            android:layout_marginRight="12dp"/>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <TextView
-                android:text="Logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/my_custom_status_bar"/>
-
-            <TextView
-                android:text="Keluar dari akun Anda"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:textColor="@color/my_custom_status_bar"/>
-        </LinearLayout>
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

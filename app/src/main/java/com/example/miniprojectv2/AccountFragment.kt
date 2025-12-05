@@ -31,6 +31,9 @@ class AccountFragment : Fragment() {
         val btnLogout: LinearLayout = v.findViewById(R.id.btn_logout)
         val btnEdit: LinearLayout = v.findViewById(R.id.btn_edit)
         val btnAddExpedition: LinearLayout = v.findViewById(R.id.btn_add_expedition)
+        val headerExpedition = v.findViewById<TextView>(R.id.header_expedition)
+        val btnChangePass: LinearLayout = v.findViewById(R.id.btn_change_password)
+
 
         prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
@@ -50,6 +53,10 @@ class AccountFragment : Fragment() {
             showEditDialog(tvUsername, tvEmail)
         }
 
+        btnChangePass.setOnClickListener {
+            showChangePasswordDialog()
+        }
+
         // Logout
         btnLogout.setOnClickListener {
             AlertDialog.Builder(requireContext())
@@ -66,13 +73,17 @@ class AccountFragment : Fragment() {
 
         // Tombol tambah ekspedisi khusus seller
         if (isSeller) {
+            headerExpedition.visibility = View.VISIBLE
             btnAddExpedition.visibility = View.VISIBLE
+
             btnAddExpedition.setOnClickListener {
                 showAddExpeditionDialog()
             }
         } else {
+            headerExpedition.visibility = View.GONE
             btnAddExpedition.visibility = View.GONE
         }
+
 
         return v
     }
@@ -195,4 +206,75 @@ class AccountFragment : Fragment() {
             .setNegativeButton("Batal", null)
             .show()
     }
+
+    // ============== DIALOG CHANGE PASSWORD ==============
+    private fun showChangePasswordDialog() {
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_change_password, null)
+
+        val etOld = dialogView.findViewById<EditText>(R.id.et_old_password)
+        val etNew = dialogView.findViewById<EditText>(R.id.et_new_password)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Ubah Password")
+            .setView(dialogView)
+            .setPositiveButton("Simpan") { _, _ ->
+                val oldPass = etOld.text.toString().trim()
+                val newPass = etNew.text.toString().trim()
+
+                if (oldPass.isEmpty() || newPass.isEmpty()) {
+                    Toast.makeText(requireContext(), "Isi semua field!", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                if (newPass.length < 4) {
+                    Toast.makeText(requireContext(), "Password baru minimal 4 karakter!", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                changePassword(oldPass, newPass)
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
+
+    private fun changePassword(oldPassword: String, newPassword: String) {
+
+        db.collection("users")
+            .document(userUID)
+            .get()
+            .addOnSuccessListener { document ->
+
+                if (!document.exists()) {
+                    Toast.makeText(requireContext(), "User tidak ditemukan!", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
+
+                val currentHashed = document.getString("password") ?: ""
+
+                // Verifikasi password lama
+                if (!PasswordBcrypt.verifyPassword(oldPassword, currentHashed)) {
+                    Toast.makeText(requireContext(), "Password lama salah!", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
+
+                // Hash password baru
+                val newHashed = PasswordBcrypt.hashPassword(newPassword)
+
+                db.collection("users")
+                    .document(userUID)
+                    .update("password", newHashed)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Password berhasil diubah!", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Gagal mengubah password!", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Terjadi kesalahan!", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
 }
