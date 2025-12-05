@@ -3,12 +3,14 @@ package com.example.miniprojectv2
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountFragment : Fragment() {
@@ -18,6 +20,9 @@ class AccountFragment : Fragment() {
 
     private var userUID: String = ""
     private var isSeller: Boolean = false
+
+    // Add a TextView to show IP scan status
+    private lateinit var tvIpStatus: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,8 +92,7 @@ class AccountFragment : Fragment() {
 
         return v
     }
-
-    // ============== LOAD DATA USER DARI FIRESTORE ==============
+    // ================= LOAD USER DATA =================
     private fun loadUserData(tvName: TextView, tvEmail: TextView) {
         db.collection("users")
             .document(userUID)
@@ -113,19 +117,14 @@ class AccountFragment : Fragment() {
             }
     }
 
-    // ============== UPDATE HEADER NAV DRAWER ==============
+    // ================= UPDATE HEADER =================
     private fun updateHeader(nama: String, email: String) {
         val navViewBuyer =
-            requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(
-                R.id.nav_view
-            )
+            requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
         val navViewSeller =
-            requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(
-                R.id.nav_view_seller
-            )
+            requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view_seller)
 
         val navView = navViewBuyer ?: navViewSeller ?: return
-
         val headerView = navView.getHeaderView(0)
         val headerTitle = headerView.findViewById<TextView>(R.id.header_title)
         val headerSubtitle = headerView.findViewById<TextView>(R.id.header_subtitle)
@@ -134,11 +133,9 @@ class AccountFragment : Fragment() {
         headerSubtitle.text = email
     }
 
-    // ============== DIALOG EDIT NAMA + EMAIL ==============
+    // ================= DIALOG EDIT ACCOUNT =================
     private fun showEditDialog(tvName: TextView, tvEmail: TextView) {
-        val dialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.dialog_edit_account, null)
-
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_account, null)
         val etName = dialogView.findViewById<EditText>(R.id.et_edit_name)
         val etEmail = dialogView.findViewById<EditText>(R.id.et_edit_email)
 
@@ -151,42 +148,29 @@ class AccountFragment : Fragment() {
             .setPositiveButton("Simpan") { _, _ ->
                 val newName = etName.text.toString().trim()
                 val newEmail = etEmail.text.toString().trim()
-
                 if (newName.isEmpty() || newEmail.isEmpty()) {
                     Toast.makeText(requireContext(), "Nama & email tidak boleh kosong", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
-                db.collection("users")
-                    .document(userUID)
-                    .update(
-                        mapOf(
-                            "nama" to newName,
-                            "email" to newEmail
-                        )
-                    )
-                    .addOnSuccessListener {
-                        tvName.text = newName
-                        tvEmail.text = newEmail
-                        updateHeader(newName, newEmail)
-
-                        // sync dengan SharedPreferences
-                        prefs.edit()
-                            .putString("active_username", newName)
-                            .putString("active_email", newEmail)
-                            .apply()
-
-                        Toast.makeText(requireContext(), "Profil diperbarui", Toast.LENGTH_SHORT).show()
-                    }
-                    .addOnFailureListener {
-                        Toast.makeText(requireContext(), "Gagal update profil: ${it.message}", Toast.LENGTH_SHORT).show()
-                    }
+                db.collection("users").document(userUID).update(
+                    mapOf("nama" to newName, "email" to newEmail)
+                ).addOnSuccessListener {
+                    tvName.text = newName
+                    tvEmail.text = newEmail
+                    updateHeader(newName, newEmail)
+                    prefs.edit().putString("active_username", newName)
+                        .putString("active_email", newEmail).apply()
+                    Toast.makeText(requireContext(), "Profil diperbarui", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    Toast.makeText(requireContext(), "Gagal update profil: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
             }
             .setNegativeButton("Batal", null)
             .show()
     }
 
-    // ============== DIALOG TAMBAH EKSPEDISI (SELLER) ==============
+    // ================= DIALOG ADD EXPEDITION =================
     private fun showAddExpeditionDialog() {
         val input = EditText(requireContext())
         input.hint = "Nama ekspedisi baru"
@@ -206,6 +190,32 @@ class AccountFragment : Fragment() {
             .setNegativeButton("Batal", null)
             .show()
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Existing code ...
+
+        val etIp = view.findViewById<EditText>(R.id.et_ip)
+        val btnSaveIp = view.findViewById<Button>(R.id.btn_save_ip)
+
+        // Initialize EditText with current IP
+        etIp.setText(IpHelper.getBaseUrl())
+
+        btnSaveIp.setOnClickListener {
+            val newIp = etIp.text.toString().trim()
+            if (newIp.isEmpty()) {
+                Toast.makeText(requireContext(), "IP tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Update in-memory URL
+            IpHelper.changeBaseUrl(newIp)
+            Toast.makeText(requireContext(), "Server IP diperbarui ke $newIp", Toast.LENGTH_SHORT).show()
+            Log.d("AccountFragment", "Server IP changed to: $newIp")
+        }
+    }
+
 
     // ============== DIALOG CHANGE PASSWORD ==============
     private fun showChangePasswordDialog() {

@@ -18,8 +18,7 @@ object ProductRepository {
         col.get()
             .addOnSuccessListener { result ->
                 val list = result.documents.mapNotNull { doc ->
-                    val product = doc.toObject(Product::class.java)
-                    product?.let { Pair(doc.id, it) }
+                    doc.toObject(Product::class.java)?.apply { id = doc.id }?.let { Pair(doc.id, it) }
                 }
                 onComplete(list)
             }
@@ -34,7 +33,11 @@ object ProductRepository {
         onComplete: () -> Unit,
         onError: (Exception) -> Unit
     ) {
-        col.add(product)
+        // Generate a new document reference
+        val docRef = col.document()
+        val productWithId = product.copy(id = docRef.id)
+
+        docRef.set(productWithId)
             .addOnSuccessListener { onComplete() }
             .addOnFailureListener(onError)
     }

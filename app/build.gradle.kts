@@ -50,6 +50,9 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
 
+    //okhttp
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
     // viewpager2 (opsional untuk tabbed)
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("androidx.cardview:cardview:1.0.0")

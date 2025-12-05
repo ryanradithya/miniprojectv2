@@ -1,5 +1,7 @@
 package com.example.miniprojectv2
 
+import android.app.Activity
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +16,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.DocumentId
+import okhttp3.OkHttpClient
+import okio.IOException
 
 class ProductAdapter(
     private val items: MutableList<Product>,
@@ -64,12 +69,83 @@ class ProductAdapter(
 
         // gambar produk
         if (!product.imageUri.isNullOrEmpty()) {
-            try {
-                holder.image?.setImageURI(Uri.parse(product.imageUri))
-            } catch (e: Exception) {
-                e.printStackTrace()
-                // placeholder klo exc
+//            try {
+//
+//                val imageView = holder.image
+//
+//                if (!product.imageUri.isNullOrEmpty()) {
+//
+//                    val imageId = product.imageUri!!
+//                    val url = "http://10.0.2.2:8000/image/$imageId"
+//
+//                    // Cache key = imageId
+//                    val cached = ImageCache.get(imageId)
+//                    if (cached != null) {
+//                        val bitmap = BitmapFactory.decodeByteArray(cached, 0, cached.size)
+//                        imageView?.setImageBitmap(bitmap)
+//                        return
+//                    }
+//
+//                    val request = okhttp3.Request.Builder()
+//                        .url(url)
+//                        .build()
+//
+//                    OkHttpClient().newCall(request).enqueue(object : okhttp3.Callback {
+//                        override fun onFailure(call: okhttp3.Call, e: IOException) {
+//                            e.printStackTrace()
+//                            imageView?.post {
+//                                imageView.setImageResource(R.drawable.ic_product_placeholder)
+//                            }
+//                        }
+//
+//                        override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+//                            val bytes = response.body?.bytes()
+//                            if (bytes != null) {
+//
+//                                // Save in cache
+//                                ImageCache.put(imageId, bytes)
+//
+//                                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+//                                imageView?.post {
+//                                    imageView.setImageBitmap(bitmap)
+//                                }
+//                            } else {
+//                                imageView?.post {
+//                                    imageView.setImageResource(R.drawable.ic_product_placeholder)
+//                                }
+//                            }
+//                        }
+//                    })
+//
+//                } else {
+//                    imageView?.setImageResource(R.drawable.ic_product_placeholder)
+//                }
+//
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//                // placeholder klo exc
+//                holder.image?.setImageResource(R.drawable.ic_product_placeholder)
+//            }
+
+            // gambar produk
+            if (!product.imageUri.isNullOrEmpty()) {
+                val imageId = product.imageUri!!
+
+                // Show placeholder first
                 holder.image?.setImageResource(R.drawable.ic_product_placeholder)
+
+                ImageHandler.getImage(holder.itemView.context, imageId) { bytes ->
+                    if (bytes != null) {
+                        val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        (holder.itemView.context as Activity).runOnUiThread {
+                            holder.image?.setImageBitmap(bitmap)
+                        }
+                    } else {
+                        (holder.itemView.context as Activity).runOnUiThread {
+                            holder.image?.setImageResource(R.drawable.ic_product_placeholder)
+                        }
+                    }
+                }
             }
         } else {
             holder.image?.setImageResource(R.drawable.ic_product_placeholder)
@@ -85,6 +161,7 @@ class ProductAdapter(
             holder.btnEdit?.setOnClickListener {
                 Log.d("ProductAdapter", "Edit produk: ${product.name}")
                 val bundle = Bundle().apply {
+                    putString("product_id", product.id)
                     putString("edit_mode", "true")
                     putString("product_name", product.name)
                     putInt("product_price", product.price)
@@ -138,7 +215,7 @@ class ProductAdapter(
                         putString("product_description", product.description)
                         putInt("product_stock", product.stock)
                         putString("product_category", product.category)
-                        putString("product_image_uri", product.imageUri)
+                        putString("product_image_uri", "server://${product.imageUri}")
                     }
                     it.findNavController().navigate(R.id.productDetailFragment, b)
                 } catch (e: Exception) {
@@ -155,4 +232,12 @@ class ProductAdapter(
         items.addAll(newList)
         notifyDataSetChanged()
     }
+
+    object ImageCache {
+        private val cache = HashMap<String, ByteArray>()
+
+        fun get(id: String): ByteArray? = cache[id]
+        fun put(id: String, data: ByteArray) { cache[id] = data }
+    }
+
 }

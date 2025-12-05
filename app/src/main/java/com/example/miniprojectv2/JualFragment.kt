@@ -2,14 +2,20 @@ package com.example.miniprojectv2
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import okhttp3.OkHttpClient
+import okio.IOException
 
 class JualFragment : Fragment() {
 
@@ -22,11 +28,13 @@ class JualFragment : Fragment() {
     private var productToEdit: Product? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        Log.d("JualFragment", "onCreateView called")
         return inflater.inflate(R.layout.fragment_jual, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("JualFragment", "onViewCreated initialized")
 
         val nameInput = view.findViewById<EditText>(R.id.input_name)
         val priceInput = view.findViewById<EditText>(R.id.input_price)
@@ -37,7 +45,6 @@ class JualFragment : Fragment() {
         val btnSelectImage = view.findViewById<Button>(R.id.btn_select_image)
         imagePreview = view.findViewById(R.id.image_preview)
 
-        // kategori
         val categories = listOf("Kamera Analog", "Lensa Analog", "Tas Kamera", "Roll Film", "Lainnya")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
         categorySpinner.adapter = adapter
@@ -47,10 +54,12 @@ class JualFragment : Fragment() {
         // ===============================
         arguments?.let { args ->
             if (args.getString("edit_mode") == "true") {
+                Log.d("JualFragment", "Edit mode enabled")
                 editMode = true
                 productIdToEdit = args.getString("product_id")
 
                 productToEdit = Product(
+                    id = productIdToEdit,
                     name = args.getString("product_name") ?: "",
                     price = args.getInt("product_price"),
                     stock = args.getInt("product_stock"),
@@ -59,18 +68,42 @@ class JualFragment : Fragment() {
                     imageUri = args.getString("product_image_uri")
                 )
 
-                // isi form edit
+                Log.d("JualFragment", "Loaded product for editing: $productToEdit")
+
                 nameInput.setText(productToEdit!!.name)
                 priceInput.setText(productToEdit!!.price.toString())
                 stockInput.setText(productToEdit!!.stock.toString())
                 descInput.setText(productToEdit!!.description)
 
-                selectedImageUri = productToEdit!!.imageUri?.let { Uri.parse(it) }
                 try {
-                    imagePreview.setImageURI(selectedImageUri)
-                }
-                catch(e: Exception)
-                {
+                    val imageId = productToEdit!!.imageUri
+                    if (!imageId.isNullOrEmpty()) {
+                        // Mark existing server image using custom URI scheme
+                        selectedImageUri = Uri.parse("server://$imageId")
+                        val url = IpHelper.getBaseUrl() + "/images/" + imageId
+
+                        val request = okhttp3.Request.Builder().url(url).build()
+
+                        OkHttpClient().newCall(request).enqueue(object : okhttp3.Callback {
+                            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                                imagePreview.post {
+                                    imagePreview.setImageResource(R.drawable.ic_product_placeholder)
+                                }
+                            }
+
+                            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                                val bytes = response.body?.bytes()
+                                if (bytes != null) {
+                                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                                    imagePreview.post { imagePreview.setImageBitmap(bitmap) }
+                                } else {
+                                    imagePreview.post { imagePreview.setImageResource(R.drawable.ic_product_placeholder) }
+                                }
+                            }
+                        })
+                    }
+                } catch (e: Exception) {
+                    Log.e("JualFragment", "Failed to load image from URI: $selectedImageUri")
                     imagePreview.setImageResource(R.drawable.ic_product_placeholder)
                 }
 
@@ -85,6 +118,7 @@ class JualFragment : Fragment() {
         // PILIH GAMBAR
         // ===============================
         btnSelectImage.setOnClickListener {
+            Log.d("JualFragment", "Select image button clicked")
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "image/*"
@@ -97,6 +131,8 @@ class JualFragment : Fragment() {
         // SIMPAN / TAMBAH PRODUK
         // ===============================
         btnAdd.setOnClickListener {
+            Log.d("JualFragment", "Add/Save button clicked")
+
             val name = nameInput.text.toString().trim()
             val price = priceInput.text.toString().toIntOrNull() ?: 0
             val stock = stockInput.text.toString().toIntOrNull() ?: 0
@@ -108,73 +144,97 @@ class JualFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val newProduct = Product(
-                name = name,
-                price = price,
-                stock = stock,
-                description = desc,
-                category = category,
-                imageUri = selectedImageUri?.toString() ?: ""
-            )
+            if (selectedImageUri == null) {
+                Toast.makeText(requireContext(), "Select image first", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-            // ===============================
-            // UPDATE PRODUK
-            // ===============================
-//            if (editMode && productIdToEdit != null) {
-//
-//                ProductRepository.updateProductById(
-//                    productIdToEdit!!,
-//                    newProduct,
-//                    onComplete = {
-//                        Toast.makeText(requireContext(), "Produk diperbarui!", Toast.LENGTH_SHORT).show()
-//                        findNavController().popBackStack()
-//                    },
-//                    onError = {
-//                        Toast.makeText(requireContext(), "Gagal update produk", Toast.LENGTH_SHORT).show()
-//                    }
-//                )
-//                return@setOnClickListener
-//            }
-            if (editMode) {
+            Log.d("JualFragment", "Starting image upload: $selectedImageUri")
 
-                ProductRepository.updateProduct(
-                    name = productToEdit?.name ?: "",
-                    updated = newProduct,
+            val isServerImage = selectedImageUri.toString().startsWith("server://")
+            val proceedToSave: (String) -> Unit = { imageId ->
+                saveProduct(name, price, stock, desc, category, imageId, productIdToEdit)
+            }
+
+            if (editMode && productIdToEdit != null) {
+                if (isServerImage) {
+                    // Existing image, no upload needed
+                    val existingImageId = selectedImageUri.toString().removePrefix("server://")
+                    proceedToSave(existingImageId)
+                } else {
+                    // New image selected, upload first
+                    ImageHandler.uploadImage(requireContext(), selectedImageUri!!) { imageId ->
+                        if (imageId == null) {
+                            Toast.makeText(requireContext(), "Gagal upload gambar!", Toast.LENGTH_SHORT).show()
+                            return@uploadImage
+                        }
+                        proceedToSave(imageId)
+                    }
+                }
+            } else {
+                // Adding new product
+                ImageHandler.uploadImage(requireContext(), selectedImageUri!!) { imageId ->
+                    if (imageId == null) {
+                        Toast.makeText(requireContext(), "Gagal upload gambar!", Toast.LENGTH_SHORT).show()
+                        return@uploadImage
+                    }
+                    proceedToSave(imageId)
+                }
+            }
+        }
+
+    }
+
+    // ===============================
+    // HELPER: SAVE PRODUCT
+    // ===============================
+    private fun saveProduct(
+        name: String,
+        price: Int,
+        stock: Int,
+        desc: String,
+        category: String,
+        imageId: String,
+        productId: String? = null // <-- optional, for edit
+    ) {
+        val product = Product(
+            name = name,
+            price = price,
+            stock = stock,
+            description = desc,
+            category = category,
+            imageUri = imageId
+        )
+
+        if (editMode && productId != null) {
+                ProductRepository.updateProductById(productId, product,
                     onComplete = {
                         Toast.makeText(requireContext(), "Produk diperbarui!", Toast.LENGTH_SHORT).show()
                         findNavController().popBackStack()
                     },
-                    onError = {
-                        Toast.makeText(requireContext(), "Gagal update produk", Toast.LENGTH_SHORT).show()
+                    onError = { e ->
+                        Toast.makeText(requireContext(), "Gagal update produk: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 )
-                return@setOnClickListener
-            }
-
-
-            // ===============================
-            // TAMBAH PRODUK BARU
-            // ===============================
-                                findNavController().popBackStack()
-
-//            ProductRepository.addProduct(
-//                newProduct,
-//                onComplete = {
-//                    Toast.makeText(requireContext(), "Produk berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
-//                    findNavController().popBackStack()
-//                },
-//                onError = {
-//                    Toast.makeText(requireContext(), "Gagal menambah produk", Toast.LENGTH_SHORT).show()
-//                }
-//            )
+        } else {
+            ProductRepository.addProduct(product,
+                onComplete = {
+                    Toast.makeText(requireContext(), "Produk berhasil disimpan!", Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
+                },
+                onError = { e ->
+                    Toast.makeText(requireContext(), "Gagal menyimpan produk: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
     }
 
-    // preview gambar
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
             selectedImageUri = data?.data
+            Log.d("JualFragment", "Image selected: $selectedImageUri")
+
             selectedImageUri?.let { uri ->
                 requireContext().contentResolver.takePersistableUriPermission(
                     uri,
@@ -184,6 +244,4 @@ class JualFragment : Fragment() {
             }
         }
     }
-
-
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import java.io.IOException
 
 object CartManager {
     val items = mutableListOf<CartItem>()
@@ -87,20 +88,6 @@ class ProductDetailFragment : Fragment() {
         tvPrice.text = "Rp $productPrice"
         tvStock.text = "Stok : $currentStock"
         tvDesc.text = productDescription
-
-        if (!productImageUri.isNullOrEmpty()) {
-            try
-                {
-                    imageView.setImageURI(Uri.parse(productImageUri))
-                }
-                catch(e: Exception)
-                {
-                    imageView.setImageResource(R.drawable.ic_product_placeholder)
-
-                }
-        } else {
-            imageView.setImageResource(R.drawable.ic_product_placeholder)
-        }
 
         if (currentStock == 0) {
             btnAdd.isEnabled = false
@@ -187,7 +174,7 @@ class ProductDetailFragment : Fragment() {
                     Log.e("ProductDetail", "Produk tidak ditemukan di database")
                     return@findProductByName
                 }
-
+                loadProductImage(imageView, productImageUri)
                 // Update rating & review
                 loadReviews()
             },
@@ -262,6 +249,48 @@ class ProductDetailFragment : Fragment() {
             }
 
             ratingStars.addView(star)
+        }
+    }
+
+    fun loadProductImage(imageView: ImageView, productImageUri: String?) {
+        if (productImageUri.isNullOrEmpty()) {
+            imageView.setImageResource(R.drawable.ic_product_placeholder)
+            return
+        }
+
+        try {
+            if (productImageUri.startsWith("server://")) {
+                val imageId = productImageUri.removePrefix("server://")
+                ImageHandler.getImage(requireContext(), imageId) { bytes ->
+                    if (bytes != null) {
+                        val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        imageView.post { imageView.setImageBitmap(bitmap) }
+                    } else {
+                        imageView.post { imageView.setImageResource(R.drawable.ic_product_placeholder) }
+                    }
+                }
+                Log.d("ProductDetail", "ini masuk ke prefix server://")
+            } else {
+                // optional: full remote URL
+                val request = okhttp3.Request.Builder().url(productImageUri).build()
+                okhttp3.OkHttpClient().newCall(request).enqueue(object : okhttp3.Callback {
+                    override fun onFailure(call: okhttp3.Call, e: IOException) {
+                        imageView.post { imageView.setImageResource(R.drawable.ic_product_placeholder) }
+                    }
+
+                    override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                        val bytes = response.body?.bytes()
+                        if (bytes != null) {
+                            val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                            imageView.post { imageView.setImageBitmap(bitmap) }
+                        } else {
+                            imageView.post { imageView.setImageResource(R.drawable.ic_product_placeholder) }
+                        }
+                    }
+                })
+            }
+        } catch (e: Exception) {
+            imageView.setImageResource(R.drawable.ic_product_placeholder)
         }
     }
 }

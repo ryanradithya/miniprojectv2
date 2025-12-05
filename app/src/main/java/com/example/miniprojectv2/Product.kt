@@ -1,9 +1,10 @@
 package com.example.miniprojectv2
 
 data class Product(
+    var id: String? = null,   // <-- new field
     val name: String = "",
     val price: Int = 0,
-    val imageUri: String? = null,
+    var imageUri: String? = null,
     var stock: Int = 0,
     val description: String = "",
     val category: String = "",
