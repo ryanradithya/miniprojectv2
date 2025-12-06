@@ -3,17 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    >
 
 
     <!-- Konten utama -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            >
 
             <!-- Toolbar -->
             <androidx.appcompat.widget.Toolbar
@@ -21,13 +30,13 @@
                 android:layout_width="0dp"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/green_primary"
-                app:title="Mini Project"
-                app:titleTextColor="@android:color/white"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:popupTheme="@style/ThemeOverlay.App.Toolbar"
-                app:theme="@style/ThemeOverlay.App.Toolbar" />
+                app:theme="@style/ThemeOverlay.App.Toolbar"
+                app:title="Mini Project"
+                app:titleTextColor="@android:color/white" />
 
 
             <!-- NavHostFragment -->
@@ -36,25 +45,24 @@
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:navGraph="@navigation/mobile_nav"
                 app:defaultNavHost="true"
-                app:layout_constraintTop_toBottomOf="@id/toolbar"
                 app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/toolbar"
+                app:navGraph="@navigation/mobile_nav" />
 
             <!-- Bottom Navigation -->
-            <com.google.android.material.bottomnavigation.BottomNavigationView
+            <include
                 android:id="@+id/bottom_nav"
+                layout="@layout/custom_bottom_nav"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                app:menu="@menu/bottom_nav_menu"
-                app:itemIconTint="#0C3B2E"
-                app:itemTextColor="#0C3B2E"
+                android:paddingBottom="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="88dp"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:paddingBottom="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        >
+
+
+    <!-- HOME TAB -->
+        <LinearLayout
+            android:id="@+id/nav_home"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <FrameLayout
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:translationY="-16dp"
+                android:gravity="center"
+                android:clipToPadding="false"
+                android:clipChildren="false">
+
+
+                <View
+                    android:id="@+id/nav_home_circle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_nav_circle"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/nav_home_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_home"
+                    android:translationY="10dp" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/nav_home_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Home"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- TRANSAKSI TAB -->
+        <LinearLayout
+            android:id="@+id/nav_transactions"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <FrameLayout
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:translationY="-16dp"
+                android:gravity="center"
+                android:clipToPadding="false"
+                android:clipChildren="false">
+
+
+            <View
+                    android:id="@+id/nav_transactions_circle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_nav_circle"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/nav_transactions_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_history"
+                    android:translationY="10dp" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/nav_transactions_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Transaksi"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- AKUN TAB -->
+        <LinearLayout
+            android:id="@+id/nav_account"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <FrameLayout
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:translationY="-16dp"
+                android:gravity="center"
+                android:clipToPadding="false"
+                android:clipChildren="false">
+
+
+                <View
+                    android:id="@+id/nav_account_circle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_nav_circle"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/nav_account_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_person"
+                    android:translationY="10dp" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/nav_account_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Akun"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </LinearLayout>
+</FrameLayout>

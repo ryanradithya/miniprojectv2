@@ -22,7 +22,7 @@ class TransactionsFragment : Fragment() {
         val transactionList: LinearLayout = v.findViewById(R.id.transactions_list)
         val btnBack: ImageButton = v.findViewById(R.id.btn_back_transactions)
         val bottomNav =
-            (requireActivity() as MainActivity).findViewById<BottomNavigationView>(R.id.bottom_nav)
+            (requireActivity() as MainActivity).findViewById<View>(R.id.bottom_nav)
 
         val fromCheckout = arguments?.getBoolean("from_checkout", false) ?: false
 
@@ -183,7 +183,7 @@ class TransactionsFragment : Fragment() {
         btnBack.setOnClickListener {
             findNavController().navigate(R.id.homeFragment)
             bottomNav.visibility = View.VISIBLE
-            bottomNav.selectedItemId = R.id.homeFragment
+            (requireActivity() as MainActivity).setSelectedTabFromFragment("home")
         }
 
         return v

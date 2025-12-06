@@ -2,15 +2,14 @@ package com.example.miniprojectv2
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,40 +17,39 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
+    // Tab enum sederhana
+    private enum class BottomTab { HOME, TRANSACTIONS, ACCOUNT }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
-        // 🟢 Set custom status bar color
+        // Status bar
         val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.statusBarColor = ContextCompat.getColor(this, R.color.my_custom_status_bar)
 
-        // 🟢 Setup Toolbar
+        // Toolbar
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        toolbar.navigationIcon?.setTint(getColor(android.R.color.white)) // tint icons if needed
+        toolbar.navigationIcon?.setTint(getColor(android.R.color.white))
 
-        // 🟢 Setup Drawer and NavHost
+        // Drawer & Nav
         val drawerLayout = findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer_layout)
         val navView = findViewById<NavigationView>(R.id.nav_view)
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        val bottomNavContainer = findViewById<View>(R.id.bottom_nav)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // 🟢 Define which fragments are top-level (show hamburger)
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.homeFragment,
@@ -63,186 +61,144 @@ class MainActivity : AppCompatActivity() {
             drawerLayout
         )
 
-        // 🟢 Set up Toolbar with Navigation
         setupActionBarWithNavController(navController, appBarConfiguration)
-
-        // 🟢 Connect NavigationView (drawer menu)
         navView.setupWithNavController(navController)
 
-        // 🟢 Connect Bottom Navigation
-        bottomNav.setupWithNavController(navController)
+        // --------------------------
+        // Custom bottom navigation
+        // --------------------------
+        val homeTab = findViewById<View>(R.id.nav_home)
+        val transTab = findViewById<View>(R.id.nav_transactions)
+        val accountTab = findViewById<View>(R.id.nav_account)
 
-        // 🟢 Drawer header info from SharedPreferences
+        val homeCircle = findViewById<View>(R.id.nav_home_circle)
+        val transCircle = findViewById<View>(R.id.nav_transactions_circle)
+        val accountCircle = findViewById<View>(R.id.nav_account_circle)
+
+        val homeIcon = findViewById<ImageView>(R.id.nav_home_icon)
+        val transIcon = findViewById<ImageView>(R.id.nav_transactions_icon)
+        val accountIcon = findViewById<ImageView>(R.id.nav_account_icon)
+
+        val homeLabel = findViewById<TextView>(R.id.nav_home_label)
+        val transLabel = findViewById<TextView>(R.id.nav_transactions_label)
+        val accountLabel = findViewById<TextView>(R.id.nav_account_label)
+
+        fun setSelectedTab(tab: BottomTab) {
+            // reset semua
+            fun apply(
+                circle: View,
+                icon: ImageView,
+                label: TextView,
+                selected: Boolean
+            ) {
+                circle.visibility = if (selected) View.VISIBLE else View.GONE
+                label.visibility = if (selected) View.VISIBLE else View.GONE
+                label.isSelected = selected
+                icon.isSelected = selected
+
+                val iconColor = if (selected)
+                    ContextCompat.getColor(this, android.R.color.white)
+                else
+                    ContextCompat.getColor(this, R.color.gray)
+
+                val textColor = if (selected)
+                    ContextCompat.getColor(this, R.color.green_primary)
+                else
+                    ContextCompat.getColor(this, R.color.gray)
+
+                icon.setColorFilter(iconColor)
+                label.setTextColor(textColor)
+            }
+
+            apply(homeCircle, homeIcon, homeLabel, tab == BottomTab.HOME)
+            apply(transCircle, transIcon, transLabel, tab == BottomTab.TRANSACTIONS)
+            apply(accountCircle, accountIcon, accountLabel, tab == BottomTab.ACCOUNT)
+        }
+
+        // Klik tab -> navigate
+        homeTab.setOnClickListener {
+            if (navController.currentDestination?.id != R.id.homeFragment) {
+                navController.navigate(R.id.homeFragment)
+            }
+            setSelectedTab(BottomTab.HOME)
+        }
+
+        transTab.setOnClickListener {
+            if (navController.currentDestination?.id != R.id.transactionsFragment) {
+                navController.navigate(R.id.transactionsFragment)
+            }
+            setSelectedTab(BottomTab.TRANSACTIONS)
+        }
+
+        accountTab.setOnClickListener {
+            if (navController.currentDestination?.id != R.id.accountFragment) {
+                navController.navigate(R.id.accountFragment)
+            }
+            setSelectedTab(BottomTab.ACCOUNT)
+        }
+
+        // Sinkronkan tab ketika destination berubah (misal dari checkout balik ke home)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.homeFragment,
+                R.id.jualFragment,
+                R.id.beliFragment -> {
+                    bottomNavContainer.visibility = View.VISIBLE
+                    setSelectedTab(BottomTab.HOME)
+                }
+                R.id.transactionsFragment -> {
+                    bottomNavContainer.visibility = View.VISIBLE
+                    setSelectedTab(BottomTab.TRANSACTIONS)
+                }
+                R.id.accountFragment -> {
+                    bottomNavContainer.visibility = View.VISIBLE
+                    setSelectedTab(BottomTab.ACCOUNT)
+                }
+                R.id.cartFragment,
+                R.id.checkoutFragment,
+                R.id.productDetailFragment -> {
+                    bottomNavContainer.visibility = View.GONE
+                }
+                else -> {
+                    bottomNavContainer.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        // Set tab awal
+        setSelectedTab(BottomTab.HOME)
+
+        // Drawer header
         val prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val username = prefs.getString("active_username", "John Doe")
         val email = prefs.getString("active_email", "johndoe@example.com")
 
         val headerView = navView.getHeaderView(0)
-        val headerTitle = headerView.findViewById<TextView>(R.id.header_title)
-        val headerSubtitle = headerView.findViewById<TextView>(R.id.header_subtitle)
-
-        headerTitle.text = username
-        headerSubtitle.text = email
-
-        // 🟢 Hide bottom nav on specific fragments
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.cartFragment,
-                R.id.checkoutFragment,
-                R.id.transactionsFragment,
-                R.id.productDetailFragment -> bottomNav.visibility = View.GONE
-                else -> bottomNav.visibility = View.VISIBLE
-            }
-        }
+        headerView.findViewById<TextView>(R.id.header_title).text = username
+        headerView.findViewById<TextView>(R.id.header_subtitle).text = email
     }
 
-    // 🟢 Handle Up Navigation (back arrow)
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    // 🟢 Inflate Toolbar Menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_appbar_menu, menu)
         return true
     }
 
-    // 🟢 Handle Toolbar Menu clicks
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return item.onNavDestinationSelected(findNavController(R.id.nav_host_fragment))
                 || super.onOptionsItemSelected(item)
     }
+
+    fun setSelectedTabFromFragment(tab: String) {
+        when (tab) {
+            "home" -> findViewById<View>(R.id.nav_home).performClick()
+            "trans" -> findViewById<View>(R.id.nav_transactions).performClick()
+            "account" -> findViewById<View>(R.id.nav_account).performClick()
+        }
+    }
+
 }
-
-// OLD CODE!!
-//package com.example.miniprojectv2
-//
-//import android.content.Context
-//import android.os.Bundle
-//import android.view.Menu
-//import android.view.MenuItem
-//import android.util.Log
-//import android.view.View
-//import android.view.WindowManager
-//import android.widget.TextView
-//import androidx.appcompat.app.AppCompatActivity
-//import androidx.core.content.ContextCompat
-//import androidx.navigation.findNavController
-//import androidx.navigation.fragment.NavHostFragment
-//import androidx.navigation.ui.*
-//import com.google.android.material.bottomnavigation.BottomNavigationView
-//import com.google.android.material.navigation.NavigationView
-//
-//class MainActivity : AppCompatActivity() {
-//
-//    private lateinit var appBarConfiguration: AppBarConfiguration
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
-//
-//        val window = window
-//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-//        window.statusBarColor = ContextCompat.getColor(this, R.color.my_custom_status_bar)
-//
-//// Pakai toolbar dari layout
-//        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
-//        setSupportActionBar(toolbar)
-//
-//// Set icon burger (menu)
-//        toolbar.setNavigationIcon(R.drawable.ic_menu)
-//
-//// Ubah warnanya jadi putih (kalau pakai vector bisa di-tint)
-//        toolbar.navigationIcon?.setTint(getColor(android.R.color.white))
-//
-//// Biar bisa buka navigation drawer
-//        val drawerLayout = findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer_layout)
-//        toolbar.setNavigationOnClickListener {
-//            drawerLayout.openDrawer(androidx.core.view.GravityCompat.START)
-//        }
-//
-//
-//        // Ambil navHostFragment dan navController
-//        val navHostFragment =
-//            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-//        val navController = navHostFragment.navController
-//
-//        // Top level destinations (bottom nav items)
-//        appBarConfiguration = AppBarConfiguration(
-//            setOf(
-//                R.id.homeFragment,
-//                R.id.jualFragment,
-//                R.id.beliFragment,
-//                R.id.transactionsFragment,
-//                R.id.accountFragment
-//            ),
-//            findViewById(R.id.drawer_layout) // hubungkan dengan drawer
-//        )
-//
-//        val prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-//        val username = prefs.getString("active_username", "John Doe")
-//        val email = prefs.getString("active_email", "johndoe@example.com")
-//
-//        val navView = findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
-//        val headerView = navView.getHeaderView(0)
-//        val headerTitle = headerView.findViewById<TextView>(R.id.header_title)
-//        val headerSubtitle = headerView.findViewById<TextView>(R.id.header_subtitle)
-//
-//        headerTitle.text = username
-//        headerSubtitle.text = email
-//
-//
-//        // Hubungkan toolbar dengan navController
-//        setupActionBarWithNavController(navController, appBarConfiguration)
-//
-//        // Hubungkan drawer navigation dengan navController
-//        navView.setupWithNavController(navController)
-//
-//        // Hubungkan bottom navigation dengan navController
-//        val bottomNav: BottomNavigationView = findViewById(R.id.bottom_nav)
-//        bottomNav.setupWithNavController(navController)
-//
-//        //tambahin disini, buat hilangin navbar di 1 halaman
-//        navController.addOnDestinationChangedListener { _, destination, _ ->
-//            when (destination.id) {
-//                R.id.cartFragment,
-//                R.id.checkoutFragment,
-//                R.id.transactionsFragment,
-//                R.id.productDetailFragment -> bottomNav.visibility = View.GONE
-//                else -> bottomNav.visibility = View.VISIBLE
-//            }
-//        }
-//    }
-//
-//    // supaya tombol back/up jalan
-//    override fun onSupportNavigateUp(): Boolean {
-//        val navController = findNavController(R.id.nav_host_fragment)
-//        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-//    }
-//
-//    // tampilkan menu (search + cart)
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.top_appbar_menu, menu)
-//        return true
-//    }
-//
-//    // handle klik icon top appbar
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return when (item.itemId) {
-////            R.id.action_cart -> {
-////                Log.d("MainActivity", "Cart icon clicked")
-////                findNavController(R.id.nav_host_fragment).navigate(R.id.cartFragment)
-////                true
-////            }
-////            R.id.action_search -> {
-////                Log.d("MainActivity", "Search icon clicked")
-////                true
-////            }
-//            else -> item.onNavDestinationSelected(findNavController(R.id.nav_host_fragment))
-//                    || super.onOptionsItemSelected(item)
-//        }
-//    }
-//}
-
