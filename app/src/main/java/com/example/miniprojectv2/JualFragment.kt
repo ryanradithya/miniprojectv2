@@ -2,6 +2,7 @@ package com.example.miniprojectv2
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
@@ -75,37 +76,7 @@ class JualFragment : Fragment() {
                 stockInput.setText(productToEdit!!.stock.toString())
                 descInput.setText(productToEdit!!.description)
 
-                try {
-                    val imageId = productToEdit!!.imageUri
-                    if (!imageId.isNullOrEmpty()) {
-                        // Mark existing server image using custom URI scheme
-                        selectedImageUri = Uri.parse("server://$imageId")
-                        val url = IpHelper.getBaseUrl() + "/images/" + imageId
-
-                        val request = okhttp3.Request.Builder().url(url).build()
-
-                        OkHttpClient().newCall(request).enqueue(object : okhttp3.Callback {
-                            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                                imagePreview.post {
-                                    imagePreview.setImageResource(R.drawable.ic_product_placeholder)
-                                }
-                            }
-
-                            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                                val bytes = response.body?.bytes()
-                                if (bytes != null) {
-                                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                                    imagePreview.post { imagePreview.setImageBitmap(bitmap) }
-                                } else {
-                                    imagePreview.post { imagePreview.setImageResource(R.drawable.ic_product_placeholder) }
-                                }
-                            }
-                        })
-                    }
-                } catch (e: Exception) {
-                    Log.e("JualFragment", "Failed to load image from URI: $selectedImageUri")
-                    imagePreview.setImageResource(R.drawable.ic_product_placeholder)
-                }
+                loadProductImage(imagePreview, productToEdit!!.imageUri)
 
                 val pos = categories.indexOf(productToEdit!!.category)
                 if (pos != -1) categorySpinner.setSelection(pos)
@@ -242,6 +213,27 @@ class JualFragment : Fragment() {
                 )
                 imagePreview.setImageURI(uri)
             }
+        }
+    }
+
+    fun loadProductImage(imageView: ImageView, productImageUri: String?) {
+        if (productImageUri.isNullOrEmpty()) {
+            imageView.setImageResource(R.drawable.ic_product_placeholder)
+            return
+        }
+
+        try {
+                val imageId = productImageUri.removePrefix("server://")
+                ImageHandler.getImage(requireContext(), imageId) { bytes ->
+                    if (bytes != null) {
+                        val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        imageView.post { imageView.setImageBitmap(bitmap) }
+                    } else {
+                        imageView.post { imageView.setImageResource(R.drawable.ic_product_placeholder) }
+                    }
+                }
+        } catch (e: Exception) {
+            imageView.setImageResource(R.drawable.ic_product_placeholder)
         }
     }
 }
