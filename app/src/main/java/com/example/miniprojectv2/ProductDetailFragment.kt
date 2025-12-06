@@ -257,9 +257,7 @@ class ProductDetailFragment : Fragment() {
             imageView.setImageResource(R.drawable.ic_product_placeholder)
             return
         }
-
         try {
-            if (productImageUri.startsWith("server://")) {
                 val imageId = productImageUri.removePrefix("server://")
                 ImageHandler.getImage(requireContext(), imageId) { bytes ->
                     if (bytes != null) {
@@ -269,26 +267,6 @@ class ProductDetailFragment : Fragment() {
                         imageView.post { imageView.setImageResource(R.drawable.ic_product_placeholder) }
                     }
                 }
-                Log.d("ProductDetail", "ini masuk ke prefix server://")
-            } else {
-                // optional: full remote URL
-                val request = okhttp3.Request.Builder().url(productImageUri).build()
-                okhttp3.OkHttpClient().newCall(request).enqueue(object : okhttp3.Callback {
-                    override fun onFailure(call: okhttp3.Call, e: IOException) {
-                        imageView.post { imageView.setImageResource(R.drawable.ic_product_placeholder) }
-                    }
-
-                    override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                        val bytes = response.body?.bytes()
-                        if (bytes != null) {
-                            val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                            imageView.post { imageView.setImageBitmap(bitmap) }
-                        } else {
-                            imageView.post { imageView.setImageResource(R.drawable.ic_product_placeholder) }
-                        }
-                    }
-                })
-            }
         } catch (e: Exception) {
             imageView.setImageResource(R.drawable.ic_product_placeholder)
         }
