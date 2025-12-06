@@ -7,6 +7,7 @@ import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -30,10 +31,8 @@ class LoginActivity : AppCompatActivity() {
                     Log.d("LoginActivity", "Auto-detect result: $success, url=${IpHelper.getBaseUrl()}")
                 }
             }
-        }
-        catch (e : Exception)
-        {
-            Log.d("LoginActivity","Auto-detect failed");
+        } catch (e: Exception) {
+            Log.d("LoginActivity", "Auto-detect failed")
         }
 
         val window = window
@@ -50,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
         val forgotText = findViewById<TextView>(R.id.textView3)
 
         loginButton.setOnClickListener {
-            val userInput = usernameInput.text.toString().trim()   // username ATAU email
+            val userInput = usernameInput.text.toString().trim()
             val password = passwordInput.text.toString().trim()
 
             if (userInput.isEmpty() || password.isEmpty()) {
@@ -69,22 +68,43 @@ class LoginActivity : AppCompatActivity() {
             openForgotPasswordFragment()
         }
 
+        //  ==============================
+        //  LISTENER SAAT FRAGMENT HILANG
+        //  ==============================
+        supportFragmentManager.addOnBackStackChangedListener {
+            val isFragmentVisible = supportFragmentManager.backStackEntryCount > 0
+
+            val bottomHalf = findViewById<View>(R.id.bottom_half)
+            val container = findViewById<FrameLayout>(R.id.login_fragment_container)
+
+            if (!isFragmentVisible) {
+
+                val bottomHalf = findViewById<View>(R.id.bottom_half)
+                val container = findViewById<FrameLayout>(R.id.login_fragment_container)
+
+                // Fade out fragment container
+                container.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out))
+                container.visibility = View.GONE
+
+                // Fade in login layout
+                bottomHalf.visibility = View.VISIBLE
+                bottomHalf.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in))
+            }
+        }
+
+        //  ==============================
+        //  HANDLE TOMBOL BACK
+        //  ==============================
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
 
-                val container = findViewById<FrameLayout>(R.id.login_fragment_container)
-                val loginLayout = findViewById<View>(R.id.bottom_half)
-
-                if (container.visibility == View.VISIBLE) {
-                    container.visibility = View.GONE
-                    loginLayout.visibility = View.VISIBLE
+                if (supportFragmentManager.backStackEntryCount > 0) {
                     supportFragmentManager.popBackStack()
                 } else {
                     finish()
                 }
             }
         })
-
     }
 
     fun restoreLoginLayout() {
@@ -93,13 +113,17 @@ class LoginActivity : AppCompatActivity() {
     }
     private fun openForgotPasswordFragment() {
 
-        // Sembunyikan login card
-        findViewById<View>(R.id.bottom_half).visibility = View.GONE
+        val bottomHalf = findViewById<View>(R.id.bottom_half)
+        val container = findViewById<FrameLayout>(R.id.login_fragment_container)
 
-        // Tampilkan fragment container
-        findViewById<FrameLayout>(R.id.login_fragment_container).visibility = View.VISIBLE
+// Fade Out card login
+        bottomHalf.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out))
+        bottomHalf.visibility = View.INVISIBLE
 
-        // Ganti fragment tanpa animasi
+// Tampilkan container + animasi fade in
+        container.visibility = View.VISIBLE
+        container.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in))
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.login_fragment_container, ForgotPasswordFragment())
             .addToBackStack("forgot_password")
