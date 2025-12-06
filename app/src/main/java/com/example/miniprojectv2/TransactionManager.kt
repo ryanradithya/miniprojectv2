@@ -21,7 +21,8 @@ object TransactionManager {
             "date" to System.currentTimeMillis().toString(),
             "status" to "Pesanan Masuk",
             "trackingNumber" to null,
-            "items" to items
+            "items" to items,
+            "updatedAt" to System.currentTimeMillis()
         )
 
         db.collection("transactions")

@@ -1,6 +1,12 @@
 package com.example.miniprojectv2
 
+import android.Manifest
+import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -8,7 +14,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
@@ -18,19 +27,36 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private var transactionListener: ListenerRegistration? = null
+
+    private val requestNotificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                Log.d("Permission", "Notification permission granted!")
+            } else {
+                Log.e("Permission", "Notification permission denied.")
+            }
+        }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
+        askNotificationPermission()
+        startTransactionRealtimeListener()
+        
         // 🟢 Set custom status bar color
         val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -94,6 +120,90 @@ class MainActivity : AppCompatActivity() {
                 else -> bottomNav.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun askNotificationPermission() {
+        // Notification permission only exists on API 33+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permission = Manifest.permission.POST_NOTIFICATIONS
+
+            when {
+                ContextCompat.checkSelfPermission(this, permission) ==
+                        PackageManager.PERMISSION_GRANTED -> {
+                    Log.d("Permission", "Notification permission already granted")
+                }
+
+                shouldShowRequestPermissionRationale(permission) -> {
+                    AlertDialog.Builder(this)
+                        .setTitle("Izin Notifikasi Dibutuhkan")
+                        .setMessage("Aplikasi membutuhkan izin untuk mengirim notifikasi pembaruan.")
+                        .setPositiveButton("OK") { _, _ ->
+                            requestNotificationPermissionLauncher.launch(permission)
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                }
+
+                else -> {
+                    requestNotificationPermissionLauncher.launch(permission)
+                }
+            }
+        }
+    }
+
+
+    private fun startTransactionRealtimeListener() {
+        val db = FirebaseFirestore.getInstance()
+
+        transactionListener = db.collection("transactions")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("Realtime", "Listener error: $error")
+                    return@addSnapshotListener
+                }
+
+                if (snapshot == null) return@addSnapshotListener
+
+                for (dc in snapshot.documentChanges) {
+                    when (dc.type) {
+
+                        DocumentChange.Type.ADDED -> {
+                            showTransactionNotification("Transaksi baru masuk!")
+                        }
+
+                        DocumentChange.Type.MODIFIED -> {
+                            showTransactionNotification("Transaksi diperbarui!")
+                        }
+
+                        DocumentChange.Type.REMOVED -> {
+                            showTransactionNotification("Transaksi dihapus!")
+                        }
+                        else -> {}
+                    }
+                }
+            }
+    }
+
+    private fun showTransactionNotification(msg: String) {
+        val channelId = "transaction_updates"
+
+        val manager = getSystemService(NotificationManager::class.java)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId, "Transaction Updates",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            manager.createNotificationChannel(channel)
+        }
+
+        val notif = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle("Update Transaksi")
+            .setContentText(msg)
+            .setAutoCancel(true)
+            .build()
+
+        manager.notify(System.currentTimeMillis().toInt(), notif)
     }
 
     // 🟢 Handle Up Navigation (back arrow)

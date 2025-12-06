@@ -9,7 +9,8 @@ data class Product(
     val description: String = "",
     val category: String = "",
     val rating: Float = 0f,
-    val reviews: List<Review> = emptyList()
+    val reviews: List<Review> = emptyList(),
+    val updatedAt: Long = System.currentTimeMillis()
 )
 
 
