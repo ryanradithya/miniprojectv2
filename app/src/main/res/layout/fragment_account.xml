@@ -235,28 +235,28 @@
             </LinearLayout>
         </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ip_input_container"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
+<!--    <LinearLayout-->
+<!--        android:id="@+id/ip_input_container"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="8dp">-->
 
-        <EditText
-            android:id="@+id/et_ip"
-            android:hint="Enter server IP"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:inputType="text"
-            android:singleLine="true"/>
+<!--        <EditText-->
+<!--            android:id="@+id/et_ip"-->
+<!--            android:hint="Enter server IP"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:inputType="text"-->
+<!--            android:singleLine="true"/>-->
 
-        <Button
-            android:id="@+id/btn_save_ip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save"/>
-    </LinearLayout>
+<!--        <Button-->
+<!--            android:id="@+id/btn_save_ip"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Save"/>-->
+<!--    </LinearLayout>-->
 
 
 

@@ -196,24 +196,24 @@ class AccountFragment : Fragment() {
 
         // Existing code ...
 
-        val etIp = view.findViewById<EditText>(R.id.et_ip)
-        val btnSaveIp = view.findViewById<Button>(R.id.btn_save_ip)
+//        val etIp = view.findViewById<EditText>(R.id.et_ip)
+//        val btnSaveIp = view.findViewById<Button>(R.id.btn_save_ip)
 
         // Initialize EditText with current IP
-        etIp.setText(IpHelper.getBaseUrl())
+//        etIp.setText(IpHelper.getBaseUrl())
 
-        btnSaveIp.setOnClickListener {
-            val newIp = etIp.text.toString().trim()
-            if (newIp.isEmpty()) {
-                Toast.makeText(requireContext(), "IP tidak boleh kosong", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Update in-memory URL
-            IpHelper.changeBaseUrl(newIp)
-            Toast.makeText(requireContext(), "Server IP diperbarui ke $newIp", Toast.LENGTH_SHORT).show()
-            Log.d("AccountFragment", "Server IP changed to: $newIp")
-        }
+//        btnSaveIp.setOnClickListener {
+//            val newIp = etIp.text.toString().trim()
+//            if (newIp.isEmpty()) {
+//                Toast.makeText(requireContext(), "IP tidak boleh kosong", Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
+//
+//            // Update in-memory URL
+//            IpHelper.changeBaseUrl(newIp)
+//            Toast.makeText(requireContext(), "Server IP diperbarui ke $newIp", Toast.LENGTH_SHORT).show()
+//            Log.d("AccountFragment", "Server IP changed to: $newIp")
+//        }
     }
 
 

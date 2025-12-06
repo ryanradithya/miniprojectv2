@@ -3,6 +3,7 @@ package com.example.miniprojectv2
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.view.WindowManager
@@ -22,6 +23,18 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        try {
+            IpHelper.autoDetectServer(this) { success ->
+                runOnUiThread {
+                    Log.d("LoginActivity", "Auto-detect result: $success, url=${IpHelper.getBaseUrl()}")
+                }
+            }
+        }
+        catch (e : Exception)
+        {
+            Log.d("LoginActivity","Auto-detect failed");
+        }
 
         val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
