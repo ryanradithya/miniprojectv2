@@ -170,7 +170,8 @@ class CheckoutFragment : Fragment() {
             "expedition" to expedition,
             "status" to "Pesanan Masuk",
             "trackingNumber" to null,
-            "date" to date
+            "date" to date,
+            "updatedAt" to System.currentTimeMillis()
         )
 
         // Simpan transaksi
