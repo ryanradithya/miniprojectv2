@@ -92,9 +92,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // --------------------------
         // Custom bottom navigation
-        // --------------------------
         val homeTab = findViewById<View>(R.id.nav_home)
         val transTab = findViewById<View>(R.id.nav_transactions)
         val accountTab = findViewById<View>(R.id.nav_account)
@@ -237,6 +235,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun startTransactionRealtimeListener() {
+        var initialLoad = false;
         val db = FirebaseFirestore.getInstance()
 
         transactionListener = db.collection("transactions")
@@ -247,14 +246,13 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 if (snapshot == null) return@addSnapshotListener
+                if (initialLoad == false) {
+                    initialLoad = true
+                    return@addSnapshotListener
+                }
 
                 for (dc in snapshot.documentChanges) {
                     when (dc.type) {
-
-                        DocumentChange.Type.ADDED -> {
-                            showTransactionNotification("Transaksi baru masuk!")
-                        }
-
                         DocumentChange.Type.MODIFIED -> {
                             showTransactionNotification("Transaksi diperbarui!")
                         }
@@ -290,7 +288,7 @@ class MainActivity : AppCompatActivity() {
         manager.notify(System.currentTimeMillis().toInt(), notif)
     }
 
-    // 🟢 Handle Up Navigation (back arrow)
+    // Handle Up Navigation
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
