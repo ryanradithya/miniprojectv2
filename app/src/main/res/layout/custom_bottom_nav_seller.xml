@@ -15,13 +15,13 @@
         android:gravity="center"
         android:background="@android:color/white"
         android:clipToPadding="false"
-        android:clipChildren="false"
-        >
+        android:clipChildren="false">
 
-
-    <!-- HOME TAB -->
+        <!-- ============================= -->
+        <!-- LIST PRODUK -->
+        <!-- ============================= -->
         <LinearLayout
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_list_produk"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -33,87 +33,43 @@
             <FrameLayout
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:clipChildren="false"
-                android:clipToPadding="false"
                 android:gravity="center"
+                android:clipToPadding="false"
+                android:clipChildren="false"
                 android:translationY="-30dp">
 
-
                 <View
-                    android:id="@+id/nav_home_circle"
+                    android:id="@+id/nav_list_produk_circle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/bg_nav_circle"
                     android:visibility="gone" />
 
                 <ImageView
-                    android:id="@+id/nav_home_icon"
+                    android:id="@+id/nav_list_produk_icon"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:src="@drawable/ic_home"
+                    android:src="@drawable/ic_list"
                     android:translationY="12dp" />
 
             </FrameLayout>
 
             <TextView
-                android:id="@+id/nav_home_label"
+                android:id="@+id/nav_list_produk_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-30dp"
-                android:text="Home"
-                android:textSize="14sp"
-                android:visibility="gone" />
-        </LinearLayout>
-
-        <!-- TRANSAKSI TAB -->
-        <LinearLayout
-            android:id="@+id/nav_transactions"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:clickable="true"
-            android:focusable="true">
-
-            <FrameLayout
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:translationY="-30dp"
-                android:gravity="center"
-                android:clipToPadding="false"
-                android:clipChildren="false">
-
-
-            <View
-                    android:id="@+id/nav_transactions_circle"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/bg_nav_circle"
-                    android:visibility="gone" />
-
-                <ImageView
-                    android:id="@+id/nav_transactions_icon"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_history"
-                    android:translationY="13dp" />
-
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/nav_transactions_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Transaksi"
+                android:text="List Produk"
                 android:textSize="14sp"
                 android:layout_marginTop="-30dp"
                 android:visibility="gone" />
+
         </LinearLayout>
 
-        <!-- AKUN TAB -->
+        <!-- ============================= -->
+        <!-- TAMBAH PRODUK -->
+        <!-- ============================= -->
         <LinearLayout
-            android:id="@+id/nav_account"
+            android:id="@+id/nav_tambah_produk"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -125,20 +81,116 @@
             <FrameLayout
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:clipChildren="false"
-                android:clipToPadding="false"
                 android:gravity="center"
+                android:clipToPadding="false"
+                android:clipChildren="false"
                 android:translationY="-30dp">
 
                 <View
-                    android:id="@+id/nav_account_circle"
+                    android:id="@+id/nav_tambah_produk_circle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/bg_nav_circle"
                     android:visibility="gone" />
 
                 <ImageView
-                    android:id="@+id/nav_account_icon"
+                    android:id="@+id/nav_tambah_produk_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_add"
+                    android:translationY="12dp" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/nav_tambah_produk_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tambah Produk"
+                android:textSize="14sp"
+                android:layout_marginTop="-30dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- ============================= -->
+        <!-- PESANAN -->
+        <!-- ============================= -->
+        <LinearLayout
+            android:id="@+id/nav_pesanan"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:gravity="center"
+                android:translationY="-30dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+                <View
+                    android:id="@+id/nav_pesanan_circle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_nav_circle"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/nav_pesanan_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_orders"
+                    android:translationY="12dp" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/nav_pesanan_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pesanan"
+                android:textSize="14sp"
+                android:layout_marginTop="-30dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- ============================= -->
+        <!-- AKUN -->
+        <!-- ============================= -->
+        <LinearLayout
+            android:id="@+id/nav_account_seller"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:gravity="center"
+                android:translationY="-30dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+                <View
+                    android:id="@+id/nav_account_seller_circle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_nav_circle"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/nav_account_seller_icon"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:src="@drawable/ic_person"
@@ -147,13 +199,14 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/nav_account_label"
+                android:id="@+id/nav_account_seller_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-30dp"
                 android:text="Akun"
                 android:textSize="14sp"
+                android:layout_marginTop="-30dp"
                 android:visibility="gone" />
+
         </LinearLayout>
 
     </LinearLayout>
