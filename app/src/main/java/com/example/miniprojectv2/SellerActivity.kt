@@ -1,13 +1,17 @@
 package com.example.miniprojectv2
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
@@ -15,10 +19,15 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 
 class SellerActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private var transactionListener: ListenerRegistration? = null
+
 
     private enum class SellerTab { LIST, ADD, ORDERS, ACCOUNT }
 
@@ -33,6 +42,8 @@ class SellerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seller)
+
+        startTransactionRealtimeListener()
 
         // Status bar
         val window = window
@@ -60,9 +71,7 @@ class SellerActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
 
-        // ==============================
         // CUSTOM NAVBAR
-        // ==============================
 
         // Tabs
         val tabList = findViewById<View>(R.id.nav_list_produk)
@@ -164,6 +173,65 @@ class SellerActivity : AppCompatActivity() {
         val headerView = navigationView.getHeaderView(0)
         headerView.findViewById<TextView>(R.id.header_title).text = sellerUsername
         headerView.findViewById<TextView>(R.id.header_subtitle).text = sellerEmail
+    }
+
+    private fun startTransactionRealtimeListener() {
+        var initialLoad = false;
+        val db = FirebaseFirestore.getInstance()
+
+        transactionListener = db.collection("transactions")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("Realtime", "Listener error: $error")
+                    return@addSnapshotListener
+                }
+
+                if (snapshot == null) return@addSnapshotListener
+                if (initialLoad == false) {
+                    initialLoad = true
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshot.documentChanges) {
+                    when (dc.type) {
+
+                        DocumentChange.Type.ADDED -> {
+                            showTransactionNotification("Transaksi baru masuk!")
+                        }
+
+                        DocumentChange.Type.MODIFIED -> {
+                            showTransactionNotification("Transaksi diperbarui!")
+                        }
+
+                        DocumentChange.Type.REMOVED -> {
+                            showTransactionNotification("Transaksi dihapus!")
+                        }
+                        else -> {}
+                    }
+                }
+            }
+    }
+
+    private fun showTransactionNotification(msg: String) {
+        val channelId = "transaction_updates"
+
+        val manager = getSystemService(NotificationManager::class.java)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId, "Transaction Updates",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            manager.createNotificationChannel(channel)
+        }
+
+        val notif = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle("Update Transaksi")
+            .setContentText(msg)
+            .setAutoCancel(true)
+            .build()
+
+        manager.notify(System.currentTimeMillis().toInt(), notif)
     }
 
     override fun onSupportNavigateUp(): Boolean {
