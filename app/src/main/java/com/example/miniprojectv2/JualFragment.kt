@@ -50,9 +50,7 @@ class JualFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
         categorySpinner.adapter = adapter
 
-        // ===============================
-        // MODE EDIT
-        // ===============================
+        //edit
         arguments?.let { args ->
             if (args.getString("edit_mode") == "true") {
                 Log.d("JualFragment", "Edit mode enabled")
@@ -85,9 +83,7 @@ class JualFragment : Fragment() {
             }
         }
 
-        // ===============================
-        // PILIH GAMBAR
-        // ===============================
+        //image
         btnSelectImage.setOnClickListener {
             Log.d("JualFragment", "Select image button clicked")
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -98,9 +94,7 @@ class JualFragment : Fragment() {
             startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
 
-        // ===============================
-        // SIMPAN / TAMBAH PRODUK
-        // ===============================
+        //edit/add
         btnAdd.setOnClickListener {
             Log.d("JualFragment", "Add/Save button clicked")
 
@@ -156,9 +150,7 @@ class JualFragment : Fragment() {
 
     }
 
-    // ===============================
-    // HELPER: SAVE PRODUCT
-    // ===============================
+    //saveproduct func
     private fun saveProduct(
         name: String,
         price: Int,
@@ -166,7 +158,7 @@ class JualFragment : Fragment() {
         desc: String,
         category: String,
         imageId: String,
-        productId: String? = null // <-- optional, for edit
+        productId: String? = null
     ) {
         val product = Product(
             name = name,

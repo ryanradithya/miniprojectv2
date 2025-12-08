@@ -16,12 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 object IpHelper {
     private val client = OkHttpClient()
 
-    /**
-     * Returns the base URL of the server.
-     * - Emulator: returns 10.0.2.2
-     * - Real device: returns saved IP if available
-     * - If not saved, returns null so auto-scan can trigger
-     */
+
     private var baseUrl: String = "http://192.168.1.25:8000"
 
     fun getBaseUrl(): String {
@@ -100,9 +95,7 @@ object IpHelper {
         }.start()
     }
 
-    /**
-     * Save the detected server base URL
-     */
+
 //    fun saveBaseUrl(context: Context, url: String) {
 //        context.getSharedPreferences("server_prefs", Context.MODE_PRIVATE)
 //            .edit()
