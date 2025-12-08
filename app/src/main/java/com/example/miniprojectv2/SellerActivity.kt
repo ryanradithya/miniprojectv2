@@ -60,10 +60,7 @@ class SellerActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
 
-        // ==============================
-        // CUSTOM NAVBAR
-        // ==============================
-
+        // NAVBAR
         // Tabs
         val tabList = findViewById<View>(R.id.nav_list_produk)
         val tabAdd = findViewById<View>(R.id.nav_tambah_produk)

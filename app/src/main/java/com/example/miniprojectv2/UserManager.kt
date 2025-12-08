@@ -7,16 +7,13 @@ data class AppUser(
     val nama: String = "",
     val email: String = "",
     val password: String = "",
-    val role: String = ""   // buyer / seller
+    val role: String = ""
 )
 
 object UserManager {
 
     private val db = FirebaseFirestore.getInstance()
 
-    // ======================================================
-    // GENERATE USER ID (b1, b2, s1, s2 ...)
-    // ======================================================
     fun generateUserId(
         role: String,
         onComplete: (String) -> Unit,
@@ -41,9 +38,7 @@ object UserManager {
             .addOnFailureListener(onError)
     }
 
-    // ======================================================
     // REGISTER USER
-    // ======================================================
     fun registerUser(
         nama: String,
         email: String,
@@ -71,9 +66,7 @@ object UserManager {
             onError = onError)
     }
 
-    // ======================================================
-    // LOGIN (username OR email + password)
-    // ======================================================
+    // LOGIN
     fun login(
         usernameOrEmail: String,
         password: String,
@@ -97,9 +90,7 @@ object UserManager {
             .addOnFailureListener(onError)
     }
 
-    // ======================================================
-    // UPDATE USER DATA
-    // ======================================================
+    // UPDATE DATA
     fun updateUser(
         userId: String,
         newName: String,
