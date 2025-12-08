@@ -8,8 +8,7 @@
     android:clipChildren="false"
     >
 
-
-    <!-- Konten utama -->
+<!--    isi konten-->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,7 +23,7 @@
             android:clipChildren="false"
             >
 
-            <!-- Toolbar -->
+<!--            bagian atas-->
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="0dp"
@@ -39,7 +38,6 @@
                 app:titleTextColor="@android:color/white" />
 
 
-            <!-- NavHostFragment -->
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/nav_host_fragment"
                 android:name="androidx.navigation.fragment.NavHostFragment"
@@ -52,7 +50,7 @@
                 app:layout_constraintTop_toBottomOf="@id/toolbar"
                 app:navGraph="@navigation/mobile_nav" />
 
-            <!-- Bottom Navigation -->
+<!--            navbar bottom-->
             <include
                 android:id="@+id/bottom_nav"
                 layout="@layout/custom_bottom_nav"
@@ -68,7 +66,7 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Drawer Navigation -->
+    <!-- Drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

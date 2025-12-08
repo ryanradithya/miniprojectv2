@@ -68,9 +68,7 @@ class LoginActivity : AppCompatActivity() {
             openForgotPasswordFragment()
         }
 
-        //  ==============================
-        //  LISTENER SAAT FRAGMENT HILANG
-        //  ==============================
+
         supportFragmentManager.addOnBackStackChangedListener {
             val isFragmentVisible = supportFragmentManager.backStackEntryCount > 0
 
@@ -92,9 +90,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        //  ==============================
-        //  HANDLE TOMBOL BACK
-        //  ==============================
+
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
 
@@ -133,7 +129,7 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-    // ================= LOGIN KE FIRESTORE =================
+    //fs login
     private fun loginUser(userInput: String, password: String) {
 
         // Deteksi input sebagai email atau username
@@ -159,7 +155,7 @@ class LoginActivity : AppCompatActivity() {
                 val role = data["role"] as? String ?: "buyer"
                 val nama = data["nama"] as? String ?: ""
                 val email = data["email"] as? String ?: ""
-                val uid = doc.id     // sama dengan field "id" yang kita set di Register
+                val uid = doc.id     // sama dengan field "id" yang di regis
 
                 val isValid = PasswordBcrypt.verifyPassword(password, savedPassword)
 

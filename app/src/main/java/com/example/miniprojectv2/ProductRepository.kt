@@ -8,9 +8,7 @@ object ProductRepository {
     private val db = FirebaseFirestore.getInstance()
     private val col = db.collection("products")
 
-    // =====================================================
-    // GET ALL PRODUCTS
-    // =====================================================
+    // panggil semua produk
     fun getProducts(
         onComplete: (List<Pair<String, Product>>) -> Unit,
         onError: (Exception) -> Unit
@@ -25,15 +23,12 @@ object ProductRepository {
             .addOnFailureListener(onError)
     }
 
-    // =====================================================
-    // ADD PRODUCT
-    // =====================================================
+    // tambah produk
     fun addProduct(
         product: Product,
         onComplete: () -> Unit,
         onError: (Exception) -> Unit
     ) {
-        // Generate a new document reference
         val docRef = col.document()
         val productWithId = product.copy(id = docRef.id)
 
@@ -42,9 +37,6 @@ object ProductRepository {
             .addOnFailureListener(onError)
     }
 
-    // =====================================================
-    // FIND PRODUCT ID BY NAME
-    // =====================================================
     fun findProductIdByName(
         name: String,
         onResult: (String?) -> Unit
@@ -59,9 +51,7 @@ object ProductRepository {
             .addOnFailureListener { onResult(null) }
     }
 
-    // =====================================================
-    // FIND PRODUCT BY NAME (RETURN PRODUCT)
-    // =====================================================
+    // cari produk
     fun findProductByName(
         name: String,
         onComplete: (Product?) -> Unit,
@@ -77,9 +67,7 @@ object ProductRepository {
             .addOnFailureListener(onError)
     }
 
-    // =====================================================
-    // UPDATE PRODUCT BY DOCUMENT ID
-    // =====================================================
+    // ubah produk berdasarkan ID
     fun updateProductById(
         productId: String,
         updated: Product,
@@ -92,9 +80,7 @@ object ProductRepository {
             .addOnFailureListener(onError)
     }
 
-    // =====================================================
-    // UPDATE PRODUCT BY NAME (OLD METHOD, STILL AVAILABLE)
-    // =====================================================
+    // ubah produk
     fun updateProduct(
         name: String,
         updated: Product,
@@ -112,9 +98,7 @@ object ProductRepository {
             .addOnFailureListener(onError)
     }
 
-    // =====================================================
-    // DELETE PRODUCT (BY NAME)
-    // =====================================================
+    // hapus produk berdasarkan nama
     fun deleteProduct(
         name: String,
         onComplete: () -> Unit,
@@ -131,9 +115,7 @@ object ProductRepository {
             .addOnFailureListener(onError)
     }
 
-    // =====================================================
-    // REDUCE STOCK
-    // =====================================================
+    // mengurangi stok
     fun reduceStock(
         productName: String,
         qty: Int,
@@ -170,9 +152,7 @@ object ProductRepository {
             .addOnFailureListener(onError)
     }
 
-    // =====================================================
-    // ADD REVIEW (SUBCOLLECTION)
-    // =====================================================
+    // menambahkan review
     fun addReviewToProduct(
         productName: String,
         reviewer: String,
@@ -208,9 +188,7 @@ object ProductRepository {
             .addOnFailureListener(onError)
     }
 
-    // =====================================================
-    // GET TOP RATED PRODUCTS
-    // =====================================================
+    // panggil rekomendasi produk berdasarkan rating
     fun getTopRatedProducts(
         onComplete: (List<Product>) -> Unit,
         onError: (Exception) -> Unit

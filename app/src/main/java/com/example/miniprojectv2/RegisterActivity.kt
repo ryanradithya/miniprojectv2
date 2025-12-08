@@ -89,7 +89,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    // =================== VALIDASI INPUT ===================
+    // validasi input user
     private fun validateInputs(nama: String, email: String, password: String): Boolean {
         if (nama.isEmpty()) {
             showToast("Nama tidak boleh kosong")
@@ -106,7 +106,7 @@ class RegisterActivity : AppCompatActivity() {
         return true
     }
 
-    // ============ CEK EMAIL SUDAH ADA ATAU BELUM ============
+    // cek email
     private fun checkEmailExists(email: String, callback: (Boolean) -> Unit) {
         db.collection("users")
             .whereEqualTo("email", email)
@@ -120,7 +120,7 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    // ============ GENERATE ID: b1, b2, s1, s2, ... ============
+    // memanggil user
     private fun generateCustomUserId(roleKey: String, callback: (String?) -> Unit) {
         db.collection("users")
             .whereEqualTo("role", roleKey)

@@ -32,9 +32,7 @@ class TransactionsFragment : Fragment() {
         val prefs = requireContext().getSharedPreferences("UserPrefs", 0)
         val activeUser = prefs.getString("active_username", "") ?: ""
 
-        // ======================================
         // LOAD TRANSAKSI (FIRESTORE)
-        // ======================================
         fun refreshList() {
             transactionList.removeAllViews()
 
@@ -73,9 +71,7 @@ class TransactionsFragment : Fragment() {
                             orientation = LinearLayout.VERTICAL
                         }
 
-                        // ===========================
                         // TITLE (Nama produk pertama)
-                        // ===========================
                         val tvTitle = TextView(requireContext()).apply {
                             text = if (firstItem != null)
                                 "${firstItem.name} x${firstItem.qty}"
@@ -86,9 +82,7 @@ class TransactionsFragment : Fragment() {
                             setPadding(0, 0, 0, 8)
                         }
 
-                        // ===========================
                         // TOTAL BELANJA
-                        // ===========================
                         val total = trx.items.sumOf { it.price * it.qty }
                         val tvTotal = TextView(requireContext()).apply {
                             text = "Total: Rp $total"
@@ -124,9 +118,7 @@ class TransactionsFragment : Fragment() {
                         layout.addView(tvDate)
 
 
-                        // =======================================
                         // BUTTON KONFIRMASI PENERIMAAN BARANG
-                        // =======================================
                         if (trx.status == "Pesanan Dikirim") {
                             val btnConfirm = Button(requireContext()).apply {
                                 text = "Konfirmasi Terima"
@@ -156,9 +148,7 @@ class TransactionsFragment : Fragment() {
                             layout.addView(btnConfirm)
                         }
 
-                        // =======================================
-                        // Klik card → buka detail transaksi
-                        // =======================================
+                        // Klik card -> buka detail transaksi
                         card.setOnClickListener {
                             val bundle = Bundle().apply {
                                 putString("transaction_id", trx.transactionId)

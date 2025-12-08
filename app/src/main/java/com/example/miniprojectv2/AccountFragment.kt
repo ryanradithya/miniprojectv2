@@ -21,7 +21,6 @@ class AccountFragment : Fragment() {
     private var userUID: String = ""
     private var isSeller: Boolean = false
 
-    // Add a TextView to show IP scan status
     private lateinit var tvIpStatus: TextView
 
     override fun onCreateView(
@@ -50,7 +49,7 @@ class AccountFragment : Fragment() {
             return v
         }
 
-        // Load user dari Firestore
+        //Load user dari fs
         loadUserData(tvUsername, tvEmail)
 
         // Edit profil
@@ -92,7 +91,7 @@ class AccountFragment : Fragment() {
 
         return v
     }
-    // ================= LOAD USER DATA =================
+    //load firestore
     private fun loadUserData(tvName: TextView, tvEmail: TextView) {
         db.collection("users")
             .document(userUID)
@@ -109,7 +108,7 @@ class AccountFragment : Fragment() {
                 tvName.text = nama
                 tvEmail.text = email
 
-                // update header drawer jika ada
+                // update drawer
                 updateHeader(nama, email)
             }
             .addOnFailureListener {
@@ -117,7 +116,7 @@ class AccountFragment : Fragment() {
             }
     }
 
-    // ================= UPDATE HEADER =================
+
     private fun updateHeader(nama: String, email: String) {
         val navViewBuyer =
             requireActivity().findViewById<com.google.android.material.navigation.NavigationView>(R.id.nav_view)
@@ -133,7 +132,7 @@ class AccountFragment : Fragment() {
         headerSubtitle.text = email
     }
 
-    // ================= DIALOG EDIT ACCOUNT =================
+    // edit acc
     private fun showEditDialog(tvName: TextView, tvEmail: TextView) {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_account, null)
         val etName = dialogView.findViewById<EditText>(R.id.et_edit_name)
@@ -170,7 +169,7 @@ class AccountFragment : Fragment() {
             .show()
     }
 
-    // ================= DIALOG ADD EXPEDITION =================
+
     private fun showAddExpeditionDialog() {
         val input = EditText(requireContext())
         input.hint = "Nama ekspedisi baru"
@@ -194,7 +193,6 @@ class AccountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Existing code ...
 
 //        val etIp = view.findViewById<EditText>(R.id.et_ip)
 //        val btnSaveIp = view.findViewById<Button>(R.id.btn_save_ip)
@@ -217,7 +215,7 @@ class AccountFragment : Fragment() {
     }
 
 
-    // ============== DIALOG CHANGE PASSWORD ==============
+    // ubah pw
     private fun showChangePasswordDialog() {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_change_password, null)
@@ -268,7 +266,7 @@ class AccountFragment : Fragment() {
                     return@addOnSuccessListener
                 }
 
-                // Hash password baru
+                // Hash password baru bcrypt
                 val newHashed = PasswordBcrypt.hashPassword(newPassword)
 
                 db.collection("users")

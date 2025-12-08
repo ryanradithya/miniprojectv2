@@ -80,9 +80,7 @@ class ProductDetailFragment : Fragment() {
         loadProductDetailsFirestore()
     }
 
-    // ============================
     // TAMPILKAN INFO DASAR PRODUK
-    // ============================
     private fun setupBasicInfo() {
         tvTitle.text = productName
         tvPrice.text = "Rp $productPrice"
@@ -96,9 +94,7 @@ class ProductDetailFragment : Fragment() {
         }
     }
 
-    // ============================
     // DESKRIPSI BISA EXPAND
-    // ============================
     private fun setupDescriptionToggle() {
         tvDesc.maxLines = 2
         tvDesc.ellipsize = TextUtils.TruncateAt.END
@@ -111,9 +107,7 @@ class ProductDetailFragment : Fragment() {
         }
     }
 
-    // ============================
     // QUANTITY COUNTER
-    // ============================
     private fun setupQtyButtons() {
         updateQtyText()
 
@@ -138,9 +132,7 @@ class ProductDetailFragment : Fragment() {
         tvQty.text = quantity.toString()
     }
 
-    // ============================
     // ADD TO CART
-    // ============================
     private fun setupAddToCart() {
         btnAdd.setOnClickListener {
             val existing = CartManager.items.find { it.name == productName }
@@ -162,9 +154,7 @@ class ProductDetailFragment : Fragment() {
         }
     }
 
-    // ============================
     // LOAD DETAIL PRODUK DARI FIRESTORE
-    // ============================
     private fun loadProductDetailsFirestore() {
         ProductRepository.findProductByName(
             name = productName,
@@ -184,9 +174,7 @@ class ProductDetailFragment : Fragment() {
         )
     }
 
-    // ============================
     // LOAD REVIEW DARI FIRESTORE
-    // ============================
     private fun loadReviews() {
         ProductRepository.getReviews(
             productName = productName,
@@ -226,9 +214,7 @@ class ProductDetailFragment : Fragment() {
         )
     }
 
-    // ============================
     // MENAMPILKAN BINTANG RATING
-    // ============================
     private fun showStars(avg: Float) {
         ratingStars.removeAllViews()
 

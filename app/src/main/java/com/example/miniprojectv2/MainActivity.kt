@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity() {
         askNotificationPermission()
         startTransactionRealtimeListener()
 
-        // 🟢 Set custom status bar color
         val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -77,7 +76,6 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // 🟢 Define which fragments are top-level (show hamburger)
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.homeFragment,
@@ -91,6 +89,7 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
 
         // Custom bottom navigation
         val homeTab = findViewById<View>(R.id.nav_home)
