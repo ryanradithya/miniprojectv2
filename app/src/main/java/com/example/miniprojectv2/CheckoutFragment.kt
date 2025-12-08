@@ -75,9 +75,7 @@ class CheckoutFragment : Fragment() {
         spinnerAdapter.notifyDataSetChanged()
     }
 
-    // ================================
-    // CHECKOUT FIRESTORE AMAN
-    // ================================
+    //checkout fs
     private fun startCheckout(
         selectedItems: List<CartItem>,
         buyer: String,
@@ -116,9 +114,7 @@ class CheckoutFragment : Fragment() {
         }
     }
 
-    // ================================
-    // KURANGI SEMUA STOK (BATAS RACE CONDITION)
-    // ================================
+    //reduce stok
     private fun reduceAllStock(
         selectedItems: List<CartItem>,
         buyer: String,
@@ -145,9 +141,7 @@ class CheckoutFragment : Fragment() {
         }
     }
 
-    // ================================
-    // BUAT SATU TRANSAKSI FIRESTORE
-    // ================================
+    //func transaksi
     private fun createOneTransaction(
         selectedItems: List<CartItem>,
         buyer: String,

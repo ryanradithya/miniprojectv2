@@ -50,18 +50,14 @@ class DetailPesananFragment : Fragment() {
         val ratingStars: LinearLayout = v.findViewById(R.id.rating_stars)
         val btnSubmit: Button = v.findViewById(R.id.btn_submit_review)
 
-        // =======================================
-        // STEP 1: Tentukan apakah user boleh review
-        // =======================================
+        // review logic
         allowReview = status == "Pesanan Selesai"
 
         if (!allowReview) {
             disableReview(etReview, btnSubmit)
         }
 
-        // =======================================
-        // STEP 2: Ambil review lama dari Firestore
-        // =======================================
+        //previous review
         ProductRepository.findProductByName(
             name,
             onComplete = { product ->
@@ -83,9 +79,7 @@ class DetailPesananFragment : Fragment() {
             }
         )
 
-        // =======================================
-        // STEP 3: Setup bintang rating
-        // =======================================
+
         for (i in 1..5) {
             val star = ImageView(requireContext())
             val size = (32 * resources.displayMetrics.density).toInt()
@@ -114,9 +108,7 @@ class DetailPesananFragment : Fragment() {
             ratingStars.addView(star)
         }
 
-        // =======================================
-        // STEP 4: Kirim review ke Firestore
-        // =======================================
+        //review fs
         btnSubmit.setOnClickListener {
             val comment = etReview.text.toString().trim()
 

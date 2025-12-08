@@ -14,9 +14,7 @@ object ImageHandler {
 
     private val client = OkHttpClient()
 
-    /**
-     * POST IMAGE → returns image ID
-     */
+
     fun uploadImage(context: Context, uri: Uri, callback: (String?) -> Unit) {
         Log.d("ImageHandler", "uploadImage() START uri=$uri")
 
@@ -80,9 +78,7 @@ object ImageHandler {
         }
     }
 
-    /**
-     * GET IMAGE → returns ByteArray
-     */
+
     fun getImage(context: Context, id: String, callback: (ByteArray?) -> Unit) {
         val baseUrl = IpHelper.getBaseUrl()
         if (baseUrl == null) {

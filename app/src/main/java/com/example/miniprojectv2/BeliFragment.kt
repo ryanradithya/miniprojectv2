@@ -38,9 +38,7 @@ class BeliFragment : Fragment() {
         val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val isSeller = prefs.getBoolean("isSeller", false)
 
-        // ====================================================
-        // 1. REKOMENDASI PRODUK — FIRESTORE
-        // ====================================================
+
         val rekomendasiRecycler = view.findViewById<RecyclerView>(R.id.rekomendasi_recycler)
 
         ProductRepository.getTopRatedProducts(
@@ -99,9 +97,7 @@ class BeliFragment : Fragment() {
             onError = { Log.e("BeliFragment", "Gagal ambil rekomendasi: $it") }
         )
 
-        // ====================================================
-        // 2. PRODUK UTAMA — FIRESTORE
-        // ====================================================
+        //Load fs ke recyclerview
         productRecycler = view.findViewById(R.id.product_recycler)
 
         adapter = ProductAdapter(mutableListOf(), isSeller = isSeller)
@@ -110,9 +106,7 @@ class BeliFragment : Fragment() {
 
         loadAllProducts()
 
-        // ====================================================
-        // 3. Fitur Search
-        // ====================================================
+        //search
         val searchInput = view.findViewById<EditText>(R.id.search_input)
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -123,15 +117,11 @@ class BeliFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, s1: Int, s2: Int, s3: Int) {}
         })
 
-        // ====================================================
-        // 4. Tombol Filter Harga
-        // ====================================================
+        //filter
         val btnFilter = view.findViewById<ImageButton>(R.id.btn_filter)
         btnFilter.setOnClickListener { showFilterDialog() }
 
-        // ====================================================
-        // 5. Tombol Cart
-        // ====================================================
+        //nav ke cart
         val btnCart = view.findViewById<ImageButton>(R.id.btn_cart)
         if (isSeller) {
             btnCart.visibility = View.GONE
@@ -145,9 +135,7 @@ class BeliFragment : Fragment() {
             }
         }
 
-        // ====================================================
-        // 6. Navbar kategori
-        // ====================================================
+        //category
         setupCategoryButtons(view)
     }
 
@@ -167,9 +155,7 @@ class BeliFragment : Fragment() {
     }
 
 
-    // ====================================================
-    // FILTER PRODUK
-    // ====================================================
+    //filter func
     private fun filterProducts(query: String, priceFilter: String, category: String) {
         val q = query.trim()
 
@@ -196,9 +182,7 @@ class BeliFragment : Fragment() {
         adapter.updateData(filtered)
     }
 
-    // ====================================================
-    // DIALOG FILTER HARGA
-    // ====================================================
+    //filter dialog
     private fun showFilterDialog() {
         val options = arrayOf(
             "Semua Harga",
@@ -227,9 +211,7 @@ class BeliFragment : Fragment() {
             .show()
     }
 
-    // ====================================================
-    // NAVBAR KATEGORI
-    // ====================================================
+    //nav category
     private fun setupCategoryButtons(view: View) {
         val layout = view.findViewById<LinearLayout>(R.id.category_navbar)
         val categories = listOf("Semua Produk", "Kamera Analog", "Roll Film", "Lensa Analog", "Tas Kamera")
