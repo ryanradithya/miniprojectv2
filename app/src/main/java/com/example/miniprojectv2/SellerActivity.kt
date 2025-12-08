@@ -175,6 +175,7 @@ class SellerActivity : AppCompatActivity() {
         headerView.findViewById<TextView>(R.id.header_subtitle).text = sellerEmail
     }
 
+    // ini notif ya
     private fun startTransactionRealtimeListener() {
         var initialLoad = false;
         val db = FirebaseFirestore.getInstance()
