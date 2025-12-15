@@ -167,30 +167,52 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
         val userRef = db.collection("users").document(uid)
 
         userRef.get().addOnSuccessListener { doc ->
+
+            // ===== AUTO REGISTER JIKA BELUM ADA =====
             if (!doc.exists()) {
-                // Auto register Google user
                 val userData = hashMapOf(
                     "id" to uid,
                     "nama" to name,
                     "email" to email,
-                    "role" to "buyer",
+                    "role" to "buyer", // default pertama kali
                     "authProvider" to "google",
                     "createdAt" to System.currentTimeMillis()
                 )
-                userRef.set(userData)
+
+                userRef.set(userData).addOnSuccessListener {
+                    proceedAfterLogin(uid, name, email, "buyer")
+                }
+            } else {
+                val role = doc.getString("role") ?: "buyer"
+                proceedAfterLogin(uid, name, email, role)
             }
-
-            prefs.edit()
-                .putString("active_uid", uid)
-                .putString("active_username", name)
-                .putString("active_email", email)
-                .putBoolean("isSeller", false)
-                .apply()
-
-            toast("Login Google berhasil")
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
         }
+    }
+
+    private fun proceedAfterLogin(
+        uid: String,
+        name: String,
+        email: String,
+        role: String
+    ) {
+        prefs.edit()
+            .putString("active_uid", uid)
+            .putString("active_username", name)
+            .putString("active_email", email)
+            .putBoolean("isSeller", role == "seller")
+            .putString(
+                "active_location",
+                if (addressText.isNotBlank()) addressText else "Lokasi tidak tersedia"
+            )
+            .apply()
+
+        startActivity(
+            Intent(
+                this,
+                if (role == "seller") SellerActivity::class.java else MainActivity::class.java
+            )
+        )
+        finish()
     }
 
     private fun loginWithFirebase(email: String, password: String) {
