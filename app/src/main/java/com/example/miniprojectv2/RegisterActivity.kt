@@ -48,7 +48,7 @@ class RegisterActivity : AppCompatActivity() {
             registerEmail()
         }
 
-        findViewById<Button>(R.id.btn_google_signup).setOnClickListener {
+        findViewById<View>(R.id.btn_google_signup).setOnClickListener {
             startActivityForResult(googleClient.signInIntent, 9002)
         }
 

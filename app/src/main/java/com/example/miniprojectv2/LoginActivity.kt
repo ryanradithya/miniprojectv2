@@ -88,7 +88,7 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
 
         googleClient = GoogleSignIn.getClient(this, gso)
 
-        val btnGoogleLogin = findViewById<Button>(R.id.btn_google_login)
+        val btnGoogleLogin = findViewById<View>(R.id.btn_google_login)
         btnGoogleLogin.setOnClickListener {
             googleClient.signOut() // prevent cached account bug
             startActivityForResult(googleClient.signInIntent, RC_GOOGLE_SIGN_IN)

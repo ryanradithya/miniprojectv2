@@ -29,8 +29,8 @@
             android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="#0C3B2E"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="26dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginLeft="24dp"
             android:layout_marginBottom="16dp"/>
 
         <ScrollView
@@ -88,6 +88,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp"
                     app:hintTextColor="@color/green_primary"
                     app:boxStrokeColor="@color/green_primary"
                     app:boxCornerRadiusTopStart="16dp"
