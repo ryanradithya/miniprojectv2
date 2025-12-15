@@ -39,6 +39,16 @@
                 android:textSize="34sp"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/btn_google_signup"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:text="Daftar dengan Google"
+                android:textAllCaps="false"
+                app:backgroundTint="#6D9773"
+                app:cornerRadius="16dp"/>
+
             <!-- milih role -->
             <TextView
                 android:layout_width="wrap_content"
@@ -140,12 +150,14 @@
                 android:id="@+id/save_button"
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
-                android:text="Save Changes"
+                android:text="Create New Account"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 app:backgroundTint="#6D9773"
                 app:cornerRadius="16dp"
                 app:elevation="6dp" />
+
+
 
         </LinearLayout>
 

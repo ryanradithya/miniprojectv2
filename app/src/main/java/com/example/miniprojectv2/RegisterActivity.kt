@@ -7,13 +7,21 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var googleClient: GoogleSignInClient
+
     private val db = FirebaseFirestore.getInstance()
+    private val RC_GOOGLE_SIGN_UP = 9002
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,12 +36,21 @@ class RegisterActivity : AppCompatActivity() {
         window.statusBarColor =
             ContextCompat.getColor(this, R.color.my_custom_status_bar)
 
+        // ===== Google Sign-In Config =====
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        googleClient = GoogleSignIn.getClient(this, gso)
+
         val loginText = findViewById<TextView>(R.id.textView3)
         val roleSpinner = findViewById<Spinner>(R.id.role_spinner)
         val usernameInput = findViewById<EditText>(R.id.reg_username_input)
         val emailInput = findViewById<EditText>(R.id.reg_email_input)
         val passwordInput = findViewById<EditText>(R.id.reg_password_input)
         val saveButton = findViewById<Button>(R.id.save_button)
+        val googleButton = findViewById<Button>(R.id.btn_google_signup)
 
         // ===== Kembali ke Login =====
         loginText.setOnClickListener {
@@ -41,7 +58,7 @@ class RegisterActivity : AppCompatActivity() {
             finish()
         }
 
-        // ===== REGISTER =====
+        // ===== REGISTER EMAIL =====
         saveButton.setOnClickListener {
 
             val roleDisplay = roleSpinner.selectedItem.toString()
@@ -53,14 +70,77 @@ class RegisterActivity : AppCompatActivity() {
 
             val roleKey = if (roleDisplay == "User") "buyer" else "seller"
 
-            registerWithFirebase(nama, email, password, roleKey)
+            registerWithEmail(nama, email, password, roleKey)
+        }
+
+        // ===== REGISTER GOOGLE =====
+        googleButton.setOnClickListener {
+            googleClient.signOut() // hindari akun cached
+            startActivityForResult(
+                googleClient.signInIntent,
+                RC_GOOGLE_SIGN_UP
+            )
         }
     }
 
-    /**
-     * ================= REGISTER FIREBASE AUTH =================
-     */
-    private fun registerWithFirebase(
+    // ================= GOOGLE RESULT =================
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == RC_GOOGLE_SIGN_UP) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Google Sign-Up dibatalkan", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+
+        auth.signInWithCredential(credential)
+            .addOnSuccessListener {
+                auth.currentUser?.let { handleGoogleUser(it) }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Google Sign-Up gagal", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    // ================= GOOGLE AUTO REGISTER =================
+    private fun handleGoogleUser(user: com.google.firebase.auth.FirebaseUser) {
+
+        val uid = user.uid
+        val email = user.email ?: ""
+        val name = user.displayName ?: "User"
+
+        val userRef = db.collection("users").document(uid)
+
+        userRef.get().addOnSuccessListener { doc ->
+            if (!doc.exists()) {
+
+                val userData = hashMapOf(
+                    "nama" to name,
+                    "email" to email,
+                    "role" to "buyer", // default
+                    "authProvider" to "google",
+                    "createdAt" to System.currentTimeMillis()
+                )
+
+                userRef.set(userData)
+            }
+
+            Toast.makeText(this, "Registrasi Google berhasil!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
+    }
+
+    // ================= EMAIL REGISTER =================
+    private fun registerWithEmail(
         nama: String,
         email: String,
         password: String,
@@ -69,56 +149,36 @@ class RegisterActivity : AppCompatActivity() {
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
-
                 val uid = result.user!!.uid
 
-                // (OPSIONAL) legacy custom id: b1 / s1
-                generateCustomUserId(roleKey) { customId ->
+                val userData = hashMapOf(
+                    "nama" to nama,
+                    "email" to email,
+                    "role" to roleKey,
+                    "authProvider" to "email",
+                    "createdAt" to System.currentTimeMillis()
+                )
 
-                    val userData = hashMapOf(
-                        "id" to customId,              // legacy ID (FIELD SAJA)
-                        "nama" to nama,
-                        "email" to email,
-                        "role" to roleKey,
-                        "authProvider" to "email",
-                        "createdAt" to System.currentTimeMillis()
-                    )
+                db.collection("users")
+                    .document(uid)
+                    .set(userData)
+                    .addOnSuccessListener {
+                        Toast.makeText(
+                            this,
+                            "Registrasi berhasil! Silakan login.",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                    // Firestore docId = UID Firebase
-                    db.collection("users")
-                        .document(uid)
-                        .set(userData)
-                        .addOnSuccessListener {
-                            Toast.makeText(
-                                this,
-                                "Registrasi berhasil! Silakan login.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            startActivity(Intent(this, LoginActivity::class.java))
-                            finish()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(
-                                this,
-                                "Gagal menyimpan profil: ${it.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                }
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }
             }
             .addOnFailureListener {
-                Toast.makeText(
-                    this,
-                    "Registrasi gagal: ${it.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
             }
     }
 
-    /**
-     * ================= VALIDASI =================
-     */
+    // ================= VALIDASI =================
     private fun validateInputs(nama: String, email: String, password: String): Boolean {
         if (nama.isEmpty()) {
             showToast("Nama tidak boleh kosong")
@@ -133,24 +193,6 @@ class RegisterActivity : AppCompatActivity() {
             return false
         }
         return true
-    }
-
-    /**
-     * ================= LEGACY CUSTOM ID (OPSIONAL) =================
-     * Hanya dipakai sebagai FIELD, bukan autentikasi
-     */
-    private fun generateCustomUserId(roleKey: String, callback: (String) -> Unit) {
-        db.collection("users")
-            .whereEqualTo("role", roleKey)
-            .get()
-            .addOnSuccessListener { result ->
-                val prefix = if (roleKey == "buyer") "b" else "s"
-                val count = result.size() + 1
-                callback("$prefix$count")
-            }
-            .addOnFailureListener {
-                callback("") // tidak fatal
-            }
     }
 
     private fun showToast(msg: String) {
