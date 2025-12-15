@@ -3,17 +3,28 @@ package com.example.miniprojectv2
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var googleClient: GoogleSignInClient
     private val db = FirebaseFirestore.getInstance()
+
+    private var selectedRole = "buyer"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,139 +32,139 @@ class RegisterActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // ===== Status bar =====
-        val window = window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.statusBarColor =
-            ContextCompat.getColor(this, R.color.my_custom_status_bar)
+        setupRoleToggle()
 
-        val loginText = findViewById<TextView>(R.id.textView3)
-        val roleSpinner = findViewById<Spinner>(R.id.role_spinner)
-        val usernameInput = findViewById<EditText>(R.id.reg_username_input)
-        val emailInput = findViewById<EditText>(R.id.reg_email_input)
-        val passwordInput = findViewById<EditText>(R.id.reg_password_input)
-        val saveButton = findViewById<Button>(R.id.save_button)
+        googleClient = GoogleSignIn.getClient(
+            this,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+        )
 
-        // ===== Kembali ke Login =====
-        loginText.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+        findViewById<Button>(R.id.save_button).setOnClickListener {
+            registerEmail()
+        }
+
+        findViewById<Button>(R.id.btn_google_signup).setOnClickListener {
+            startActivityForResult(googleClient.signInIntent, 9002)
+        }
+
+        findViewById<TextView>(R.id.textView3).setOnClickListener {
             finish()
         }
-
-        // ===== REGISTER =====
-        saveButton.setOnClickListener {
-
-            val roleDisplay = roleSpinner.selectedItem.toString()
-            val nama = usernameInput.text.toString().trim()
-            val email = emailInput.text.toString().trim()
-            val password = passwordInput.text.toString().trim()
-
-            if (!validateInputs(nama, email, password)) return@setOnClickListener
-
-            val roleKey = if (roleDisplay == "User") "buyer" else "seller"
-
-            registerWithFirebase(nama, email, password, roleKey)
-        }
     }
 
-    /**
-     * ================= REGISTER FIREBASE AUTH =================
-     */
-    private fun registerWithFirebase(
-        nama: String,
-        email: String,
-        password: String,
-        roleKey: String
-    ) {
 
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener { result ->
+    private fun registerEmail() {
+        val name = findViewById<EditText>(R.id.input_name).text.toString()
+        val email = findViewById<EditText>(R.id.input_email).text.toString()
+        val pass = findViewById<EditText>(R.id.input_password).text.toString()
+        val dob = findViewById<EditText>(R.id.input_dob).text.toString()
+        val region = findViewById<EditText>(R.id.input_region).text.toString()
 
-                val uid = result.user!!.uid
+        if (email.isBlank() || pass.length < 6) return
 
-                // (OPSIONAL) legacy custom id: b1 / s1
-                generateCustomUserId(roleKey) { customId ->
+        auth.createUserWithEmailAndPassword(email, pass)
+            .addOnSuccessListener {
+                val uid = it.user!!.uid
+                val data = hashMapOf(
+                    "nama" to name,
+                    "email" to email,
+                    "role" to selectedRole,
+                    "dob" to dob.takeIf { selectedRole == "buyer" },
+                    "region" to region.takeIf { selectedRole == "seller" },
+                    "authProvider" to "email"
+                )
+                db.collection("users").document(uid).set(data)
+                finish()
+            }
+    }
 
-                    val userData = hashMapOf(
-                        "id" to customId,              // legacy ID (FIELD SAJA)
-                        "nama" to nama,
-                        "email" to email,
-                        "role" to roleKey,
-                        "authProvider" to "email",
-                        "createdAt" to System.currentTimeMillis()
+    override fun onActivityResult(rc: Int, res: Int, data: Intent?) {
+        super.onActivityResult(rc, res, data)
+        if (rc == 9002) {
+            val account = GoogleSignIn.getSignedInAccountFromIntent(data)
+                .getResult(ApiException::class.java)
+
+            val credential =
+                GoogleAuthProvider.getCredential(account.idToken, null)
+
+            auth.signInWithCredential(credential)
+                .addOnSuccessListener {
+                    val u = it.user!!
+                    val profile = hashMapOf(
+                        "nama" to (u.displayName ?: ""),
+                        "email" to (u.email ?: ""),
+                        "role" to selectedRole,
+                        "authProvider" to "google"
                     )
-
-                    // Firestore docId = UID Firebase
-                    db.collection("users")
-                        .document(uid)
-                        .set(userData)
-                        .addOnSuccessListener {
-                            Toast.makeText(
-                                this,
-                                "Registrasi berhasil! Silakan login.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            startActivity(Intent(this, LoginActivity::class.java))
-                            finish()
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(
-                                this,
-                                "Gagal menyimpan profil: ${it.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                    db.collection("users").document(u.uid).set(profile)
+                    finish()
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(
-                    this,
-                    "Registrasi gagal: ${it.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+        }
+    }
+
+    private fun setupRoleToggle() {
+
+        val btnBuyer = findViewById<MaterialButton>(R.id.btn_buyer)
+        val btnSeller = findViewById<MaterialButton>(R.id.btn_seller)
+
+        val nameInput = findViewById<EditText>(R.id.input_name)
+        val dobInput = findViewById<EditText>(R.id.input_dob)
+        val regionInput = findViewById<EditText>(R.id.input_region)
+
+        fun selectBuyer() {
+            selectedRole = "buyer"
+
+            nameInput.hint = "Nama Lengkap"
+            dobInput.visibility = View.VISIBLE
+            regionInput.visibility = View.GONE
+
+            btnBuyer.setTextColor(getColor(R.color.white))
+            btnSeller.setTextColor(getColor(R.color.green_primary))
+
+            btnBuyer.setBackgroundResource(R.drawable.bg_toggle_selected)
+            btnSeller.setBackgroundResource(R.drawable.bg_toggle_unselected)
+
+            animateToggle(btnBuyer)
+        }
+
+        fun selectSeller() {
+            selectedRole = "seller"
+
+            nameInput.hint = "Nama Toko"
+            dobInput.visibility = View.GONE
+            regionInput.visibility = View.VISIBLE
+
+            btnSeller.setTextColor(getColor(R.color.white))
+            btnBuyer.setTextColor(getColor(R.color.green_primary))
+
+            btnSeller.setBackgroundResource(R.drawable.bg_toggle_selected)
+            btnBuyer.setBackgroundResource(R.drawable.bg_toggle_unselected)
+
+            animateToggle(btnSeller)
+        }
+
+        btnBuyer.setOnClickListener { selectBuyer() }
+        btnSeller.setOnClickListener { selectSeller() }
+
+        // DEFAULT
+        selectBuyer()
+    }
+
+
+    private fun animateToggle(button: View) {
+        button.animate()
+            .scaleX(1.03f)
+            .scaleY(1.03f)
+            .setDuration(120)
+            .withEndAction {
+                button.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .duration = 80
             }
     }
 
-    /**
-     * ================= VALIDASI =================
-     */
-    private fun validateInputs(nama: String, email: String, password: String): Boolean {
-        if (nama.isEmpty()) {
-            showToast("Nama tidak boleh kosong")
-            return false
-        }
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            showToast("Email tidak valid")
-            return false
-        }
-        if (password.length < 6) {
-            showToast("Password minimal 6 karakter")
-            return false
-        }
-        return true
-    }
-
-    /**
-     * ================= LEGACY CUSTOM ID (OPSIONAL) =================
-     * Hanya dipakai sebagai FIELD, bukan autentikasi
-     */
-    private fun generateCustomUserId(roleKey: String, callback: (String) -> Unit) {
-        db.collection("users")
-            .whereEqualTo("role", roleKey)
-            .get()
-            .addOnSuccessListener { result ->
-                val prefix = if (roleKey == "buyer") "b" else "s"
-                val count = result.size() + 1
-                callback("$prefix$count")
-            }
-            .addOnFailureListener {
-                callback("") // tidak fatal
-            }
-    }
-
-    private fun showToast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-    }
 }
