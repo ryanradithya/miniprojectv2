@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -37,6 +38,7 @@ class AccountFragment : Fragment() {
         val btnAddExpedition: LinearLayout = v.findViewById(R.id.btn_add_expedition)
         val headerExpedition = v.findViewById<TextView>(R.id.header_expedition)
         val btnChangePass: LinearLayout = v.findViewById(R.id.btn_change_password)
+        val btnMLModel = v.findViewById<LinearLayout>(R.id.btn_ml_model)
 
 
         prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
@@ -59,6 +61,17 @@ class AccountFragment : Fragment() {
 
         btnChangePass.setOnClickListener {
             showChangePasswordDialog()
+        }
+
+        btnMLModel.setOnClickListener {
+            try {
+                // Navigasi ke MachineLearningFragment via NavController
+                val navController = findNavController()
+                navController.navigate(R.id.machineLearningFragment)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Gagal membuka Machine Learning", Toast.LENGTH_SHORT).show()
+                Log.e("AccountFragment", "Navigate to ML failed", e)
+            }
         }
 
         // Logout

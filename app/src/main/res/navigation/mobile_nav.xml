@@ -115,4 +115,10 @@
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
+    <fragment
+        android:id="@+id/machineLearningFragment"
+        android:name="com.example.miniprojectv2.MachineLearningFragment"
+        android:label="Machine Learning"
+        tools:layout="@layout/fragment_machine_learning" />
+
 </navigation>

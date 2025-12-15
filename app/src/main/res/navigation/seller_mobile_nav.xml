@@ -48,4 +48,11 @@
         android:name="com.example.miniprojectv2.AccountFragment"
         android:label="Account"
         tools:layout="@layout/fragment_account" />
+
+    <fragment
+        android:id="@+id/machineLearningFragment"
+        android:name="com.example.miniprojectv2.MachineLearningFragment"
+        android:label="Machine Learning"
+        tools:layout="@layout/fragment_machine_learning" />
+
 </navigation>
