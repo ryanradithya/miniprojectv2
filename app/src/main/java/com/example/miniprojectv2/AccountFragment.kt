@@ -343,7 +343,6 @@ class AccountFragment : Fragment() {
             }
     }
 
-
     private fun requestGpsAndTagLocation() {
 
         // Update UI immediately
