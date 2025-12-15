@@ -166,27 +166,36 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
 
         val userRef = db.collection("users").document(uid)
 
-        userRef.get().addOnSuccessListener { doc ->
+        userRef.get()
+            .addOnSuccessListener { doc ->
+                if (!doc.exists()) {
+                    val userData = hashMapOf(
+                        "id" to uid,
+                        "nama" to name,
+                        "email" to email,
+                        "role" to "buyer", // default pertama kali
+                        "authProvider" to "google",
+                        "createdAt" to System.currentTimeMillis()
+                    )
 
-            // ===== AUTO REGISTER JIKA BELUM ADA =====
-            if (!doc.exists()) {
-                val userData = hashMapOf(
-                    "id" to uid,
-                    "nama" to name,
-                    "email" to email,
-                    "role" to "buyer", // default pertama kali
-                    "authProvider" to "google",
-                    "createdAt" to System.currentTimeMillis()
-                )
+                    userRef.set(userData)
+                        .addOnSuccessListener {
+                            proceedAfterLogin(uid, name, email, "buyer")
+                        }
+                        .addOnFailureListener {
+                            toast("Gagal menyimpan akun Google")
+                            auth.signOut()
+                        }
 
-                userRef.set(userData).addOnSuccessListener {
-                    proceedAfterLogin(uid, name, email, "buyer")
+                } else {
+                    val role = doc.getString("role") ?: "buyer"
+                    proceedAfterLogin(uid, name, email, role)
                 }
-            } else {
-                val role = doc.getString("role") ?: "buyer"
-                proceedAfterLogin(uid, name, email, role)
             }
-        }
+            .addOnFailureListener {
+                toast("Gagal mengambil data akun Google")
+                auth.signOut()
+            }
     }
 
     private fun proceedAfterLogin(
@@ -237,6 +246,13 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
 
         db.collection("users").document(uid).get()
             .addOnSuccessListener { doc ->
+
+                if (!doc.exists()) {
+                    toast("Profil user tidak ditemukan")
+                    auth.signOut()
+                    return@addOnSuccessListener
+                }
+
                 val role = doc.getString("role") ?: "buyer"
                 val nama = doc.getString("nama") ?: ""
 
@@ -259,6 +275,11 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
                 )
                 finish()
             }
+            .addOnFailureListener {
+                toast("Gagal mengambil data user")
+                auth.signOut()
+            }
+
     }
 
 
@@ -323,8 +344,8 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
                 }
             }.addOnFailureListener {
                 addressText = "Lokasi tidak tersedia"
+                toast("Tidak dapat mengambil lokasi")
             }
-
     }
 
 
@@ -367,6 +388,7 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
             grantResults[0] == PackageManager.PERMISSION_GRANTED
         ) {
             requestGpsAndTagLocation()
+            toast("Izin lokasi ditolak")
         }
     }
 

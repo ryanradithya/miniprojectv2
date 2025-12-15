@@ -26,6 +26,8 @@ class RegisterActivity : AppCompatActivity() {
 
     private var selectedRole = "buyer"
 
+    private lateinit var saveButton: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
@@ -53,33 +55,94 @@ class RegisterActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.textView3).setOnClickListener {
             finish()
         }
+
+        saveButton = findViewById(R.id.save_button)
+        saveButton.setOnClickListener {
+            registerEmail()
+        }
+
     }
 
 
     private fun registerEmail() {
-        val name = findViewById<EditText>(R.id.input_name).text.toString()
-        val email = findViewById<EditText>(R.id.input_email).text.toString()
+
+        val name = findViewById<EditText>(R.id.input_name).text.toString().trim()
+        val email = findViewById<EditText>(R.id.input_email).text.toString().trim()
         val pass = findViewById<EditText>(R.id.input_password).text.toString()
-        val dob = findViewById<EditText>(R.id.input_dob).text.toString()
-        val region = findViewById<EditText>(R.id.input_region).text.toString()
+        val dob = findViewById<EditText>(R.id.input_dob).text.toString().trim()
+        val region = findViewById<EditText>(R.id.input_region).text.toString().trim()
 
-        if (email.isBlank() || pass.length < 6) return
+        saveButton.isEnabled = false
 
+        // ===== VALIDASI UMUM =====
+        if (name.isEmpty()) {
+            toast("Nama tidak boleh kosong")
+            return
+        }
+
+        if (email.isEmpty()) {
+            toast("Email tidak boleh kosong")
+            return
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            toast("Format email tidak valid")
+            return
+        }
+
+        if (pass.isEmpty()) {
+            toast("Password tidak boleh kosong")
+            return
+        }
+
+        if (pass.length < 6) {
+            toast("Password minimal 6 karakter")
+            return
+        }
+
+        // ===== VALIDASI ROLE =====
+        if (selectedRole == "buyer" && dob.isEmpty()) {
+            toast("Tanggal lahir wajib diisi untuk pembeli")
+            return
+        }
+
+        if (selectedRole == "seller" && region.isEmpty()) {
+            toast("Daerah wajib diisi untuk penjual")
+            return
+        }
+
+        // ===== FIREBASE REGISTER =====
         auth.createUserWithEmailAndPassword(email, pass)
             .addOnSuccessListener {
                 val uid = it.user!!.uid
+
                 val data = hashMapOf(
                     "nama" to name,
                     "email" to email,
                     "role" to selectedRole,
                     "dob" to dob.takeIf { selectedRole == "buyer" },
                     "region" to region.takeIf { selectedRole == "seller" },
-                    "authProvider" to "email"
+                    "authProvider" to "email",
+                    "createdAt" to System.currentTimeMillis()
                 )
-                db.collection("users").document(uid).set(data)
-                finish()
+
+                db.collection("users")
+                    .document(uid)
+                    .set(data)
+                    .addOnSuccessListener {
+                        toast("Registrasi berhasil, silakan login")
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        toast("Gagal menyimpan data user")
+                    }
+            }
+            .addOnFailureListener {
+                toast(it.message ?: "Registrasi gagal")
+                saveButton.isEnabled = true
             }
     }
+
 
     override fun onActivityResult(rc: Int, res: Int, data: Intent?) {
         super.onActivityResult(rc, res, data)
@@ -165,6 +228,10 @@ class RegisterActivity : AppCompatActivity() {
                     .scaleY(1f)
                     .duration = 80
             }
+    }
+
+    private fun toast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
 }
