@@ -1,29 +1,152 @@
 package com.example.miniprojectv2
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.example.miniprojectv2.model.LoanRequest
+import com.example.miniprojectv2.viewmodel.MachineLearningViewModel
+import com.example.miniprojectv2.viewmodel.PredictionState
 
 class MachineLearningFragment : Fragment(R.layout.fragment_machine_learning) {
 
+    private val viewModel: MachineLearningViewModel by viewModels()
+
+//    spinner attributes
+    private val termOptions = listOf("36 months", "60 months")
+    private val gradeOptions = listOf("A", "B", "C", "D", "E", "F", "G")
+    private val homeOwnershipOptions = listOf("MORTGAGE", "NONE", "OTHER", "OWN", "RENT")
+    private val verificationOptions = listOf("Not Verified", "Source Verified", "Verified")
+    private val purposeOptions = listOf(
+        "car", "credit_card", "debt_consolidation", "educational",
+        "home_improvement", "house", "major_purchase", "medical",
+        "moving", "other", "renewable_energy", "small_business",
+        "vacation", "wedding"
+    )
+
+    private var DEFAULT_DESCRIPTION =
+        "Prediksi ini merepresentasikan kategori suku bunga yang diperkirakan berdasarkan informasi pinjaman dan peminjam yang diberikan." +
+        "Hasil ini dihasilkan menggunakan model machine learning yang dilatih dengan data pinjaman historis dan hanya digunakan sebagai referensi, bukan sebagai jaminan atau keputusan final."
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val spinnerTerm = view.findViewById<Spinner>(R.id.spinnerTerm)
+        val spinnerGrade = view.findViewById<Spinner>(R.id.spinnerGrade)
+        val spinnerHome = view.findViewById<Spinner>(R.id.spinnerHomeOwnership)
+        val spinnerVerification = view.findViewById<Spinner>(R.id.spinnerVerification)
+        val spinnerPurpose = view.findViewById<Spinner>(R.id.spinnerPurpose)
 
-        // =============================
-        // TEMPORARY PLACEHOLDER LOGIC
-        // =============================
-        // Ini cuma penanda bahwa fragment berhasil dibuka
-        Toast.makeText(
-            requireContext(),
-            "Machine Learning Settings dibuka",
-            Toast.LENGTH_SHORT
-        ).show()
+        setupSpinner(spinnerTerm, termOptions)
+        setupSpinner(spinnerGrade, gradeOptions)
+        setupSpinner(spinnerHome, homeOwnershipOptions)
+        setupSpinner(spinnerVerification, verificationOptions)
+        setupSpinner(spinnerPurpose, purposeOptions)
 
-        // Nanti di sini kamu akan:
-        // - init switch ML
-        // - load saved config
-        // - setup spinner / radio button model
-        // - connect ke ViewModel / DataStore
+        val loanAmountEt = view.findViewById<EditText>(R.id.etLoanAmount)
+        val installmentEt = view.findViewById<EditText>(R.id.etInstallment)
+        val annualIncomeEt = view.findViewById<EditText>(R.id.etAnnualIncome)
+
+        val predictBtn = view.findViewById<Button>(R.id.btnPredict)
+        val statusTv = view.findViewById<TextView>(R.id.tvStatus)
+        val predictionTv = view.findViewById<TextView>(R.id.tvPrediction)
+        val explanationTv = view.findViewById<TextView>(R.id.tvExplanation)
+
+        predictBtn.setOnClickListener {
+            val loanAmount = loanAmountEt.text.toString().toIntOrNull()
+            val installment = installmentEt.text.toString().toIntOrNull()
+            val annualIncome = annualIncomeEt.text.toString().toIntOrNull()
+
+            if (loanAmount == null || loanAmount !in 5000..10000) {
+                loanAmountEt.error = "Harus diantara 5000 dan 10000"
+                return@setOnClickListener
+            }
+
+            if (installment == null || installment !in 100..1000) {
+                installmentEt.error = "Harus diantara 100 dan 1000"
+                return@setOnClickListener
+            }
+
+            if (annualIncome == null || annualIncome < 0) {
+                annualIncomeEt.error = "Income tidak boleh minus"
+                return@setOnClickListener
+            }
+
+            val term = spinnerTerm.selectedItem.toString()
+            val grade = spinnerGrade.selectedItem.toString()
+            val homeOwnership = spinnerHome.selectedItem.toString()
+            val verification = spinnerVerification.selectedItem.toString()
+            val purpose = spinnerPurpose.selectedItem.toString()
+
+            explanationTv.text = DEFAULT_DESCRIPTION
+
+
+            val request = LoanRequest(
+                loan_amnt = loanAmount,
+                term = term,
+                installment = 300.0,
+                grade = grade,
+                home_ownership = homeOwnership,
+                annual_inc = 60000.0,
+                verification_status = verification,
+                purpose = purpose,
+                delinq_2yrs = 0,
+                inq_last_6mths = 0,
+                open_acc = 0,
+                pub_rec = 0,
+                total_acc = 0
+            )
+
+            viewModel.predict(request)
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is PredictionState.Loading -> {
+                    statusTv.text = "Connecting to API..."
+                }
+                is PredictionState.Success -> {
+                    statusTv.text = "Success"
+                    predictionTv.visibility = View.VISIBLE
+                    explanationTv.visibility = View.VISIBLE
+
+                    predictionTv.text = state.prediction
+                    explanationTv.text = state.description
+
+                    predictionTv.setTextColor(
+                        when (state.prediction) {
+                            "Low" -> Color.GREEN
+                            "Mid" -> Color.BLUE
+                            "High" -> Color.parseColor("#FFA500")
+                            "Very High" -> Color.RED
+                            else -> Color.GRAY
+                        }
+                    )
+                }
+                is PredictionState.Error -> {
+                    statusTv.text = state.message
+                }
+                else -> Unit
+            }
+        }
     }
+    private fun setupSpinner(
+        spinner: Spinner,
+        items: List<String>
+    ) {
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            items
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+    }
+
 }

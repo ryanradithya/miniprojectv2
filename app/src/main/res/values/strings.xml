@@ -6,6 +6,11 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
+    <string name="defaultDescription">
+    Prediksi ini merepresentasikan kategori suku bunga yang diperkirakan berdasarkan informasi pinjaman dan peminjam yang diberikan.
+    Hasil ini dihasilkan menggunakan model machine learning (Decision Tree, dengan akurasi 94.96%) yang dilatih dengan data pinjaman historis dan hanya digunakan sebagai referensi,
+    bukan sebagai jaminan atau keputusan final.
+</string>
     <string-array name="account_types">
         <item>User</item>
         <item>Seller</item>
