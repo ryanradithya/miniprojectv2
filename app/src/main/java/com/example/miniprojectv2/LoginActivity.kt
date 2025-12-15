@@ -1,8 +1,13 @@
 package com.example.miniprojectv2
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.util.Patterns
 import android.view.View
@@ -13,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.core.app.ActivityCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -21,21 +27,43 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.GoogleAuthProvider
+import java.util.Locale
+
+import com.google.android.gms.location.*
 
 class LoginActivity : AppCompatActivity(), LoginLayoutController {
-
-
     private lateinit var auth: FirebaseAuth
     private lateinit var googleClient: GoogleSignInClient
     private val RC_GOOGLE_SIGN_IN = 9001
 
     private val db = FirebaseFirestore.getInstance()
     private lateinit var prefs: android.content.SharedPreferences
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val LOCATION_PERMISSION_REQUEST = 1001
+
+    private var addressText: String = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+
+        fusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(this)
+
+        val locationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+        } else {
+            requestGpsAndTagLocation()
+        }
+
+
 
         IpHelper.autoDetectServer(this) {
             Log.d("IpHelper", "Server detected: $it")
@@ -195,6 +223,10 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
                     .putString("active_username", nama)
                     .putString("active_email", email)
                     .putBoolean("isSeller", role == "seller")
+                    .putString(
+                        "active_location",
+                        if (addressText.isNotBlank()) addressText else "Lokasi tidak tersedia"
+                    )
                     .apply()
 
                 startActivity(
@@ -233,4 +265,88 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
         findViewById<FrameLayout>(R.id.login_fragment_container).visibility = View.GONE
     }
 
+    private fun requestGpsAndTagLocation() {
+
+        // Permission check
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST
+            )
+            return
+        }
+
+        // GPS enabled check
+        val locationManager =
+            getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
+
+        if (!locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+            return
+        }
+
+        // Get current location (reliable)
+        val request = CurrentLocationRequest.Builder()
+            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            .build()
+
+        fusedLocationClient.getCurrentLocation(request, null)
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    getAddressFromLocation(location.latitude, location.longitude)
+                }
+            }.addOnFailureListener {
+                addressText = "Lokasi tidak tersedia"
+            }
+
+    }
+
+
+     fun getAddressFromLocation(lat: Double, lon: Double) {
+         Thread {
+             addressText = try {
+                 val geocoder = Geocoder(this, Locale.getDefault())
+                 val addresses = geocoder.getFromLocation(lat, lon, 1)
+
+                 if (!addresses.isNullOrEmpty()) {
+                     val a = addresses[0]
+                     listOf(
+                         a.locality ?: a.subAdminArea,
+                         a.adminArea,
+                         a.countryName
+                     ).filterNotNull().joinToString(", ")
+                 } else {
+                     "Alamat tidak ditemukan"
+                 }
+             } catch (e: Exception) {
+                 "Gagal membaca lokasi"
+             }
+
+             runOnUiThread {
+                 Log.d("GPS", "Tagged location: $addressText")
+             }
+
+         }.start()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST &&
+            grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            requestGpsAndTagLocation()
+        }
+    }
+
 }
+

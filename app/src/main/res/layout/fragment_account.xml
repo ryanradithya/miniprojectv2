@@ -33,6 +33,14 @@
             android:layout_height="wrap_content"
             android:text="email@example.com"
             android:textSize="16sp"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location example"
+            android:textSize="16sp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"/>
 
@@ -129,6 +137,45 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- UBH LOKASI -->
+        <LinearLayout
+            android:id="@+id/btn_change_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="14dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_location_logo"
+                android:layout_marginRight="12dp"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:text="Ubah Lokasi Toko"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/my_custom_status_bar"/>
+
+                <TextView
+                    android:text="Perbarui lokasi toko Anda"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:textColor="@color/my_custom_status_bar"/>
+            </LinearLayout>
+        </LinearLayout>
 
         <!-- ===============================
              HEADER 2: PENGATURAN EKSPEDISI

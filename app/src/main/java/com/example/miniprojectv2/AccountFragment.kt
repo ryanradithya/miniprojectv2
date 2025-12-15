@@ -14,8 +14,23 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.*
+import com.google.android.material.snackbar.Snackbar
+import android.location.Geocoder
+import java.util.Locale
+
 
 class AccountFragment : Fragment() {
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST = 1001
+    }
+
 
     private val db = FirebaseFirestore.getInstance()
     private lateinit var prefs: android.content.SharedPreferences
@@ -23,11 +38,18 @@ class AccountFragment : Fragment() {
 
     private var userUID: String = ""
     private var isSeller: Boolean = false
+    private var addressText: String = ""
+
+    private lateinit var tvLocation: TextView
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        fusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
 
         val v = inflater.inflate(R.layout.fragment_account, container, false)
 
@@ -44,6 +66,10 @@ class AccountFragment : Fragment() {
 
         userUID = prefs.getString("active_uid", "") ?: ""
         isSeller = prefs.getBoolean("isSeller", false)
+        addressText = prefs.getString(
+            "active_location",
+            "Lokasi tidak tersedia"
+        ).toString()
 
         if (userUID.isEmpty()) {
             Toast.makeText(requireContext(), "Tidak ada user aktif!", Toast.LENGTH_SHORT).show()
@@ -96,6 +122,23 @@ class AccountFragment : Fragment() {
 
         return v
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        fusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        tvLocation = view.findViewById(R.id.tv_location)
+        tvLocation.text = addressText
+
+        val btnChangeLocation = view.findViewById<LinearLayout>(R.id.btn_change_location)
+        btnChangeLocation.setOnClickListener {
+            requestGpsAndTagLocation()
+        }
+    }
+
+
 
     private fun loadUserData(tvName: TextView, tvEmail: TextView) {
         db.collection("users")
@@ -203,5 +246,97 @@ class AccountFragment : Fragment() {
             }
             .setNegativeButton("Batal", null)
             .show()
+    }
+
+    private fun requestGpsAndTagLocation() {
+
+        // Update UI immediately
+        tvLocation.text = "📡 Mengambil lokasi..."
+
+        Snackbar.make(
+            requireView(),
+            "Mengambil lokasi GPS...",
+            Snackbar.LENGTH_SHORT
+        ).show()
+
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST
+            )
+            return
+        }
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    val lat = location.latitude
+                    val lon = location.longitude
+
+                    addressText = getAddressFromLocation(lat, lon)
+
+                    tvLocation.text = addressText
+                    prefs.edit()
+                        .putString("active_location", addressText)
+                        .apply()
+
+
+
+                } else {
+                    tvLocation.text = "Lokasi tidak tersedia"
+                }
+            }
+            .addOnFailureListener {
+                tvLocation.text = "Gagal mendapatkan lokasi"
+            }
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST &&
+            grantResults.isNotEmpty() &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            requestGpsAndTagLocation()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Izin lokasi ditolak",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun getAddressFromLocation(lat: Double, lon: Double): String {
+        return try {
+            val geocoder = Geocoder(requireContext(), Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, lon, 1)
+
+            if (!addresses.isNullOrEmpty()) {
+                val address = addresses[0]
+
+                val city = address.locality ?: address.subAdminArea ?: ""
+                val province = address.adminArea ?: ""
+                val country = address.countryName ?: ""
+
+                listOf(city, province, country)
+                    .filter { it.isNotEmpty() }
+                    .joinToString(", ")
+            } else {
+                "Alamat tidak ditemukan"
+            }
+        } catch (e: Exception) {
+            "Gagal mendapatkan alamat"
+        }
     }
 }
