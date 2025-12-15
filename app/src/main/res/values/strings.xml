@@ -16,4 +16,8 @@
         <item>Seller</item>
     </string-array>
 
+    <string name="default_web_client_id">
+    774037551904-m16bup3h0d7s4o3blsng2cpg8vgufgie.apps.googleusercontent.com
+    </string>
+
 </resources>

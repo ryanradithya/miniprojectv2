@@ -10,54 +10,66 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
 
 class ForgotPasswordFragment : Fragment() {
 
-    private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return inflater.inflate(R.layout.fragment_forgot_password, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         val emailInput = view.findViewById<EditText>(R.id.email_input)
-        val newPassInput = view.findViewById<EditText>(R.id.new_password_input)
         val resetButton = view.findViewById<Button>(R.id.btn_reset)
         val backText = view.findViewById<TextView>(R.id.textView_back_login)
 
+        // Kembali ke login
         backText.setOnClickListener {
-            // Kembalikan layout login
-            (requireActivity() as LoginActivity).restoreLoginLayout()
+            (requireActivity() as? LoginLayoutController)?.restoreLoginLayout()
             parentFragmentManager.popBackStack()
         }
 
+        // Kirim email reset password
         resetButton.setOnClickListener {
             val email = emailInput.text.toString().trim()
-            val newPassword = newPassInput.text.toString().trim()
 
-            // Validasi input
-            if (!validateInputs(email, newPassword)) return@setOnClickListener
+            if (!validateEmail(email)) return@setOnClickListener
 
-            // Update password
-            updatePassword(email, newPassword)
+            sendResetEmail(email)
         }
     }
 
-    private fun validateInputs(email: String, password: String): Boolean {
+    /**
+     * ================= RESET PASSWORD =================
+     */
+    private fun sendResetEmail(email: String) {
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener {
+                showToast("Link reset password telah dikirim ke email")
+                (requireActivity() as? LoginLayoutController)?.restoreLoginLayout()
+                parentFragmentManager.popBackStack()
+            }
+            .addOnFailureListener {
+                showToast("Email tidak terdaftar")
+            }
+    }
+
+    /**
+     * ================= VALIDASI =================
+     */
+    private fun validateEmail(email: String): Boolean {
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            showToast("Email tidak valid!")
-            return false
-        }
-        if (password.isEmpty() || password.length < 4) {
-            showToast("Password minimal 4 karakter!")
+            showToast("Email tidak valid")
             return false
         }
         return true
@@ -65,38 +77,5 @@ class ForgotPasswordFragment : Fragment() {
 
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun updatePassword(email: String, newPassword: String) {
-        firestore.collection("users")
-            .whereEqualTo("email", email)
-            .get()
-            .addOnSuccessListener { documents ->
-
-                if (documents.isEmpty) {
-                    showToast("Email tidak ditemukan!")
-                    return@addOnSuccessListener
-                }
-
-                val userDoc = documents.documents[0].reference
-
-                // Hash password baru
-                val hashed = PasswordBcrypt.hashPassword(newPassword)
-
-                userDoc.update("password", hashed)
-                    .addOnSuccessListener {
-                        showToast("Password berhasil diubah!")
-
-                        // Kembalikan UI login
-                        (requireActivity() as LoginActivity).restoreLoginLayout()
-                        parentFragmentManager.popBackStack()
-                    }
-                    .addOnFailureListener {
-                        showToast("Gagal update password!")
-                    }
-            }
-            .addOnFailureListener {
-                showToast("Terjadi kesalahan!")
-            }
     }
 }
