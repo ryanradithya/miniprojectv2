@@ -11,6 +11,7 @@ import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.Query
@@ -101,7 +102,7 @@ class BeliFragment : Fragment() {
         productRecycler = view.findViewById(R.id.product_recycler)
 
         adapter = ProductAdapter(mutableListOf(), isSeller = isSeller)
-        productRecycler.layoutManager = LinearLayoutManager(requireContext())
+        productRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
         productRecycler.adapter = adapter
 
         loadAllProducts()

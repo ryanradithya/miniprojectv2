@@ -223,6 +223,9 @@ class ProductAdapter(
                 }
             }
         }
+        holder.itemView.findViewById<TextView>(R.id.product_rating)?.text =
+            "⭐ ${String.format("%.1f", product.rating)}"
+
     }
 
     //counter jumlah produk

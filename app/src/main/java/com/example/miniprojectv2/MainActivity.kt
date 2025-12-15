@@ -68,8 +68,8 @@ class MainActivity : AppCompatActivity() {
         toolbar.navigationIcon?.setTint(getColor(android.R.color.white))
 
         // Drawer & Nav
-        val drawerLayout = findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer_layout)
-        val navView = findViewById<NavigationView>(R.id.nav_view)
+//        val drawerLayout = findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer_layout)
+//        val navView = findViewById<NavigationView>(R.id.nav_view)
         val bottomNavContainer = findViewById<View>(R.id.bottom_nav)
 
         val navHostFragment =
@@ -84,11 +84,11 @@ class MainActivity : AppCompatActivity() {
                 R.id.transactionsFragment,
                 R.id.accountFragment
             ),
-            drawerLayout
+//            drawerLayout
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+//        navView.setupWithNavController(navController)
 
 
         // Custom bottom navigation
@@ -198,9 +198,9 @@ class MainActivity : AppCompatActivity() {
         val username = prefs.getString("active_username", "John Doe")
         val email = prefs.getString("active_email", "johndoe@example.com")
 
-        val headerView = navView.getHeaderView(0)
-        headerView.findViewById<TextView>(R.id.header_title).text = username
-        headerView.findViewById<TextView>(R.id.header_subtitle).text = email
+//        val headerView = navView.getHeaderView(0)
+//        headerView.findViewById<TextView>(R.id.header_title).text = username
+//        headerView.findViewById<TextView>(R.id.header_subtitle).text = email
     }
 
     private fun askNotificationPermission() {

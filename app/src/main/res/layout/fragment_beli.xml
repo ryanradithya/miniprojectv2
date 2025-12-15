@@ -3,32 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp">
-
-    <!-- Judul Rekomendasi -->
-    <TextView
-        android:id="@+id/rekomendasi_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="Rekomendasi Produk"
-        android:textSize="18sp" />
-
-    <!-- RecyclerView Horizontal -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rekomendasi_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:overScrollMode="never"
-        android:padding="8dp" />
-
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:background="@drawable/bg_header_green_bottom_round">
 
         <!-- Search Bar -->
         <LinearLayout
@@ -38,6 +20,7 @@
             android:layout_margin="8dp"
             android:layout_marginBottom="12dp"
             android:background="@drawable/bg_search"
+            android:backgroundTint="@color/white"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="8dp">
@@ -75,8 +58,32 @@
             android:src="@drawable/ic_shopping_cart"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Keranjang"
-            app:tint="#555" />
+            app:tint="#ffffff" />
     </LinearLayout>
+
+    <!-- Judul Rekomendasi -->
+<!--    <TextView-->
+<!--        android:id="@+id/rekomendasi_title"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="8dp"-->
+<!--        android:layout_marginRight="8dp"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:text="Rekomendasi Produk"-->
+<!--        android:textSize="18sp" />-->
+
+    <!-- RecyclerView Horizontal -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rekomendasi_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:padding="8dp" />
+
+
 
     <!-- Judul Belanja -->
     <TextView
@@ -85,6 +92,8 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Belanja Sekarang"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
         android:textSize="18sp" />
 
     <!--    category -->
@@ -99,13 +108,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"/>
     </HorizontalScrollView>
 
-    <!-- RecyclerView Produk Utama -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/product_recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:padding="8dp" />
+
 </LinearLayout>
