@@ -72,7 +72,6 @@ class RegisterActivity : AppCompatActivity() {
         val dob = findViewById<EditText>(R.id.input_dob).text.toString().trim()
         val region = findViewById<EditText>(R.id.input_region).text.toString().trim()
 
-        saveButton.isEnabled = false
 
         // ===== VALIDASI UMUM =====
         if (name.isEmpty()) {
@@ -110,6 +109,8 @@ class RegisterActivity : AppCompatActivity() {
             toast("Daerah wajib diisi untuk penjual")
             return
         }
+
+        saveButton.isEnabled = false
 
         // ===== FIREBASE REGISTER =====
         auth.createUserWithEmailAndPassword(email, pass)
