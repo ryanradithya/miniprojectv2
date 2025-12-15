@@ -173,56 +173,25 @@ class AccountFragment : Fragment() {
             .setTitle("Edit Akun")
             .setView(dialogView)
             .setPositiveButton("Simpan") { _, _ ->
+
                 val newName = etName.text.toString().trim()
                 val newEmail = etEmail.text.toString().trim()
 
-                val firebaseUser = auth.currentUser
-
                 if (newName.isEmpty() || newEmail.isEmpty()) {
-                    Toast.makeText(requireContext(), "Field tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Nama dan email tidak boleh kosong",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return@setPositiveButton
                 }
 
-                // Update email Firebase (jika berubah)
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Edit Akun")
-                    .setView(dialogView)
-                    .setPositiveButton("Simpan") { _, _ ->
-                        val newName = etName.text.toString().trim()
-                        val newEmail = etEmail.text.toString().trim()
-
-                        if (newName.isEmpty() || newEmail.isEmpty()) {
-                            Toast.makeText(requireContext(), "Field tidak boleh kosong", Toast.LENGTH_SHORT).show()
-                            return@setPositiveButton
-                        }
-
-                        updateProfile(newName, newEmail, tvName, tvEmail)
-                    }
-                    .setNegativeButton("Batal", null)
-                    .show()
-
-
-                db.collection("users")
-                    .document(userUID)
-                    .update(
-                        mapOf(
-                            "nama" to newName,
-                            "email" to newEmail
-                        )
-                    )
-                    .addOnSuccessListener {
-                        tvName.text = newName
-                        tvEmail.text = newEmail
-                        prefs.edit()
-                            .putString("active_username", newName)
-                            .putString("active_email", newEmail)
-                            .apply()
-                        Toast.makeText(requireContext(), "Profil diperbarui", Toast.LENGTH_SHORT).show()
-                    }
+                updateProfile(newName, newEmail, tvName, tvEmail)
             }
             .setNegativeButton("Batal", null)
             .show()
     }
+
 
     private fun showChangePasswordDialog() {
         val dialogView = LayoutInflater.from(requireContext())
