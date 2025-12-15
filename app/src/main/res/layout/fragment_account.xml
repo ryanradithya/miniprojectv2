@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Pengaturan Akun"
-            android:textSize="14sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#555"
             android:layout_marginBottom="8dp"/>
@@ -121,7 +121,7 @@
                 android:layout_weight="1">
 
                 <TextView
-                    android:text="Ubah Password"
+                    android:text="Ubah Kata Sandi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
@@ -320,7 +320,7 @@
                 android:layout_weight="1">
 
                 <TextView
-                    android:text="Logout"
+                    android:text="Keluar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
