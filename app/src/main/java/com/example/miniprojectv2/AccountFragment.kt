@@ -2,6 +2,7 @@ package com.example.miniprojectv2
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,8 +19,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 class AccountFragment : Fragment() {
 
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var prefs: android.content.SharedPreferences
     private val auth = FirebaseAuth.getInstance()
+    private lateinit var prefs: SharedPreferences
 
     private var userUID: String = ""
     private var isSeller: Boolean = false
@@ -33,12 +34,13 @@ class AccountFragment : Fragment() {
 
         val tvUsername: TextView = v.findViewById(R.id.tv_username)
         val tvEmail: TextView = v.findViewById(R.id.tv_email)
+
         val btnLogout: LinearLayout = v.findViewById(R.id.btn_logout)
         val btnEdit: LinearLayout = v.findViewById(R.id.btn_edit)
-        val btnAddExpedition: LinearLayout = v.findViewById(R.id.btn_add_expedition)
-        val headerExpedition = v.findViewById<TextView>(R.id.header_expedition)
         val btnChangePass: LinearLayout = v.findViewById(R.id.btn_change_password)
-        val btnMLModel = v.findViewById<LinearLayout>(R.id.btn_ml_model)
+        val btnAddExpedition: LinearLayout = v.findViewById(R.id.btn_add_expedition)
+        val btnMLModel: LinearLayout = v.findViewById(R.id.btn_ml_model)
+        val headerExpedition: TextView = v.findViewById(R.id.header_expedition)
 
         prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
@@ -50,27 +52,30 @@ class AccountFragment : Fragment() {
             return v
         }
 
+        // ===== Load user data =====
         loadUserData(tvUsername, tvEmail)
 
+        // ===== Edit Profile =====
         btnEdit.setOnClickListener {
             showEditDialog(tvUsername, tvEmail)
         }
 
+        // ===== Change Password =====
         btnChangePass.setOnClickListener {
             showChangePasswordDialog()
         }
 
+        // ===== Machine Learning =====
         btnMLModel.setOnClickListener {
             try {
-                // Navigasi ke MachineLearningFragment via NavController
-                val navController = findNavController()
-                navController.navigate(R.id.machineLearningFragment)
+                findNavController().navigate(R.id.machineLearningFragment)
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Gagal membuka Machine Learning", Toast.LENGTH_SHORT).show()
-                Log.e("AccountFragment", "Navigate to ML failed", e)
+                Log.e("AccountFragment", "Navigation error", e)
             }
         }
 
+        // ===== Logout =====
         btnLogout.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Konfirmasi Logout")
@@ -97,18 +102,29 @@ class AccountFragment : Fragment() {
         return v
     }
 
+
     private fun loadUserData(tvName: TextView, tvEmail: TextView) {
         db.collection("users")
             .document(userUID)
             .get()
             .addOnSuccessListener { doc ->
                 if (!doc.exists()) return@addOnSuccessListener
+
                 tvName.text = doc.getString("nama") ?: ""
                 tvEmail.text = doc.getString("email") ?: ""
+
+                // Optional future use
+                val dob = doc.getString("dob")       // buyer only
+                val region = doc.getString("region") // seller only
+            }
+            .addOnFailureListener {
+                Toast.makeText(requireContext(), "Gagal memuat profil", Toast.LENGTH_SHORT).show()
             }
     }
 
+
     private fun showEditDialog(tvName: TextView, tvEmail: TextView) {
+
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_edit_account, null)
 
@@ -122,19 +138,43 @@ class AccountFragment : Fragment() {
             .setTitle("Edit Akun")
             .setView(dialogView)
             .setPositiveButton("Simpan") { _, _ ->
+
                 val newName = etName.text.toString().trim()
                 val newEmail = etEmail.text.toString().trim()
-
                 val firebaseUser = auth.currentUser
 
-                //  Update email Firebase jika user Firebase
-                if (firebaseUser != null && newEmail != firebaseUser.email) {
-                    firebaseUser.updateEmail(newEmail)
+                if (newName.isEmpty() || newEmail.isEmpty()) {
+                    Toast.makeText(requireContext(), "Field tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
                 }
+
+                // Update email Firebase (jika berubah)
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Edit Akun")
+                    .setView(dialogView)
+                    .setPositiveButton("Simpan") { _, _ ->
+                        val newName = etName.text.toString().trim()
+                        val newEmail = etEmail.text.toString().trim()
+
+                        if (newName.isEmpty() || newEmail.isEmpty()) {
+                            Toast.makeText(requireContext(), "Field tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                            return@setPositiveButton
+                        }
+
+                        updateProfile(newName, newEmail, tvName, tvEmail)
+                    }
+                    .setNegativeButton("Batal", null)
+                    .show()
+
 
                 db.collection("users")
                     .document(userUID)
-                    .update(mapOf("nama" to newName, "email" to newEmail))
+                    .update(
+                        mapOf(
+                            "nama" to newName,
+                            "email" to newEmail
+                        )
+                    )
                     .addOnSuccessListener {
                         tvName.text = newName
                         tvEmail.text = newEmail
@@ -149,7 +189,9 @@ class AccountFragment : Fragment() {
             .show()
     }
 
+
     private fun showChangePasswordDialog() {
+
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_change_password, null)
 
@@ -160,8 +202,19 @@ class AccountFragment : Fragment() {
             .setTitle("Ubah Password")
             .setView(dialogView)
             .setPositiveButton("Simpan") { _, _ ->
+
                 val oldPass = etOld.text.toString()
                 val newPass = etNew.text.toString()
+
+                if (newPass.length < 6) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Password minimal 6 karakter",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setPositiveButton
+                }
+
                 changePassword(oldPass, newPass)
             }
             .setNegativeButton("Batal", null)
@@ -170,28 +223,31 @@ class AccountFragment : Fragment() {
 
     private fun changePassword(oldPassword: String, newPassword: String) {
 
-        val firebaseUser = auth.currentUser
+        val firebaseUser = auth.currentUser ?: return
 
-        // USER FIREBASE
-        if (firebaseUser != null && firebaseUser.email != null) {
+        val credential = EmailAuthProvider
+            .getCredential(firebaseUser.email!!, oldPassword)
 
-            val credential = EmailAuthProvider
-                .getCredential(firebaseUser.email!!, oldPassword)
-
-            firebaseUser.reauthenticate(credential)
-                .addOnSuccessListener {
-                    firebaseUser.updatePassword(newPassword)
-                        .addOnSuccessListener {
-                            Toast.makeText(requireContext(), "Password berhasil diubah", Toast.LENGTH_SHORT).show()
-                        }
-                }
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Password lama salah", Toast.LENGTH_SHORT).show()
-                }
-
-            return
-        }
+        firebaseUser.reauthenticate(credential)
+            .addOnSuccessListener {
+                firebaseUser.updatePassword(newPassword)
+                    .addOnSuccessListener {
+                        Toast.makeText(
+                            requireContext(),
+                            "Password berhasil diubah",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    requireContext(),
+                    "Password lama salah",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
+
 
     private fun showAddExpeditionDialog() {
         val input = EditText(requireContext())
@@ -199,9 +255,61 @@ class AccountFragment : Fragment() {
             .setTitle("Tambah Ekspedisi")
             .setView(input)
             .setPositiveButton("Tambah") { _, _ ->
-                (activity as? SellerActivity)?.addDeliveryExpedition(input.text.toString())
+                (activity as? SellerActivity)
+                    ?.addDeliveryExpedition(input.text.toString())
             }
             .setNegativeButton("Batal", null)
             .show()
     }
+
+    private fun updateProfile(
+        newName: String,
+        newEmail: String,
+        tvName: TextView,
+        tvEmail: TextView
+    ) {
+        val firebaseUser = auth.currentUser
+
+        if (firebaseUser != null && firebaseUser.email != newEmail) {
+            firebaseUser.updateEmail(newEmail)
+                .addOnSuccessListener {
+                    updateFirestoreProfile(newName, newEmail, tvName, tvEmail)
+                }
+                .addOnFailureListener {
+                    Toast.makeText(
+                        requireContext(),
+                        "Silakan login ulang untuk mengganti email",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+        } else {
+            updateFirestoreProfile(newName, newEmail, tvName, tvEmail)
+        }
+    }
+
+    private fun updateFirestoreProfile(
+        newName: String,
+        newEmail: String,
+        tvName: TextView,
+        tvEmail: TextView
+    ) {
+        db.collection("users")
+            .document(userUID)
+            .update(
+                mapOf(
+                    "nama" to newName,
+                    "email" to newEmail
+                )
+            )
+            .addOnSuccessListener {
+                tvName.text = newName
+                tvEmail.text = newEmail
+                prefs.edit()
+                    .putString("active_username", newName)
+                    .putString("active_email", newEmail)
+                    .apply()
+                Toast.makeText(requireContext(), "Profil diperbarui", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 }
