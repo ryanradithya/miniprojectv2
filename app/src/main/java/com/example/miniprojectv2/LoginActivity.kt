@@ -37,6 +37,11 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        IpHelper.autoDetectServer(this) {
+            Log.d("IpHelper", "Server detected: $it")
+        }
+
+
         // ===== Status bar =====
         val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
