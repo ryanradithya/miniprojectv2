@@ -156,6 +156,7 @@ object ProductRepository {
     fun addReviewToProduct(
         productName: String,
         reviewer: String,
+        transactionId: String,
         comment: String,
         rating: Float,
         onComplete: () -> Unit,
@@ -170,18 +171,39 @@ object ProductRepository {
                     return@addOnSuccessListener
                 }
 
-                val productId = result.documents.first().id
+                val doc = result.documents.first()
+                val product = doc.toObject(Product::class.java)
+                    ?: return@addOnSuccessListener
 
-                val review = Review(
+                // 🔒 proteksi transaksi
+                if (product.reviews.any {
+                        it.reviewerName == reviewer &&
+                                it.transactionId == transactionId
+                    }) {
+                    onError(Exception("Review sudah ada untuk transaksi ini"))
+                    return@addOnSuccessListener
+                }
+
+                val newReview = Review(
                     reviewerName = reviewer,
+                    transactionId = transactionId,
                     comment = comment,
                     rating = rating,
-                    date = System.currentTimeMillis().toString()
+                    date = System.currentTimeMillis()
                 )
 
-                col.document(productId)
-                    .collection("reviews")
-                    .add(review)
+                val updatedReviews = product.reviews + newReview
+                val avgRating =
+                    updatedReviews.map { it.rating }.average().toFloat()
+
+                col.document(doc.id)
+                    .set(
+                        product.copy(
+                            reviews = updatedReviews,
+                            rating = avgRating,
+                            updatedAt = System.currentTimeMillis()
+                        )
+                    )
                     .addOnSuccessListener { onComplete() }
                     .addOnFailureListener(onError)
             }

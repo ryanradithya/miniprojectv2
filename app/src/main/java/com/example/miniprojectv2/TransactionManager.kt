@@ -93,4 +93,29 @@ object TransactionManager {
             .addOnSuccessListener { onComplete() }
             .addOnFailureListener(onError)
     }
+
+    fun getTransactionById(
+        transactionId: String,
+        onComplete: (Transaction?) -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        db.collection("transactions")
+            .document(transactionId)
+            .get()
+            .addOnSuccessListener { doc ->
+                if (!doc.exists()) {
+                    onComplete(null)
+                    return@addOnSuccessListener
+                }
+
+                val trx = doc.toObject(Transaction::class.java)
+                if (trx != null) {
+                    trx.transactionId = doc.id
+                }
+
+                onComplete(trx)
+            }
+            .addOnFailureListener(onError)
+    }
+
 }

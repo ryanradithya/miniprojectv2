@@ -136,6 +136,21 @@ class OrdersFragment : Fragment() {
 
                         card.addView(layout)
                         listLayout.addView(card)
+
+                        card.setOnClickListener {
+
+                            val fragment = DetailPesananFragment().apply {
+                                arguments = Bundle().apply {
+                                    putString("transaction_id", trx.transactionId)
+                                }
+                            }
+
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.drawer_layout, fragment)
+                                .addToBackStack(null)
+                                .commit()
+                        }
+
                     }
                 },
                 onError = {

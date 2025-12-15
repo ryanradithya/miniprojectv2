@@ -16,8 +16,9 @@ data class Product(
 
 data class Review(
     val reviewerName: String = "",
+    val transactionId: String = "",
     val comment: String = "",
     val rating: Float = 0f,
-    val date: String = ""
+    val date: Long = 0L
 )
 

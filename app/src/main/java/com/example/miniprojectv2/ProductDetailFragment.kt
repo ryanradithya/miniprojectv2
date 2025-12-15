@@ -176,43 +176,66 @@ class ProductDetailFragment : Fragment() {
 
     // LOAD REVIEW DARI FIRESTORE
     private fun loadReviews() {
-        ProductRepository.getReviews(
-            productName = productName,
-            onComplete = { list ->
+        ProductRepository.findProductByName(
+            name = productName,
+            onComplete = { product ->
 
-                // tampilkan rating rata-rata
-                if (list.isEmpty()) {
+                if (product == null) {
+                    tvAverageRating.text = "Belum ada ulasan"
+                    ratingStars.removeAllViews()
+                    return@findProductByName
+                }
+
+                val reviews = product.reviews
+
+                // ===== RATING RATA-RATA =====
+                if (reviews.isEmpty()) {
                     tvAverageRating.text = "Belum ada ulasan"
                     ratingStars.removeAllViews()
                 } else {
-                    val avg = list.map { it.rating }.average().toFloat()
+                    val avg = reviews.map { it.rating }.average().toFloat()
                     tvAverageRating.text = String.format("%.1f", avg)
                     showStars(avg)
                 }
 
-                // tampilkan review list
+                // ===== LIST REVIEW =====
                 reviewContainer.removeAllViews()
-                if (list.isEmpty()) {
+
+                if (reviews.isEmpty()) {
                     val tv = TextView(requireContext()).apply {
                         text = "Belum ada ulasan"
                         setPadding(16, 16, 16, 16)
                     }
                     reviewContainer.addView(tv)
                 } else {
-                    for (r in list) {
-                        val card = layoutInflater.inflate(R.layout.item_review_card, reviewContainer, false)
-                        card.findViewById<TextView>(R.id.tv_reviewer_name).text = r.reviewerName
-                        card.findViewById<TextView>(R.id.tv_comment).text = r.comment
-                        card.findViewById<TextView>(R.id.tv_review_rating).text = "⭐ ${r.rating}"
-                        reviewContainer.addView(card)
-                    }
+                    reviews
+                        .sortedByDescending { it.date }
+                        .forEach { r ->
+                            val card = layoutInflater.inflate(
+                                R.layout.item_review_card,
+                                reviewContainer,
+                                false
+                            )
+                            card.findViewById<TextView>(R.id.tv_reviewer_name).text =
+                                r.reviewerName
+                            card.findViewById<TextView>(R.id.tv_comment).text =
+                                r.comment
+                            card.findViewById<TextView>(R.id.tv_review_rating).text =
+                                "⭐ ${r.rating}"
+                            reviewContainer.addView(card)
+                        }
                 }
             },
             onError = {
-                Toast.makeText(requireContext(), "Gagal memuat ulasan", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Gagal memuat ulasan",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         )
     }
+
 
     // MENAMPILKAN BINTANG RATING
     private fun showStars(avg: Float) {
