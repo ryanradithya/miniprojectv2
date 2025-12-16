@@ -14,9 +14,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.datepicker.CalendarConstraints
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.material.datepicker.MaterialDatePicker
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -31,6 +36,29 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        val dobInput = findViewById<EditText>(R.id.input_dob)
+
+        dobInput.setOnClickListener {
+
+            val picker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Pilih Tanggal Lahir")
+                .setCalendarConstraints(
+                    CalendarConstraints.Builder()
+                        .setEnd(MaterialDatePicker.todayInUtcMilliseconds())
+                        .build()
+                )
+                .build()
+
+            picker.show(supportFragmentManager, "DOB_PICKER")
+
+
+
+            picker.addOnPositiveButtonClickListener { selection ->
+                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                dobInput.setText(sdf.format(Date(selection)))
+            }
+        }
 
         auth = FirebaseAuth.getInstance()
 

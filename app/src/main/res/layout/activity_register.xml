@@ -101,7 +101,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Nama Lengkap"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textCursorDrawable="@null"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -124,7 +125,8 @@
                         android:layout_height="wrap_content"
                         android:hint="Email"
                         android:inputType="textEmailAddress"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textCursorDrawable="@null"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -147,7 +149,8 @@
                         android:layout_height="wrap_content"
                         android:hint="Kata Sandi"
                         android:inputType="textPassword"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textCursorDrawable="@null"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -168,9 +171,14 @@
                         android:id="@+id/input_dob"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Tanggal Lahir (YYYY-MM-DD)"
-                        android:textColor="@color/black"/>
+                        android:hint="Tanggal Lahir"
+                        android:textColor="@color/black"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:textCursorDrawable="@null"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
 
 
                 <!-- SELLER ONLY -->
@@ -191,7 +199,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Daerah"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textCursorDrawable="@null"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
 
