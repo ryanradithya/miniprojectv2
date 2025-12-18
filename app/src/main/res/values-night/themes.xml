@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Miniprojectv2" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+    <!-- Tema utama aplikasi -->
+    <style name="Theme.App" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Warna utama -->
         <item name="colorPrimary">#0C3B2E</item>
         <item name="colorPrimaryVariant">#6D9773</item>
         <item name="colorOnPrimary">@android:color/white</item>
@@ -19,5 +20,65 @@
         <!-- Status bar -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
 
+
     </style>
+
+    <!-- Tema tanpa ActionBar (dipakai di AndroidManifest) -->
+    <style name="Theme.App.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Warna utama -->
+        <item name="colorPrimary">#0C3B2E</item>
+        <item name="colorPrimaryVariant">#6D9773</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+
+        <!-- Warna sekunder -->
+        <item name="colorSecondary">#FFBA00</item>
+        <item name="colorSecondaryVariant">#B46617</item>
+        <item name="colorOnSecondary">@android:color/black</item>
+
+        <!-- Warna fokus & outline komponen -->
+        <item name="colorControlActivated">#0C3B2E</item>
+        <item name="colorOutline">#6D9773</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
+
+    </style>
+
+    <!-- Tema overlay untuk Toolbar -->
+    <style name="ThemeOverlay.App.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:colorControlNormal">@android:color/white</item>
+    </style>
+    <style name="Theme.MyApp.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#0C3B2E</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.MaterialComponents.DayNight.NoActionBar</item>
+    </style>
+
+    <style name="Theme.MiniprojectV2.Auth" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">#0C3B2E</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <item name="colorPrimary">#0C3B2E</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+
+        <item name="colorSecondary">#0C3B2E</item>
+        <item name="colorOnSecondary">@android:color/white</item>
+
+        <item name="colorSurface">@android:color/white</item>
+        <item name="colorOnSurface">@android:color/black</item>
+    </style>
+
+    <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorControlActivated">#0C3B2E</item>
+    </style>
+
+
+
+
+
+
 </resources>

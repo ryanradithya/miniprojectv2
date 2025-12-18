@@ -36,6 +36,7 @@ class TransactionsFragment : Fragment() {
         fun refreshList() {
             transactionList.removeAllViews()
 
+
             TransactionManager.getTransactionsForBuyer(
                 buyer = activeUser,
                 onComplete = { trxList ->

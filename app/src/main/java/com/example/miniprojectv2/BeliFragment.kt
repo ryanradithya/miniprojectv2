@@ -102,7 +102,12 @@ class BeliFragment : Fragment() {
         productRecycler = view.findViewById(R.id.product_recycler)
 
         adapter = ProductAdapter(mutableListOf(), isSeller = isSeller)
-        productRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
+        productRecycler.layoutManager =
+            if (isSeller) {
+                LinearLayoutManager(requireContext())
+            } else {
+                GridLayoutManager(requireContext(), 2)
+            }
         productRecycler.adapter = adapter
 
         loadAllProducts()
