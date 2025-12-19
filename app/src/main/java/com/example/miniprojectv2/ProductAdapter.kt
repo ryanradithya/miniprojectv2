@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.DocumentId
 import okhttp3.OkHttpClient
 import okio.IOException
+import android.widget.Button
+
 
 class ProductAdapter(
     private val items: MutableList<Product>,
@@ -175,31 +177,47 @@ class ProductAdapter(
 
             // tombol delete produk
             holder.btnDelete?.setOnClickListener {
+
                 val context = holder.itemView.context
 
-                AlertDialog.Builder(context)
-                    .setTitle("Konfirmasi Hapus")
-                    .setMessage("Hapus produk \"${product.name}\"?")
-                    .setPositiveButton("Ya") { _, _ ->
+                val dialogView = LayoutInflater.from(context)
+                    .inflate(R.layout.dialog_delete_product, null)
 
-                        ProductRepository.deleteProduct(
-                            product.name,
-                            onComplete = {
-                                val pos = holder.adapterPosition
-                                if (pos != RecyclerView.NO_POSITION) {
-                                    items.removeAt(pos)
-                                    notifyItemRemoved(pos)
-                                }
-                                Toast.makeText(context, "Produk dihapus", Toast.LENGTH_SHORT).show()
-                            },
-                            onError = {
-                                Toast.makeText(context, "Gagal menghapus produk", Toast.LENGTH_SHORT).show()
+                val tvMessage = dialogView.findViewById<TextView>(R.id.tv_message)
+                val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
+                val btnDelete = dialogView.findViewById<Button>(R.id.btn_delete)
+
+                tvMessage.text = "Hapus produk \"${product.name}\"?"
+
+                val dialog = AlertDialog.Builder(context)
+                    .setView(dialogView)
+                    .create()
+
+                btnCancel.setOnClickListener {
+                    dialog.dismiss()
+                }
+
+                btnDelete.setOnClickListener {
+                    ProductRepository.deleteProduct(
+                        product.name,
+                        onComplete = {
+                            val pos = holder.adapterPosition
+                            if (pos != RecyclerView.NO_POSITION) {
+                                items.removeAt(pos)
+                                notifyItemRemoved(pos)
                             }
-                        )
-                    }
-                    .setNegativeButton("Batal", null)
-                    .show()
+                            Toast.makeText(context, "Produk dihapus", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        },
+                        onError = {
+                            Toast.makeText(context, "Gagal menghapus produk", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+
+                dialog.show()
             }
+
 
         } else {
             // tampilan pembeli
