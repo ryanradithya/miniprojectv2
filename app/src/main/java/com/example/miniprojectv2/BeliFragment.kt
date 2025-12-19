@@ -15,6 +15,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.Query
+import com.example.miniprojectv2.data.CategoryRepository
+import com.example.miniprojectv2.utils.toTitleCase
+
 
 class BeliFragment : Fragment() {
 
@@ -190,39 +193,70 @@ class BeliFragment : Fragment() {
 
     //filter dialog
     private fun showFilterDialog() {
-        val options = arrayOf(
-            "Semua Harga",
-            "Di bawah 100rb",
-            "100rb - 300rb",
-            "300rb - 500rb",
-            "500rb - 1jt",
-            "Di atas 1jt"
-        )
-        val selectedIndex = options.indexOf(currentFilter).coerceIn(0, options.size - 1)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_filter_price, null)
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Filter Harga")
-            .setSingleChoiceItems(options, selectedIndex) { _, which ->
-                currentFilter = options[which]
+        val rgPrice = dialogView.findViewById<RadioGroup>(R.id.rg_price)
+        val btnApply = dialogView.findViewById<Button>(R.id.btn_apply)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
+
+        // Set radio sesuai filter aktif
+        for (i in 0 until rgPrice.childCount) {
+            val rb = rgPrice.getChildAt(i) as RadioButton
+            if (rb.text.toString() == currentFilter) {
+                rb.isChecked = true
+                break
             }
-            .setPositiveButton("Terapkan") { dialog, _ ->
-                filterProducts(
-                    view?.findViewById<EditText>(R.id.search_input)?.text.toString(),
-                    currentFilter,
-                    currentCategory
-                )
-                dialog.dismiss()
+        }
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        btnApply.setOnClickListener {
+            val checkedId = rgPrice.checkedRadioButtonId
+            if (checkedId != -1) {
+                val selectedRadio = dialogView.findViewById<RadioButton>(checkedId)
+                currentFilter = selectedRadio.text.toString()
             }
-            .setNegativeButton("Batal", null)
-            .show()
+
+            filterProducts(
+                view?.findViewById<EditText>(R.id.search_input)?.text.toString(),
+                currentFilter,
+                currentCategory
+            )
+
+            dialog.dismiss()
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
+
 
     //nav category
     private fun setupCategoryButtons(view: View) {
         val layout = view.findViewById<LinearLayout>(R.id.category_navbar)
-        val categories = listOf("Semua Produk", "Kamera Analog", "Roll Film", "Lensa Analog", "Tas Kamera")
-
         layout.removeAllViews()
+
+        CategoryRepository.getAllCategories(
+            onSuccess = { dbCategories ->
+                val categories = mutableListOf("Semua Produk")
+                categories.addAll(dbCategories)
+                renderCategoryButtons(view, layout, categories)
+            },
+            onError = {
+                Toast.makeText(requireContext(), "Gagal memuat kategori", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+    private fun renderCategoryButtons(
+        view: View,
+        layout: LinearLayout,
+        categories: List<String>
+    ) {
         var activeButton: Button? = null
 
         categories.forEach { cat ->
@@ -233,12 +267,12 @@ class BeliFragment : Fragment() {
                 setBackgroundResource(R.drawable.bg_category_normal)
                 setTextColor(resources.getColor(android.R.color.black))
 
-                val params = LinearLayout.LayoutParams(
+                layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                params.setMargins(8, 0, 8, 0)
-                layoutParams = params
+                ).apply {
+                    setMargins(8, 0, 8, 0)
+                }
             }
 
             if (cat.equals(currentCategory, ignoreCase = true)) {
@@ -264,4 +298,6 @@ class BeliFragment : Fragment() {
             layout.addView(btn)
         }
     }
+
+
 }

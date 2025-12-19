@@ -17,6 +17,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import okhttp3.OkHttpClient
 import okio.IOException
+import com.example.miniprojectv2.data.CategoryRepository
+import com.google.android.material.textfield.TextInputLayout
+
 
 class JualFragment : Fragment() {
 
@@ -27,6 +30,9 @@ class JualFragment : Fragment() {
     private var editMode = false
     private var productIdToEdit: String? = null
     private var productToEdit: Product? = null
+
+    private val categories = mutableListOf<String>()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Log.d("JualFragment", "onCreateView called")
@@ -41,14 +47,26 @@ class JualFragment : Fragment() {
         val priceInput = view.findViewById<EditText>(R.id.input_price)
         val stockInput = view.findViewById<EditText>(R.id.input_stock)
         val descInput = view.findViewById<EditText>(R.id.input_description)
-        val categorySpinner = view.findViewById<Spinner>(R.id.spinner_category)
+        val categorySpinner =
+            view.findViewById<AutoCompleteTextView>(R.id.spinner_category)
+
+        val customCategoryLayout =
+            view.findViewById<TextInputLayout>(R.id.layout_custom_category)
         val btnAdd = view.findViewById<Button>(R.id.btn_add)
         val btnSelectImage = view.findViewById<Button>(R.id.btn_select_image)
         imagePreview = view.findViewById(R.id.image_preview)
 
-        val categories = listOf("Kamera Analog", "Lensa Analog", "Tas Kamera", "Roll Film", "Lainnya")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
-        categorySpinner.adapter = adapter
+        val customCategoryInput = view.findViewById<EditText>(R.id.input_custom_category)
+
+        loadCategoriesFromDatabase(
+            categorySpinner,
+            customCategoryLayout,
+            customCategoryInput,
+            arguments
+        )
+
+
+
 
         //edit
         arguments?.let { args ->
@@ -76,8 +94,19 @@ class JualFragment : Fragment() {
 
                 loadProductImage(imagePreview, productToEdit!!.imageUri)
 
-                val pos = categories.indexOf(productToEdit!!.category)
-                if (pos != -1) categorySpinner.setSelection(pos)
+                val matchedCategory = categories.firstOrNull {
+                    it.equals(productToEdit!!.category, ignoreCase = true)
+                }
+
+                if (matchedCategory != null) {
+                    categorySpinner.setText(matchedCategory, false)
+                } else {
+                    categorySpinner.setText("Lainnya", false)
+                    customCategoryInput.visibility = View.VISIBLE
+                    customCategoryInput.setText(productToEdit!!.category)
+                }
+
+
 
                 btnAdd.text = "Simpan Perubahan"
             }
@@ -102,7 +131,18 @@ class JualFragment : Fragment() {
             val price = priceInput.text.toString().toIntOrNull() ?: 0
             val stock = stockInput.text.toString().toIntOrNull() ?: 0
             val desc = descInput.text.toString().trim()
-            val category = categorySpinner.selectedItem.toString()
+            val selectedCategory = categorySpinner.text.toString()
+            val customCategory = customCategoryInput.text.toString().trim()
+
+            val category = if (selectedCategory == "Lainnya") {
+                if (customCategory.isEmpty()) {
+                    Toast.makeText(requireContext(), "Masukkan kategori baru", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                customCategory
+            } else {
+                selectedCategory
+            }
 
             if (name.isEmpty() || desc.isEmpty() || price <= 0) {
                 Toast.makeText(requireContext(), "Lengkapi semua data!", Toast.LENGTH_SHORT).show()
@@ -117,8 +157,11 @@ class JualFragment : Fragment() {
             Log.d("JualFragment", "Starting image upload: $selectedImageUri")
 
             val isServerImage = selectedImageUri.toString().startsWith("server://")
+
+            val categoryToSave = category.trim().lowercase()
+
             val proceedToSave: (String) -> Unit = { imageId ->
-                saveProduct(name, price, stock, desc, category, imageId, productIdToEdit)
+                saveProduct(name, price, stock, desc, categoryToSave, imageId, productIdToEdit)
             }
 
             if (editMode && productIdToEdit != null) {
@@ -140,7 +183,9 @@ class JualFragment : Fragment() {
                 // Adding new product
                 ImageHandler.uploadImage(requireContext(), selectedImageUri!!) { imageId ->
                     if (imageId == null) {
-                        Toast.makeText(requireContext(), "Gagal upload gambar!", Toast.LENGTH_SHORT).show()
+                        requireActivity().runOnUiThread {
+                            Toast.makeText(requireContext(), "Gagal upload gambar!", Toast.LENGTH_SHORT).show()
+                        }
                         return@uploadImage
                     }
                     proceedToSave(imageId)
@@ -148,6 +193,62 @@ class JualFragment : Fragment() {
             }
         }
 
+    }
+    private fun loadCategoriesFromDatabase(
+        categoryInput: AutoCompleteTextView,
+        customCategoryLayout: TextInputLayout,
+        customCategoryInput: EditText,
+        args: Bundle?
+    ) {
+        CategoryRepository.getAllCategories(
+            onSuccess = { dbCategories ->
+                categories.clear()
+                categories.addAll(dbCategories)
+
+                if (!categories.any { it.equals("Lainnya", true) }) {
+                    categories.add("Lainnya")
+                }
+
+                val adapter = ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_list_item_1,
+                    categories
+                )
+                categoryInput.setAdapter(adapter)
+
+                categoryInput.setOnItemClickListener { _, _, position, _ ->
+                    val selected = categories[position]
+                    if (selected.equals("Lainnya", true)) {
+                        customCategoryLayout.visibility = View.VISIBLE
+                    } else {
+                        customCategoryLayout.visibility = View.GONE
+                        customCategoryInput.text?.clear()
+                    }
+                }
+
+                // HANDLE EDIT MODE
+                args?.let {
+                    if (it.getString("edit_mode") == "true") {
+                        val productCategory = it.getString("product_category") ?: return@let
+
+                        val matched = categories.firstOrNull {
+                            it.equals(productCategory, ignoreCase = true)
+                        }
+
+                        if (matched != null) {
+                            categoryInput.setText(matched, false)
+                        } else {
+                            categoryInput.setText("Lainnya", false)
+                            customCategoryLayout.visibility = View.VISIBLE
+                            customCategoryInput.setText(productCategory)
+                        }
+                    }
+                }
+            },
+            onError = {
+                Toast.makeText(requireContext(), "Gagal memuat kategori", Toast.LENGTH_SHORT).show()
+            }
+        )
     }
 
     //saveproduct func
@@ -228,4 +329,7 @@ class JualFragment : Fragment() {
             imageView.setImageResource(R.drawable.ic_product_placeholder)
         }
     }
+
+
+
 }

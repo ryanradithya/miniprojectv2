@@ -25,7 +25,7 @@ import com.google.firebase.firestore.ListenerRegistration
 
 class SellerActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
+//    private lateinit var appBarConfiguration: AppBarConfiguration
     private var transactionListener: ListenerRegistration? = null
 
 
@@ -60,15 +60,15 @@ class SellerActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_seller) as NavHostFragment
         val navController = navHostFragment.navController
 
-        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout_seller)
+//        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout_seller)
         val navigationView = findViewById<NavigationView>(R.id.nav_view_seller)
 
-        appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.beliFragment, R.id.jualFragment, R.id.ordersFragment, R.id.accountFragment),
-            drawerLayout
-        )
+//        appBarConfiguration = AppBarConfiguration(
+//            setOf(R.id.beliFragment, R.id.jualFragment, R.id.ordersFragment, R.id.accountFragment),
+//            drawerLayout
+//        )
 
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
+        NavigationUI.setupActionBarWithNavController(this, navController)
         navigationView.setupWithNavController(navController)
 
         // CUSTOM NAVBAR
@@ -239,8 +239,7 @@ class SellerActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_seller) as NavHostFragment
         val navController = navHostFragment.navController
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp()
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     fun addDeliveryExpedition(expedition: String) {

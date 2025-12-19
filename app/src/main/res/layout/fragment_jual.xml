@@ -1,4 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -25,37 +26,142 @@
             android:backgroundTint="#6D9773"
             android:textColor="@android:color/white"/>
 
-        <EditText
-            android:id="@+id/input_name"
-            android:hint="Nama Produk"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginBottom="16dp"
+            app:hintTextColor="@color/green_primary"
+            app:boxStrokeColor="@color/green_primary"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
 
-        <EditText
-            android:id="@+id/input_price"
-            android:hint="Harga"
-            android:inputType="number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nama Produk"
+                android:inputType="text"
+                android:textColor="@color/black"
+                app:hintTextColor="@color/green_primary"
+                android:textCursorDrawable="@null"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/input_description"
-            android:hint="Deskripsi Produk"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:hintTextColor="@color/green_primary"
+            app:boxStrokeColor="@color/green_primary"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
 
-        <EditText
-            android:id="@+id/input_stock"
-            android:hint="Stok Produk"
-            android:inputType="number"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Harga"
+                android:inputType="text"
+                android:textColor="@color/black"
+                app:hintTextColor="@color/green_primary"
+                android:textCursorDrawable="@null"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:hintTextColor="@color/green_primary"
+            app:boxStrokeColor="@color/green_primary"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
 
-        <Spinner
-            android:id="@+id/spinner_category"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Deskripsi Produk"
+                android:inputType="text"
+                android:textColor="@color/black"
+                app:hintTextColor="@color/green_primary"
+                android:textCursorDrawable="@null"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:hintTextColor="@color/green_primary"
+            app:boxStrokeColor="@color/green_primary"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_stock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Jumlah Stok Produk"
+                android:inputType="text"
+                android:textColor="@color/black"
+                app:hintTextColor="@color/green_primary"
+                android:textCursorDrawable="@null"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_category"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:boxStrokeColor="@color/green_primary"
+            app:hintTextColor="@color/green_primary"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp"
+            android:hint="Kategori">
+
+            <AutoCompleteTextView
+                android:id="@+id/spinner_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:textColor="@color/black"
+                android:textCursorDrawable="@null"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_custom_category"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            app:boxStrokeColor="@color/green_primary"
+            app:hintTextColor="@color/green_primary"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp"
+            android:hint="Kategori Baru">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_custom_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textCursorDrawable="@null"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <Button
             android:id="@+id/btn_add"

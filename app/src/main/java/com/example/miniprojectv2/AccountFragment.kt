@@ -98,18 +98,32 @@ class AccountFragment : Fragment() {
         }
 
         btnLogout.setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Konfirmasi Logout")
-                .setMessage("Apakah Anda yakin ingin logout?")
-                .setPositiveButton("Ya") { _, _ ->
-                    prefs.edit().clear().apply()
-                    auth.signOut()
-                    startActivity(Intent(requireContext(), LoginActivity::class.java))
-                    requireActivity().finish()
-                }
-                .setNegativeButton("Batal", null)
-                .show()
+
+            val dialogView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_logout_confirm, null)
+
+            val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
+            val btnLogoutConfirm = dialogView.findViewById<Button>(R.id.btn_logout)
+
+            val dialog = AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create()
+
+            btnCancel.setOnClickListener {
+                dialog.dismiss()
+            }
+
+            btnLogoutConfirm.setOnClickListener {
+                prefs.edit().clear().apply()
+                auth.signOut()
+                startActivity(Intent(requireContext(), LoginActivity::class.java))
+                requireActivity().finish()
+                dialog.dismiss()
+            }
+
+            dialog.show()
         }
+
 
         if (isSeller) {
             headerExpedition.visibility = View.VISIBLE
@@ -165,61 +179,85 @@ class AccountFragment : Fragment() {
 
         val etName = dialogView.findViewById<EditText>(R.id.et_edit_name)
         val etEmail = dialogView.findViewById<EditText>(R.id.et_edit_email)
+        val btnSave = dialogView.findViewById<Button>(R.id.btn_save)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
 
         etName.setText(tvName.text)
         etEmail.setText(tvEmail.text)
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Edit Akun")
+        val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
-            .setPositiveButton("Simpan") { _, _ ->
+            .create()
 
-                val newName = etName.text.toString().trim()
-                val newEmail = etEmail.text.toString().trim()
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
 
-                if (newName.isEmpty() || newEmail.isEmpty()) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Nama dan email tidak boleh kosong",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setPositiveButton
-                }
+        btnSave.setOnClickListener {
+            val newName = etName.text.toString().trim()
+            val newEmail = etEmail.text.toString().trim()
 
-                updateProfile(newName, newEmail, tvName, tvEmail)
+            if (newName.isEmpty() || newEmail.isEmpty()) {
+                Toast.makeText(
+                    requireContext(),
+                    "Nama dan email tidak boleh kosong",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
             }
-            .setNegativeButton("Batal", null)
-            .show()
+
+            updateProfile(newName, newEmail, tvName, tvEmail)
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
-
     private fun showChangePasswordDialog() {
+
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_change_password, null)
 
         val etOld = dialogView.findViewById<EditText>(R.id.et_old_password)
         val etNew = dialogView.findViewById<EditText>(R.id.et_new_password)
+        val btnSave = dialogView.findViewById<Button>(R.id.btn_save)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("Ubah Password")
+        val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
-            .setPositiveButton("Simpan") { _, _ ->
-                val oldPass = etOld.text.toString()
-                val newPass = etNew.text.toString()
+            .create()
 
-                if (newPass.length < 6) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Password minimal 6 karakter",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setPositiveButton
-                }
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
 
-                changePassword(oldPass, newPass)
+        btnSave.setOnClickListener {
+            val oldPass = etOld.text.toString().trim()
+            val newPass = etNew.text.toString().trim()
+
+            if (oldPass.isEmpty() || newPass.isEmpty()) {
+                Toast.makeText(
+                    requireContext(),
+                    "Password tidak boleh kosong",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
             }
-            .setNegativeButton("Batal", null)
-            .show()
+
+            if (newPass.length < 6) {
+                Toast.makeText(
+                    requireContext(),
+                    "Password minimal 6 karakter",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            changePassword(oldPass, newPass)
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun changePassword(oldPassword: String, newPassword: String) {
@@ -250,17 +288,43 @@ class AccountFragment : Fragment() {
     }
 
     private fun showAddExpeditionDialog() {
-        val input = EditText(requireContext())
-        AlertDialog.Builder(requireContext())
-            .setTitle("Tambah Ekspedisi")
-            .setView(input)
-            .setPositiveButton("Tambah") { _, _ ->
-                (activity as? SellerActivity)
-                    ?.addDeliveryExpedition(input.text.toString())
+
+        val dialogView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.dialog_add_expedition, null)
+
+        val etExpedition = dialogView.findViewById<EditText>(R.id.et_expedition_name)
+        val btnAdd = dialogView.findViewById<Button>(R.id.btn_add)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .create()
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnAdd.setOnClickListener {
+            val expeditionName = etExpedition.text.toString().trim()
+
+            if (expeditionName.isEmpty()) {
+                Toast.makeText(
+                    requireContext(),
+                    "Nama ekspedisi tidak boleh kosong",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
             }
-            .setNegativeButton("Batal", null)
-            .show()
+
+            (activity as? SellerActivity)
+                ?.addDeliveryExpedition(expeditionName)
+
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
+
 
     private fun updateProfile(
         newName: String,

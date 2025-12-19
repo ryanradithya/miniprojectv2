@@ -61,17 +61,6 @@
             app:tint="#ffffff" />
     </LinearLayout>
 
-    <!-- Judul Rekomendasi -->
-<!--    <TextView-->
-<!--        android:id="@+id/rekomendasi_title"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:padding="8dp"-->
-<!--        android:layout_marginRight="8dp"-->
-<!--        android:layout_marginLeft="8dp"-->
-<!--        android:text="Rekomendasi Produk"-->
-<!--        android:textSize="18sp" />-->
-
     <!-- RecyclerView Horizontal -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rekomendasi_recycler"
@@ -83,35 +72,65 @@
         android:layout_marginLeft="8dp"
         android:padding="8dp" />
 
-
-
-    <!-- Judul Belanja -->
-    <TextView
-        android:id="@+id/belanja_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="Belanja Sekarang"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:textSize="18sp" />
-
-    <!--    category -->
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:padding="8dp">
-
-        <LinearLayout
-            android:id="@+id/category_navbar"
-            android:layout_width="wrap_content"
+        android:orientation="vertical">
+        <!-- Judul Belanja -->
+        <TextView
+            android:id="@+id/belanja_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:text="Belanja Sekarang"
             android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp"/>
-    </HorizontalScrollView>
+            android:layout_marginLeft="8dp"
+            android:textSize="18sp" />
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:paddingHorizontal="8dp"-->
+<!--            android:gravity="center_vertical">-->
+<!--            <TextView-->
+<!--                android:id="@+id/category_title"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Kategori Produk"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/btn_more"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Lihat Semua"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textColor="@color/green_primary"-->
+<!--                android:clickable="true"-->
+<!--                android:focusable="true"-->
+<!--                android:padding="4dp"/>-->
+
+
+<!--        </LinearLayout>-->
+        <!--    category -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:id="@+id/category_navbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"/>
+        </HorizontalScrollView>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/product_recycler"

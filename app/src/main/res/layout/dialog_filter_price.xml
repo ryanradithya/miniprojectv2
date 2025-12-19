@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    >
+
+    <TextView
+        android:text="Filter Harga"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <RadioGroup
+        android:id="@+id/rg_price"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton android:text="Semua Harga"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+        <RadioButton android:text="Di bawah 100rb"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+        <RadioButton android:text="100rb - 300rb"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            />
+        <RadioButton android:text="300rb - 500rb"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+        <RadioButton android:text="500rb - 1jt"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+        <RadioButton android:text="Di atas 1jt"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"/>
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:backgroundTint="@color/green_primary"
+            android:text="Batal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btn_apply"
+            android:backgroundTint="@color/green_primary"
+            android:text="Terapkan"
+            android:layout_marginStart="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>
