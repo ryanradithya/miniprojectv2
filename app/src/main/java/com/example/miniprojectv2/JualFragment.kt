@@ -1,6 +1,7 @@
 package com.example.miniprojectv2
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -40,6 +41,13 @@ class JualFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val prefs = requireContext()
+            .getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+
+        val sellerEmail = prefs.getString("active_email", "") ?: ""
+        val sellerName = prefs.getString("active_username", "") ?: ""
+
+
         super.onViewCreated(view, savedInstanceState)
         Log.d("JualFragment", "onViewCreated initialized")
 
@@ -161,8 +169,17 @@ class JualFragment : Fragment() {
             val categoryToSave = category.trim().lowercase()
 
             val proceedToSave: (String) -> Unit = { imageId ->
-                saveProduct(name, price, stock, desc, categoryToSave, imageId, productIdToEdit)
-            }
+                saveProduct(
+                    name,
+                    price,
+                    stock,
+                    desc,
+                    categoryToSave,
+                    imageId,
+                    sellerEmail,
+                    sellerName,
+                    productIdToEdit
+                )            }
 
             if (editMode && productIdToEdit != null) {
                 if (isServerImage) {
@@ -259,7 +276,10 @@ class JualFragment : Fragment() {
         desc: String,
         category: String,
         imageId: String,
+        sellerEmail: String,
+        sellerName: String,
         productId: String? = null
+
     ) {
         val product = Product(
             name = name,
@@ -267,7 +287,10 @@ class JualFragment : Fragment() {
             stock = stock,
             description = desc,
             category = category,
-            imageUri = imageId
+            imageUri = imageId,
+
+            sellerEmail = sellerEmail,
+            sellerName = sellerName
         )
 
         if (editMode && productId != null) {

@@ -10,7 +10,10 @@ data class Product(
     val category: String = "",
     val rating: Float = 0f,
     val reviews: List<Review> = emptyList(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+
+    val sellerEmail: String = "",
+    val sellerName: String = ""
 )
 
 

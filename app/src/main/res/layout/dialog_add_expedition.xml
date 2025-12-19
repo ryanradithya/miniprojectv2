@@ -41,7 +41,9 @@
             android:text="Batal"
             android:textAllCaps="false"
             android:backgroundTint="@color/yellow_secondary"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_add"
@@ -49,7 +51,9 @@
             android:text="Tambah"
             android:textAllCaps="false"
             android:backgroundTint="@color/green_variant"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
     </LinearLayout>
 
 </LinearLayout>

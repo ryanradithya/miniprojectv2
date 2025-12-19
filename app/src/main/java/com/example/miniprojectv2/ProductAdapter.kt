@@ -1,6 +1,7 @@
 package com.example.miniprojectv2
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
@@ -57,6 +58,7 @@ class ProductAdapter(
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
+
         val product = items[position]
 
         holder.title?.text = product.name
@@ -153,14 +155,29 @@ class ProductAdapter(
             holder.image?.setImageResource(R.drawable.ic_product_placeholder)
         }
 
+        val context = holder.itemView.context
+        val prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val currentSellerEmail = prefs.getString("active_email", "")
+
+        val isOwner = product.sellerEmail == currentSellerEmail
 
         // tampilan produk untuk seller
-        if (isSeller) {
+        if (isSeller && isOwner) {
             holder.btnEdit?.visibility = View.VISIBLE
             holder.btnDelete?.visibility = View.VISIBLE
 
             // tombol Edit
             holder.btnEdit?.setOnClickListener {
+
+                if (!isOwner) {
+                    Toast.makeText(
+                        context,
+                        "Anda tidak berhak mengedit produk ini",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+
                 Log.d("ProductAdapter", "Edit produk: ${product.name}")
                 val bundle = Bundle().apply {
                     putString("product_id", product.id)
@@ -174,6 +191,7 @@ class ProductAdapter(
                 }
                 it.findNavController().navigate(R.id.jualFragment, bundle)
             }
+
 
             // tombol delete produk
             holder.btnDelete?.setOnClickListener {
@@ -198,6 +216,16 @@ class ProductAdapter(
                 }
 
                 btnDelete.setOnClickListener {
+                    if (!isOwner) {
+                        Toast.makeText(
+                            context,
+                            "Anda tidak berhak menghapus produk ini",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        dialog.dismiss()
+                        return@setOnClickListener
+                    }
+
                     ProductRepository.deleteProduct(
                         product.name,
                         onComplete = {
