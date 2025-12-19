@@ -148,43 +148,38 @@ class CheckoutFragment : Fragment() {
         expedition: String
     ) {
 
-        val totalPrice = selectedItems.sumOf { it.price * it.qty }
-        val date = System.currentTimeMillis().toString()
+        val transactionItems = selectedItems.map {
+            TransactionItem(
+                name = it.name,
+                price = it.price,
+                qty = it.qty,
+                sellerEmail = it.sellerEmail
+            )
+        }
 
-        val data = hashMapOf(
-            "items" to selectedItems.map {
-                mapOf(
-                    "name" to it.name,
-                    "qty" to it.qty,
-                    "price" to it.price
-                )
-            },
-            "totalPrice" to totalPrice,
-            "buyer" to buyer,
-            "expedition" to expedition,
-            "status" to "Pesanan Masuk",
-            "trackingNumber" to null,
-            "date" to date,
-            "updatedAt" to System.currentTimeMillis()
-        )
-
-        // Simpan transaksi
-        com.google.firebase.firestore.FirebaseFirestore.getInstance()
-            .collection("transactions")
-            .add(data)
-            .addOnSuccessListener {
-
+        TransactionManager.addTransaction(
+            buyer = buyer,
+            expedition = expedition,
+            items = transactionItems,
+            onComplete = {
                 Toast.makeText(requireContext(), "Checkout berhasil!", Toast.LENGTH_SHORT).show()
 
                 // Kosongkan keranjang
                 CartManager.items.removeAll(selectedItems)
 
                 // Pindah ke halaman transaksi
-                val bundle = Bundle().apply { putBoolean("from_checkout", true) }
-                findNavController().navigate(R.id.action_checkout_to_transaction, bundle)
-            }
-            .addOnFailureListener {
+                val bundle = Bundle().apply {
+                    putBoolean("from_checkout", true)
+                }
+                findNavController().navigate(
+                    R.id.action_checkout_to_transaction,
+                    bundle
+                )
+            },
+            onError = {
                 Toast.makeText(requireContext(), "Gagal menyimpan transaksi", Toast.LENGTH_SHORT).show()
             }
+        )
     }
+
 }

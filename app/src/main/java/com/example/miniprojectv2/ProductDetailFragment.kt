@@ -16,7 +16,7 @@ object CartManager {
     val items = mutableListOf<CartItem>()
 }
 
-data class CartItem(val name: String, val price: Int, var qty: Int = 1)
+data class CartItem(val name: String, val price: Int, var qty: Int = 1, val sellerEmail: String)
 
 class ProductDetailFragment : Fragment() {
 
@@ -132,11 +132,14 @@ class ProductDetailFragment : Fragment() {
         tvQty.text = quantity.toString()
     }
 
+    private var productSellerEmail: String = ""
+
     // ADD TO CART
     private fun setupAddToCart() {
         btnAdd.setOnClickListener {
             val existing = CartManager.items.find { it.name == productName }
             val totalQty = (existing?.qty ?: 0) + quantity
+
 
             if (totalQty > currentStock) {
                 Toast.makeText(requireContext(), "Jumlah melebihi stok", Toast.LENGTH_SHORT).show()
@@ -146,7 +149,7 @@ class ProductDetailFragment : Fragment() {
             if (existing != null) {
                 existing.qty += quantity
             } else {
-                CartManager.items.add(CartItem(productName, productPrice, quantity))
+                CartManager.items.add(CartItem(productName, productPrice, quantity, sellerEmail = productSellerEmail))
             }
 
             Toast.makeText(requireContext(), "Ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
@@ -159,13 +162,9 @@ class ProductDetailFragment : Fragment() {
         ProductRepository.findProductByName(
             name = productName,
             onComplete = { product ->
-
-                if (product == null) {
-                    Log.e("ProductDetail", "Produk tidak ditemukan di database")
-                    return@findProductByName
-                }
+                if (product == null) return@findProductByName
+                productSellerEmail = product.sellerEmail   // ← SIMPAN
                 loadProductImage(imageView, productImageUri)
-                // Update rating & review
                 loadReviews()
             },
             onError = {

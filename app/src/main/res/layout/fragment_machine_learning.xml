@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:orientation="vertical"
@@ -18,127 +19,186 @@
             android:textColor="@color/gray"
             android:padding="12dp"
             android:background="@drawable/bg_info_box"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:layout_marginBottom="8dp"
+            />
 
-
-
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Jumlah Peminjaman"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"/>
-        <EditText
-            android:id="@+id/etLoanAmount"
-            android:hint=""
-            android:inputType="number"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="8dp"
+            app:hintTextColor="@color/green_primary"
+            app:boxStrokeColor="@color/green_primary"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
 
-        <TextView
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etLoanAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Jumlah Peminjaman"
+                android:inputType="text"
+                android:textColor="@color/black"
+                app:hintTextColor="@color/green_primary"
+                android:textCursorDrawable="@null"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Jumlah Pembayaran per Bulan"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"/>
-        <EditText
-            android:id="@+id/etInstallment"
-            android:hint=""
-            android:inputType="number"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="8dp"
+            app:hintTextColor="@color/green_primary"
+            app:boxStrokeColor="@color/green_primary"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
 
-        <TextView
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etInstallment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Jumlah Pembayaran per Bulan"
+                android:inputType="text"
+                android:textColor="@color/black"
+                app:hintTextColor="@color/green_primary"
+                android:textCursorDrawable="@null"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pendapatan Tahunan"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"/>
-        <EditText
-            android:id="@+id/etAnnualIncome"
-            android:hint="Pendapat dalam 1 tahun (dalam dollar)"
-            android:inputType="number"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="8dp"
+            app:hintTextColor="@color/green_primary"
+            app:boxStrokeColor="@color/green_primary"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp">
 
-        <TextView
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etAnnualIncome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pendapat dalam 1 tahun (dalam dollar)"
+                android:inputType="text"
+                android:textColor="@color/black"
+                app:hintTextColor="@color/green_primary"
+                android:textCursorDrawable="@null"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Lama Menyicil"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"/>
-        <Spinner
-            android:id="@+id/spinnerTerm"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="8dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp"
+            >
 
-        <TextView
+            <AutoCompleteTextView
+                android:id="@+id/spinnerTerm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Lama Menyicil"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nilai Rating"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"/>
-        <Spinner
-            android:id="@+id/spinnerGrade"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="8dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp"
+            >
 
-        <TextView
+            <AutoCompleteTextView
+                android:id="@+id/spinnerGrade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nilai Rating"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tipe Home Ownership"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"/>
-        <Spinner
-            android:id="@+id/spinnerHomeOwnership"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="8dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp"
+            >
 
-        <TextView
+            <AutoCompleteTextView
+                android:id="@+id/spinnerHomeOwnership"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tipe Home Ownership"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Status Verifikasi"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"/>
-        <Spinner
-            android:id="@+id/spinnerVerification"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="8dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp"
+            >
 
-        <TextView
+            <AutoCompleteTextView
+                android:id="@+id/spinnerVerification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Status Verifikasi"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tujuan Meminjam"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginTop="12dp"/>
-        <Spinner
-            android:id="@+id/spinnerPurpose"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="8dp"
+            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusTopEnd="16dp"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusBottomEnd="16dp"
+            >
+
+            <AutoCompleteTextView
+                android:id="@+id/spinnerPurpose"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tujuan Meminjam"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
 
 <!-- submit button-->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPredict"
-            android:text="Predict"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp"
+            android:text="Predict"
+            android:textAllCaps="false"
+            android:backgroundTint="@color/green_variant"
+            app:cornerRadius="16dp" />
+
 
         <!-- Status -->
         <TextView

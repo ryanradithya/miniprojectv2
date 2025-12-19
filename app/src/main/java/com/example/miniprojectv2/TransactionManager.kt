@@ -55,6 +55,7 @@ object TransactionManager {
 
     // SELLER: LIHAT SEMUA TRANSAKSI
     fun getTransactionsForSeller(
+        sellerEmail: String,
         onComplete: (List<Transaction>) -> Unit,
         onError: (Exception) -> Unit
     ) {
@@ -62,13 +63,24 @@ object TransactionManager {
             .get()
             .addOnSuccessListener { result ->
 
-                val list = result.map { doc ->
-                    val trx = doc.toObject(Transaction::class.java)
+                val list = result.mapNotNull { doc ->
+                    val trx = doc.toObject(Transaction::class.java) ?: return@mapNotNull null
                     trx.transactionId = doc.id
-                    trx
+
+                    val sellerItems = trx.items.filter {
+                        it.sellerEmail == sellerEmail
+                    }
+
+                    if (sellerItems.isEmpty()) {
+                        null
+                    } else {
+                        trx.items = sellerItems
+                        trx
+                    }
                 }
 
                 onComplete(list)
+
             }
             .addOnFailureListener(onError)
     }

@@ -23,7 +23,14 @@ class OrdersFragment : Fragment() {
 
             listLayout.removeAllViews()
 
+            val prefs = requireContext()
+                .getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
+
+            val sellerEmail = prefs.getString("active_email", "") ?: ""
+
             TransactionManager.getTransactionsForSeller(
+                sellerEmail = sellerEmail,
+
                 onComplete = { transactions ->
 
                     if (transactions.isEmpty()) {
