@@ -36,7 +36,8 @@
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
-            app:boxCornerRadiusBottomEnd="16dp">
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_name"
@@ -59,7 +60,8 @@
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
-            app:boxCornerRadiusBottomEnd="16dp">
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_price"
@@ -81,7 +83,8 @@
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
-            app:boxCornerRadiusBottomEnd="16dp">
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_description"
@@ -103,7 +106,8 @@
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
-            app:boxCornerRadiusBottomEnd="16dp">
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_stock"
@@ -128,7 +132,8 @@
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusBottomEnd="16dp"
-            android:hint="Kategori">
+            android:hint="Kategori"
+            app:boxBackgroundColor="@android:color/white">
 
             <AutoCompleteTextView
                 android:id="@+id/spinner_category"
@@ -152,7 +157,8 @@
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusBottomEnd="16dp"
-            android:hint="Kategori Baru">
+            app:boxBackgroundColor="@android:color/white"
+            android:hint="Kategori Lainnya">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/input_custom_category"

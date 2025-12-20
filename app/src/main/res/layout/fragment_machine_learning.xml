@@ -33,7 +33,9 @@
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
-            app:boxCornerRadiusBottomEnd="16dp">
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white"
+            >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLoanAmount"
@@ -43,7 +45,8 @@
                 android:inputType="text"
                 android:textColor="@color/black"
                 app:hintTextColor="@color/green_primary"
-                android:textCursorDrawable="@null"/>
+                android:textCursorDrawable="@null"
+                android:backgroundTint="@color/white"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -56,7 +59,8 @@
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
-            app:boxCornerRadiusBottomEnd="16dp">
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etInstallment"
@@ -66,7 +70,8 @@
                 android:inputType="text"
                 android:textColor="@color/black"
                 app:hintTextColor="@color/green_primary"
-                android:textCursorDrawable="@null"/>
+                android:textCursorDrawable="@null"
+                android:backgroundTint="@color/white"/>
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -78,7 +83,8 @@
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
-            app:boxCornerRadiusBottomEnd="16dp">
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etAnnualIncome"
@@ -100,6 +106,7 @@
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white"
             >
 
             <AutoCompleteTextView
@@ -120,6 +127,7 @@
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white"
             >
 
             <AutoCompleteTextView
@@ -140,6 +148,7 @@
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white"
             >
 
             <AutoCompleteTextView
@@ -147,7 +156,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Tipe Home Ownership"
-                android:inputType="none" />
+                android:inputType="none"
+                android:backgroundTint="@color/white"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -155,6 +165,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            app:boxBackgroundColor="@android:color/white"
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
@@ -178,6 +189,7 @@
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
             app:boxCornerRadiusBottomEnd="16dp"
+            app:boxBackgroundColor="@android:color/white"
             >
 
             <AutoCompleteTextView

@@ -223,7 +223,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="------------------ Atau buat akun dengan ------------------"
+                    android:text="-------- Atau buat akun dengan --------"
                     />
 
                 <com.google.android.material.card.MaterialCardView

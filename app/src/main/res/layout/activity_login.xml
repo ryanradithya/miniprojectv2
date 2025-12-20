@@ -139,8 +139,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="------------------ Atau masuk dengan ------------------"
-                />
+                android:text="-------- Atau masuk dengan --------"
+                android:layout_marginTop="6dp"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btn_google_login"

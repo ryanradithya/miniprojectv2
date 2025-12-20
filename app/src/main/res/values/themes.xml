@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+
     <!-- Tema utama aplikasi -->
     <style name="Theme.App" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Warna utama -->
@@ -25,6 +26,9 @@
 
     <!-- Tema tanpa ActionBar (dipakai di AndroidManifest) -->
     <style name="Theme.App.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:fontFamily">@font/app_font</item>
+        <item name="fontFamily">@font/app_font</item>
+
         <!-- Warna utama -->
         <item name="colorPrimary">#0C3B2E</item>
         <item name="colorPrimaryVariant">#6D9773</item>
@@ -57,7 +61,7 @@
         <item name="postSplashScreenTheme">@style/Theme.MaterialComponents.DayNight.NoActionBar</item>
     </style>
 
-    <style name="Theme.MiniprojectV2.Auth" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.MiniprojectV2.Auth" parent="Theme.App.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">#0C3B2E</item>
         <item name="android:windowLightStatusBar">false</item>

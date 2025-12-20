@@ -64,6 +64,10 @@ class AccountFragment : Fragment() {
         val btnMLModel: LinearLayout = v.findViewById(R.id.btn_ml_model)
         val headerExpedition: TextView = v.findViewById(R.id.header_expedition)
 
+        val headerReport: TextView = v.findViewById(R.id.header_report)
+        val btnReport: LinearLayout = v.findViewById(R.id.btn_report)
+
+
         prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
         userUID = prefs.getString("active_uid", "") ?: ""
@@ -129,9 +133,26 @@ class AccountFragment : Fragment() {
             headerExpedition.visibility = View.VISIBLE
             btnAddExpedition.visibility = View.VISIBLE
             btnAddExpedition.setOnClickListener { showAddExpeditionDialog() }
+
+            headerReport.visibility = View.VISIBLE
+            btnReport.visibility = View.VISIBLE
+            btnReport.setOnClickListener {
+                try {
+                    findNavController().navigate(R.id.sellerReportFragment)
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal membuka laporan",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         } else {
             headerExpedition.visibility = View.GONE
             btnAddExpedition.visibility = View.GONE
+
+            headerReport.visibility = View.GONE
+            btnReport.visibility = View.GONE
         }
 
         return v

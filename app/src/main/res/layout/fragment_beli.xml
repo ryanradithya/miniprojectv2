@@ -37,7 +37,8 @@
                 android:inputType="text"
                 android:padding="10dp"
                 android:textColor="#222"
-                android:textSize="14sp" />
+                android:textSize="16sp"
+                />
 
             <ImageButton
                 android:id="@+id/btn_filter"
@@ -52,8 +53,8 @@
         <!-- Cart Icon -->
         <ImageButton
             android:id="@+id/btn_cart"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_shopping_cart"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -83,6 +84,7 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:text="Belanja Sekarang"
+            android:textColor="@color/green_primary"
             android:layout_marginRight="8dp"
             android:layout_marginLeft="8dp"
             android:textSize="18sp" />

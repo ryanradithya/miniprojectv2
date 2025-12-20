@@ -9,6 +9,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 
 class CheckoutFragment : Fragment() {
 
@@ -19,10 +20,13 @@ class CheckoutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         val v = inflater.inflate(R.layout.fragment_checkout, container, false)
-        val listLayout: LinearLayout = v.findViewById(R.id.checkout_list)
+        val productContainer =
+            v.findViewById<LinearLayout>(R.id.container_products)
         val tvTotal: TextView = v.findViewById(R.id.checkout_total)
         val btnConfirm: MaterialButton = v.findViewById(R.id.btn_confirm_checkout)
+        spinner = v.findViewById(R.id.spinner_expedition)
 
         val selectedItems =
             arguments?.getSerializable("selected_items") as? ArrayList<CartItem> ?: arrayListOf()
@@ -30,41 +34,41 @@ class CheckoutFragment : Fragment() {
         val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val buyerEmail = prefs.getString("active_email", "") ?: ""
 
-        // Tampilkan ringkasan item checkout
         var totalCost = 0
         selectedItems.forEach { item ->
-            val tv = TextView(requireContext())
-            tv.text = "${item.name} × ${item.qty} — Rp ${item.price * item.qty}"
-            listLayout.addView(tv)
+            val itemView = layoutInflater.inflate(
+                R.layout.item_checkout_product,
+                productContainer,
+                false
+            )
+
+            itemView.findViewById<TextView>(R.id.tv_product_name).text = item.name
+            itemView.findViewById<TextView>(R.id.tv_product_qty).text = "×${item.qty}"
+            itemView.findViewById<TextView>(R.id.tv_product_price).text =
+                "Rp ${item.price * item.qty}"
+
+            productContainer.addView(itemView)
             totalCost += item.price * item.qty
         }
+
         tvTotal.text = "Total: Rp $totalCost"
 
-        // Ekspedisi
-        val tvExpedition = TextView(requireContext()).apply {
-            text = "Pilih Ekspedisi:"
-            textSize = 16f
-        }
-        spinner = Spinner(requireContext())
-        listLayout.addView(tvExpedition)
-        listLayout.addView(spinner)
-
-        spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf())
+        spinnerAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            mutableListOf()
+        )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = spinnerAdapter
 
         btnConfirm.setOnClickListener {
-            if (selectedItems.isEmpty()) {
-                Toast.makeText(requireContext(), "Keranjang kosong!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
             val expedition = spinner.selectedItem?.toString() ?: ""
             startCheckout(selectedItems, buyerEmail, expedition)
         }
 
         return v
     }
+
 
     override fun onResume() {
         super.onResume()

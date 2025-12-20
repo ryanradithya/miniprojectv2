@@ -76,4 +76,8 @@
         android:label="Machine Learning"
         tools:layout="@layout/fragment_machine_learning" />
 
+    <fragment
+        android:id="@+id/sellerReportFragment"
+        android:name="com.example.miniprojectv2.SellerReportFragment"
+        android:label="Laporan Transaksi" />
 </navigation>

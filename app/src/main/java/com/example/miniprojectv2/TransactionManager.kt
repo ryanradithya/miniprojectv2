@@ -17,7 +17,7 @@ object TransactionManager {
         val data = hashMapOf(
             "buyer" to buyer,
             "expedition" to expedition,
-            "date" to System.currentTimeMillis().toString(),
+            "date" to System.currentTimeMillis(),
             "status" to "Pesanan Masuk",
             "trackingNumber" to null,
             "items" to items,
