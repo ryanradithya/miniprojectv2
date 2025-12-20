@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.textfield.TextInputLayout
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -206,12 +207,25 @@ class RegisterActivity : AppCompatActivity() {
         val dobInput = findViewById<EditText>(R.id.input_dob)
         val regionInput = findViewById<EditText>(R.id.input_region)
 
+        val dobLayout = findViewById<TextInputLayout>(R.id.layout_dob)
+        val regionLayout = findViewById<TextInputLayout>(R.id.layout_region)
+
+        val nameLayout = findViewById<com.google.android.material.textfield.TextInputLayout>(
+            R.id.layout_name
+        )
+
+
         fun selectBuyer() {
             selectedRole = "buyer"
 
-            nameInput.hint = "Nama Lengkap"
+            nameLayout.hint = "Nama Lengkap"
+            nameInput.text?.clear()
+
             dobInput.visibility = View.VISIBLE
             regionInput.visibility = View.GONE
+
+            dobLayout.visibility = View.VISIBLE
+            regionLayout.visibility = View.GONE
 
             btnBuyer.setTextColor(getColor(R.color.white))
             btnSeller.setTextColor(getColor(R.color.green_primary))
@@ -225,9 +239,14 @@ class RegisterActivity : AppCompatActivity() {
         fun selectSeller() {
             selectedRole = "seller"
 
-            nameInput.hint = "Nama Toko"
+            nameLayout.hint = "Nama Toko"
+            nameInput.text?.clear()
+
             dobInput.visibility = View.GONE
             regionInput.visibility = View.VISIBLE
+
+            dobLayout.visibility = View.GONE
+            regionLayout.visibility = View.VISIBLE
 
             btnSeller.setTextColor(getColor(R.color.white))
             btnBuyer.setTextColor(getColor(R.color.green_primary))
@@ -238,10 +257,10 @@ class RegisterActivity : AppCompatActivity() {
             animateToggle(btnSeller)
         }
 
+
         btnBuyer.setOnClickListener { selectBuyer() }
         btnSeller.setOnClickListener { selectSeller() }
 
-        // DEFAULT
         selectBuyer()
     }
 

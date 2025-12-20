@@ -7,6 +7,15 @@
     android:fitsSystemWindows="true"
     >
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/wallpaper_background"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottom_half"
@@ -85,6 +94,7 @@
                 <!-- NAMA LENGKAP -->
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:id="@+id/layout_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
@@ -100,7 +110,6 @@
                         android:id="@+id/input_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Nama Lengkap"
                         android:textColor="@color/black"
                         android:textCursorDrawable="@null"/>
                 </com.google.android.material.textfield.TextInputLayout>
@@ -118,6 +127,7 @@
                     app:boxCornerRadiusTopEnd="16dp"
                     app:boxCornerRadiusBottomStart="16dp"
                     app:boxCornerRadiusBottomEnd="16dp">
+
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/input_email"
@@ -156,6 +166,7 @@
 
                 <!-- BUYER ONLY -->
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layout_dob"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -172,17 +183,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Tanggal Lahir"
-                        android:textColor="@color/black"
                         android:focusable="false"
-                        android:clickable="true"
-                        android:cursorVisible="false"
-                        android:textCursorDrawable="@null"/>
+                        android:clickable="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
 
 
                 <!-- SELLER ONLY -->
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layout_region"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -198,10 +207,9 @@
                         android:id="@+id/input_region"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Daerah"
-                        android:textColor="@color/black"
-                        android:textCursorDrawable="@null"/>
+                        android:hint="Daerah"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
 
 
                 <Button
