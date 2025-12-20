@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import com.example.miniprojectv2.model.LoanRequest
 import com.example.miniprojectv2.viewmodel.MachineLearningViewModel
 import com.example.miniprojectv2.viewmodel.PredictionState
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 
 class MachineLearningFragment : Fragment(R.layout.fragment_machine_learning) {
 
@@ -37,17 +38,22 @@ class MachineLearningFragment : Fragment(R.layout.fragment_machine_learning) {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val spinnerTerm = view.findViewById<Spinner>(R.id.spinnerTerm)
-        val spinnerGrade = view.findViewById<Spinner>(R.id.spinnerGrade)
-        val spinnerHome = view.findViewById<Spinner>(R.id.spinnerHomeOwnership)
-        val spinnerVerification = view.findViewById<Spinner>(R.id.spinnerVerification)
-        val spinnerPurpose = view.findViewById<Spinner>(R.id.spinnerPurpose)
+        val spinnerTerm =
+            view.findViewById<MaterialAutoCompleteTextView>(R.id.spinnerTerm)
+        val spinnerGrade =
+            view.findViewById<MaterialAutoCompleteTextView>(R.id.spinnerGrade)
+        val spinnerHome =
+            view.findViewById<MaterialAutoCompleteTextView>(R.id.spinnerHomeOwnership)
+        val spinnerVerification =
+            view.findViewById<MaterialAutoCompleteTextView>(R.id.spinnerVerification)
+        val spinnerPurpose =
+            view.findViewById<MaterialAutoCompleteTextView>(R.id.spinnerPurpose)
 
-        setupSpinner(spinnerTerm, termOptions)
-        setupSpinner(spinnerGrade, gradeOptions)
-        setupSpinner(spinnerHome, homeOwnershipOptions)
-        setupSpinner(spinnerVerification, verificationOptions)
-        setupSpinner(spinnerPurpose, purposeOptions)
+        setupDropdown(spinnerTerm, termOptions)
+        setupDropdown(spinnerGrade, gradeOptions)
+        setupDropdown(spinnerHome, homeOwnershipOptions)
+        setupDropdown(spinnerVerification, verificationOptions)
+        setupDropdown(spinnerPurpose, purposeOptions)
 
         val loanAmountEt = view.findViewById<EditText>(R.id.etLoanAmount)
         val installmentEt = view.findViewById<EditText>(R.id.etInstallment)
@@ -78,24 +84,15 @@ class MachineLearningFragment : Fragment(R.layout.fragment_machine_learning) {
                 return@setOnClickListener
             }
 
-            val term = spinnerTerm.selectedItem.toString()
-            val grade = spinnerGrade.selectedItem.toString()
-            val homeOwnership = spinnerHome.selectedItem.toString()
-            val verification = spinnerVerification.selectedItem.toString()
-            val purpose = spinnerPurpose.selectedItem.toString()
-
-            explanationTv.text = DEFAULT_DESCRIPTION
-
-
             val request = LoanRequest(
                 loan_amnt = loanAmount,
-                term = term,
-                installment = 300.0,
-                grade = grade,
-                home_ownership = homeOwnership,
-                annual_inc = 60000.0,
-                verification_status = verification,
-                purpose = purpose,
+                term = spinnerTerm.text.toString(),
+                installment = installment.toDouble(),
+                grade = spinnerGrade.text.toString(),
+                home_ownership = spinnerHome.text.toString(),
+                annual_inc = annualIncome.toDouble(),
+                verification_status = spinnerVerification.text.toString(),
+                purpose = spinnerPurpose.text.toString(),
                 delinq_2yrs = 0,
                 inq_last_6mths = 0,
                 open_acc = 0,
@@ -103,6 +100,7 @@ class MachineLearningFragment : Fragment(R.layout.fragment_machine_learning) {
                 total_acc = 0
             )
 
+            explanationTv.text = DEFAULT_DESCRIPTION
             viewModel.predict(request)
         }
 
@@ -136,17 +134,16 @@ class MachineLearningFragment : Fragment(R.layout.fragment_machine_learning) {
             }
         }
     }
-    private fun setupSpinner(
-        spinner: Spinner,
+    private fun setupDropdown(
+        dropdown: MaterialAutoCompleteTextView,
         items: List<String>
     ) {
         val adapter = ArrayAdapter(
             requireContext(),
-            android.R.layout.simple_spinner_item,
+            android.R.layout.simple_list_item_1,
             items
         )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
+        dropdown.setAdapter(adapter)
     }
 
 }
