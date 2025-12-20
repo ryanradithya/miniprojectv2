@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import java.io.IOException
 
 data class CartItem(
+    val id: String = "",
     val name: String = "",
     val price: Int = 0,
     var qty: Int = 1,

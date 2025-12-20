@@ -26,8 +26,8 @@ class CartFragment : Fragment() {
         val selectedItems = mutableListOf<CartItem>()
 
         fun refreshCart() {
+
             cartList.removeAllViews()
-            selectedItems.clear()
 
             CartRepository.getCart(
                 onSuccess = { result ->
@@ -118,15 +118,21 @@ class CartFragment : Fragment() {
                             }
                         )
 
+                        val selectedItemIds = mutableSetOf<String>()
+
+                        cbSelect.isChecked = selectedItemIds.contains(itemId)
+
                         cbSelect.setOnCheckedChangeListener { _, isChecked ->
                             if (isChecked) {
-                                if (!selectedItems.contains(item)) {
-                                    selectedItems.add(item)
-                                }
+                                selectedItemIds.add(itemId)
+                                selectedItems.removeAll { it.name == item.name }
+                                selectedItems.add(item.copy())
                             } else {
-                                selectedItems.remove(item)
+                                selectedItemIds.remove(itemId)
+                                selectedItems.removeAll { it.name == item.name }
                             }
                         }
+
 
                         btnPlus.setOnClickListener {
                             if (item.qty < stock) {
