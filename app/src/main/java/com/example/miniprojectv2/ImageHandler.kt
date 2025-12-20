@@ -50,6 +50,7 @@ object ImageHandler {
 
             val request = Request.Builder()
                 .url(requestUrl)
+                .addHeader("Authorization", "Bearer ${AuthConfig.API_KEY}")
                 .post(requestBody)
                 .build()
 
@@ -92,6 +93,7 @@ object ImageHandler {
 
         val request = Request.Builder()
             .url(url)
+            .addHeader("Authorization", "Bearer ${AuthConfig.API_KEY}")
             .get()
             .build()
 
