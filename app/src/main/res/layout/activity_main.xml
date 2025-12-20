@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:clipChildren="false"
+    android:background="@drawable/bg_putih"
     >
 
 <!--    isi konten-->

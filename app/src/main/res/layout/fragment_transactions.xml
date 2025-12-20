@@ -24,13 +24,15 @@
 
         <TextView
             android:id="@+id/tv_title_transactions"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="History Transaksi"
             android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp" />
+            android:textSize="28sp"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
     </LinearLayout>
 
     <!-- scroll view -->

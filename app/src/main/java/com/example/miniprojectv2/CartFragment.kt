@@ -1,7 +1,9 @@
 package com.example.miniprojectv2
 
 import android.app.AlertDialog
+import android.graphics.Typeface
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,12 +36,25 @@ class CartFragment : Fragment() {
                     selectedItems.clear()
 
                     if (result.isEmpty()) {
-                        val tv = TextView(requireContext())
-                        tv.text = "Keranjang kosong"
+                        val tv = TextView(requireContext()).apply {
+                            text = "Keranjang kosong"
+                            textSize = 20f
+                            setTypeface(null, Typeface.BOLD)
+                            gravity = Gravity.CENTER
+                        }
+
+                        val params = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        )
+                        params.topMargin = 48
+                        tv.layoutParams = params
+
                         cartList.addView(tv)
                         btnCheckout.visibility = View.GONE
                         return@getCart
                     }
+
 
                     btnCheckout.visibility = View.VISIBLE
 
