@@ -163,7 +163,7 @@
                 android:layout_weight="1">
 
                 <TextView
-                    android:text="Ubah Lokasi Toko"
+                    android:text="Ubah Lokasi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
@@ -171,7 +171,7 @@
                     android:textColor="@color/my_custom_status_bar"/>
 
                 <TextView
-                    android:text="Perbarui lokasi toko Anda"
+                    android:text="Perbarui lokasi Anda"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="13sp"
