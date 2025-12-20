@@ -9,6 +9,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.miniprojectv2.formatTimestamp
+
 
 class BuyerOrdersFragment : Fragment() {
 
@@ -66,7 +68,7 @@ class BuyerOrdersFragment : Fragment() {
                                 sb.append("\nResi: ${trx.trackingNumber}")
                             }
 
-                            sb.append("\nTanggal: ${trx.date}")
+                            sb.append("\nTanggal: ${formatTimestamp(trx.date)}")
 
                             text = sb.toString()
                             textSize = 14f

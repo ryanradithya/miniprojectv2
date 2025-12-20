@@ -102,6 +102,8 @@ class JualFragment : Fragment() {
 
                 loadProductImage(imagePreview, productToEdit!!.imageUri)
 
+                selectedImageUri = Uri.parse("server://${productToEdit!!.imageUri}")
+
                 val matchedCategory = categories.firstOrNull {
                     it.equals(productToEdit!!.category, ignoreCase = true)
                 }
@@ -157,14 +159,15 @@ class JualFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            if (selectedImageUri == null) {
+            if (!editMode && selectedImageUri == null) {
                 Toast.makeText(requireContext(), "Select image first", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+
             Log.d("JualFragment", "Starting image upload: $selectedImageUri")
 
-            val isServerImage = selectedImageUri.toString().startsWith("server://")
+            val isServerImage = selectedImageUri?.toString()?.startsWith("server://") == true
 
             val categoryToSave = category.trim().lowercase()
 

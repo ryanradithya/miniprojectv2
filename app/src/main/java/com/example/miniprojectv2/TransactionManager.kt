@@ -14,20 +14,41 @@ object TransactionManager {
         onError: (Exception) -> Unit = {}
     ) {
 
-        val data = hashMapOf(
-            "buyer" to buyer,
-            "expedition" to expedition,
-            "date" to System.currentTimeMillis(),
-            "status" to "Pesanan Masuk",
-            "trackingNumber" to null,
-            "items" to items,
-            "updatedAt" to System.currentTimeMillis()
-        )
+        if (items.isEmpty()) {
+            onError(Exception("Item kosong"))
+            return
+        }
 
-        db.collection("transactions")
-            .add(data)
-            .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { onError(it) }
+        val groupedItems = items.groupBy { it.sellerEmail }
+
+        var successCounter = 0
+        val totalTransaction = groupedItems.size
+
+        groupedItems.forEach { (sellerEmail, sellerItems) ->
+
+            val data = hashMapOf(
+                "buyer" to buyer,
+                "sellerEmail" to sellerEmail,
+                "expedition" to expedition,
+                "date" to System.currentTimeMillis(),
+                "status" to "Pesanan Masuk",
+                "trackingNumber" to null,
+                "items" to sellerItems,
+                "updatedAt" to System.currentTimeMillis()
+            )
+
+            db.collection("transactions")
+                .add(data)
+                .addOnSuccessListener {
+                    successCounter++
+                    if (successCounter == totalTransaction) {
+                        onSuccess()
+                    }
+                }
+                .addOnFailureListener {
+                    onError(it)
+                }
+        }
     }
 
     fun getTransactionsForBuyer(
@@ -59,30 +80,20 @@ object TransactionManager {
     ) {
 
         db.collection("transactions")
+            .whereEqualTo("sellerEmail", sellerEmail)
             .get()
             .addOnSuccessListener { snapshot ->
 
-                val result = mutableListOf<Transaction>()
-
-                for (doc in snapshot) {
+                val result = snapshot.map { doc ->
                     val trx = doc.toObject(Transaction::class.java)
                     trx.transactionId = doc.id
-
-                    val sellerItems = trx.items.filter {
-                        it.sellerEmail == sellerEmail
-                    }
-
-                    if (sellerItems.isNotEmpty()) {
-                        trx.items = sellerItems
-                        result.add(trx)
-                    }
+                    trx
                 }
 
                 onSuccess(result)
             }
             .addOnFailureListener { onError(it) }
     }
-
 
     fun updateStatus(
         transactionId: String,
@@ -107,7 +118,6 @@ object TransactionManager {
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onError(it) }
     }
-
 
     fun getTransactionById(
         transactionId: String,

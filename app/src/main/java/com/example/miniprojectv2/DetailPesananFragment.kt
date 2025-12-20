@@ -4,40 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 
 class DetailPesananFragment : Fragment() {
 
-    // ===== MODE =====
-    private lateinit var mode: String // "buyer" | "seller"
-
-    // ===== DATA =====
+    private lateinit var mode: String
     private lateinit var transactionId: String
-    private var productName: String = ""
-    private var allowReview = false
-    private var productAlreadyReviewed = false
-    private var selectedRating = 0f
-
-    // ===== UI =====
-    private lateinit var rvReviews: RecyclerView
-    private lateinit var reviewAdapter: ReviewAdapter
-    private val starViews = mutableListOf<ImageView>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        var sellerActionLocked = false
 
         val v = inflater.inflate(R.layout.fragment_detail_pesanan, container, false)
 
-        // ===============================
-        // Ambil Argument
-        // ===============================
+        val reviewContainer = v.findViewById<LinearLayout>(R.id.review_container)
+
         transactionId = arguments?.getString("transaction_id") ?: ""
         mode = arguments?.getString("mode") ?: "buyer"
 
@@ -46,59 +33,34 @@ class DetailPesananFragment : Fragment() {
             return v
         }
 
-        val prefs = requireContext()
-            .getSharedPreferences("UserPrefs", 0)
+        val prefs = requireContext().getSharedPreferences("UserPrefs", 0)
         val activeUser = prefs.getString("active_username", "User") ?: "User"
 
-        // ===============================
-        // UI REFERENCES
-        // ===============================
-        val tvName = v.findViewById<TextView>(R.id.tv_product_name)
-        val tvPrice = v.findViewById<TextView>(R.id.tv_product_price)
-        val tvQty = v.findViewById<TextView>(R.id.tv_product_qty)
         val tvTotal = v.findViewById<TextView>(R.id.tv_product_total)
         val tvStatus = v.findViewById<TextView>(R.id.tv_product_status)
         val tvExpedition = v.findViewById<TextView>(R.id.tv_product_expedition)
         val tvTracking = v.findViewById<TextView>(R.id.tv_product_tracking)
         val tvDate = v.findViewById<TextView>(R.id.tv_product_date)
+        val layoutProducts = v.findViewById<LinearLayout>(R.id.layout_products)
+        val tvBuyer = v.findViewById<TextView>(R.id.tv_product_buyer)
 
-        // ===== Review Section =====
-        val reviewSection = v.findViewById<LinearLayout>(R.id.review_section)
-        val etReview = v.findViewById<EditText>(R.id.et_review)
-        val ratingStars = v.findViewById<LinearLayout>(R.id.rating_stars)
-        val btnSubmit = v.findViewById<Button>(R.id.btn_submit_review)
 
-        // ===== Seller Action Section =====
+        var buyer: String = ""
+        var expedition: String = ""
+
         val sellerSection = v.findViewById<LinearLayout>(R.id.seller_action_section)
         val btnAccept = v.findViewById<Button>(R.id.btn_accept_order)
         val btnShip = v.findViewById<Button>(R.id.btn_ship_order)
 
-        // ===============================
-        // MODE SETUP
-        // ===============================
-        when (mode) {
-            "buyer" -> {
-                reviewSection.visibility = View.VISIBLE
-                sellerSection.visibility = View.GONE
-            }
-            "seller" -> {
-                reviewSection.visibility = View.GONE
-                sellerSection.visibility = View.VISIBLE
-            }
+        if (mode == "buyer") {
+            reviewContainer.visibility = View.VISIBLE
+            sellerSection.visibility = View.GONE
+        } else {
+            reviewContainer.visibility = View.GONE
+            sellerSection.visibility = View.VISIBLE
         }
 
-        // ===============================
-        // RecyclerView Review
-        // ===============================
-        rvReviews = v.findViewById(R.id.rv_reviews)
-        rvReviews.layoutManager = LinearLayoutManager(requireContext())
-        rvReviews.isNestedScrollingEnabled = false
-        reviewAdapter = ReviewAdapter(emptyList())
-        rvReviews.adapter = reviewAdapter
 
-        // ===============================
-        // LOAD TRANSACTION
-        // ===============================
         TransactionManager.getTransactionById(
             transactionId,
             onSuccess = { trx ->
@@ -108,104 +70,182 @@ class DetailPesananFragment : Fragment() {
                     return@getTransactionById
                 }
 
-                val firstItem = trx.items.firstOrNull()
                 val total = trx.items.sumOf { it.price * it.qty }
 
-                productName = firstItem?.name ?: ""
+                while (layoutProducts.childCount > 1) {
+                    layoutProducts.removeViewAt(0)
+                }
 
-                tvName.text = productName.ifEmpty { "(Item kosong)" }
-                tvPrice.text = "Rp ${firstItem?.price ?: 0}"
-                tvQty.text = "x${firstItem?.qty ?: 0}"
+                reviewContainer.removeAllViews()
+                reviewContainer.visibility = View.VISIBLE
+
+                trx.items.forEach { item ->
+
+                    val row = LinearLayout(requireContext()).apply {
+                        orientation = LinearLayout.HORIZONTAL
+                        setPadding(0, 4, 0, 4)
+                    }
+
+                    row.addView(TextView(requireContext()).apply {
+                        text = item.name
+                        layoutParams = LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f)
+                    })
+
+                    row.addView(TextView(requireContext()).apply {
+                        text = "x${item.qty}"
+                        setPadding(8, 0, 8, 0)
+                    })
+
+                    row.addView(TextView(requireContext()).apply {
+                        text = "Rp ${item.price * item.qty}"
+                    })
+
+                    layoutProducts.addView(row, 0)
+                }
+
+                tvBuyer.text = "Pembeli: ${trx.buyer}"
                 tvTotal.text = "Total: Rp $total"
                 tvStatus.text = "Status: ${trx.status}"
                 tvExpedition.text = "Ekspedisi: ${trx.expedition}"
                 tvTracking.text = trx.trackingNumber?.let { "Resi: $it" } ?: ""
-                tvDate.text = "Tanggal: ${trx.date}"
+                tvDate.text = "Tanggal: ${formatDate(trx.date)}"
 
-                // ===== Review Permission =====
-                allowReview = trx.status.contains("selesai", true)
-                if (!allowReview) disableReview(etReview, btnSubmit)
 
-                // ===== Seller Button State =====
-                if (mode == "seller") {
-                    btnAccept.isEnabled = false
-                    btnShip.isEnabled = false
+                if (mode == "buyer" && trx.status.contains("selesai", true)) {
 
-                    when (trx.status) {
-                        "Pesanan Masuk" -> {
-                            btnAccept.isEnabled = true
+                    trx.items.forEach { item ->
+
+                        var alreadyReviewed = false
+                        var selectedRating = 0f
+                        var isSubmitting = false
+
+
+                        val section = LinearLayout(requireContext()).apply {
+                            orientation = LinearLayout.VERTICAL
+                            setPadding(0, 16, 0, 16)
                         }
 
-                        "Pesanan Diproses" -> {
-                            btnShip.isEnabled = true
+                        val title = TextView(requireContext()).apply {
+                            text = "Beri Ulasan: ${item.name}"
+                            textSize = 16f
+                            setTypeface(null, android.graphics.Typeface.BOLD)
                         }
+
+                        val starLayout = LinearLayout(requireContext())
+                        val stars = mutableListOf<ImageView>()
+
+                        for (i in 1..5) {
+                            val star = ImageView(requireContext()).apply {
+                                setImageResource(R.drawable.ic_star_empty)
+                                val size = (32 * resources.displayMetrics.density).toInt()
+                                layoutParams = LinearLayout.LayoutParams(size, size)
+                                setOnClickListener {
+                                    if (alreadyReviewed) return@setOnClickListener
+                                    selectedRating = i.toFloat()
+                                    stars.forEachIndexed { idx, img ->
+                                        img.setImageResource(
+                                            if (idx < i) R.drawable.ic_star_full
+                                            else R.drawable.ic_star_empty
+                                        )
+                                    }
+                                }
+                            }
+                            stars.add(star)
+                            starLayout.addView(star)
+                        }
+
+                        val etComment = EditText(requireContext()).apply {
+                            hint = "Tulis ulasan untuk ${item.name}"
+                        }
+
+                        val btnSubmit = Button(requireContext()).apply {
+                            text = "Kirim Ulasan"
+                        }
+
+                        ProductRepository.findProductByName(
+                            item.name,
+                            onComplete = { product ->
+
+                                val existingReview = product?.reviews?.firstOrNull {
+                                    it.transactionId == transactionId &&
+                                            it.reviewerName == activeUser
+                                }
+
+                                if (existingReview != null) {
+                                    alreadyReviewed = true
+                                    selectedRating = existingReview.rating
+
+                                    etComment.setText(existingReview.comment)
+                                    etComment.isEnabled = false
+                                    btnSubmit.isEnabled = false
+
+                                    stars.forEachIndexed { idx, img ->
+                                        img.setImageResource(
+                                            if (idx < selectedRating) R.drawable.ic_star_full
+                                            else R.drawable.ic_star_empty
+                                        )
+                                        img.isEnabled = false
+                                    }
+                                }
+                            },
+                            onError = {}
+                        )
+
+
+                        btnSubmit.setOnClickListener {
+                            if (isSubmitting || alreadyReviewed) return@setOnClickListener
+
+                            val comment = etComment.text.toString().trim()
+                            if (selectedRating == 0f || comment.isEmpty()) {
+                                Toast.makeText(requireContext(), "Lengkapi rating dan ulasan", Toast.LENGTH_SHORT).show()
+                                return@setOnClickListener
+                            }
+
+                            isSubmitting = true
+                            btnSubmit.isEnabled = false
+
+                            ProductRepository.addReviewToProduct(
+                                productName = item.name,
+                                reviewer = activeUser,
+                                transactionId = transactionId,
+                                comment = comment,
+                                rating = selectedRating,
+                                onComplete = {
+                                    Toast.makeText(requireContext(), "Ulasan ${item.name} dikirim", Toast.LENGTH_SHORT).show()
+
+                                    alreadyReviewed = true
+                                    etComment.isEnabled = false
+                                    stars.forEach { it.isEnabled = false }
+                                },
+                                onError = {
+                                    isSubmitting = false
+                                    btnSubmit.isEnabled = true
+                                    Toast.makeText(requireContext(), it.message ?: "Gagal kirim ulasan", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+
+                        section.addView(title)
+                        section.addView(starLayout)
+                        section.addView(etComment)
+                        section.addView(btnSubmit)
+                        reviewContainer.addView(section)
                     }
                 }
 
-                loadReviews(activeUser, etReview, btnSubmit)
+                if (mode == "seller") {
+                    btnAccept.isEnabled = trx.status == "Pesanan Masuk"
+                    btnShip.isEnabled = trx.status == "Pesanan Diproses"
+                }
             },
             onError = {
                 Toast.makeText(requireContext(), "Gagal memuat detail pesanan", Toast.LENGTH_SHORT).show()
             }
         )
 
-        // ===============================
-        // Generate Rating Stars
-        // ===============================
-        for (i in 1..5) {
-            val star = ImageView(requireContext())
-            val size = (32 * resources.displayMetrics.density).toInt()
-            star.layoutParams = LinearLayout.LayoutParams(size, size)
-            star.setImageResource(R.drawable.ic_star_empty)
-
-            star.setOnClickListener {
-                if (!allowReview || productAlreadyReviewed) return@setOnClickListener
-                selectedRating = i.toFloat()
-                starViews.forEachIndexed { idx, img ->
-                    img.setImageResource(
-                        if (idx < i) R.drawable.ic_star_full
-                        else R.drawable.ic_star_empty
-                    )
-                }
-            }
-
-            starViews.add(star)
-            ratingStars.addView(star)
-        }
-
-        // ===============================
-        // Submit Review (BUYER)
-        // ===============================
-        btnSubmit.setOnClickListener {
-            val comment = etReview.text.toString().trim()
-            if (selectedRating == 0f || comment.isEmpty()) {
-                Toast.makeText(requireContext(), "Isi rating dan komentar dulu!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            ProductRepository.addReviewToProduct(
-                productName = productName,
-                reviewer = activeUser,
-                transactionId = transactionId,
-                comment = comment,
-                rating = selectedRating,
-                onComplete = {
-                    Toast.makeText(requireContext(), "Ulasan dikirim!", Toast.LENGTH_SHORT).show()
-                    etReview.setText("")
-                    selectedRating = 0f
-                    starViews.forEach { it.setImageResource(R.drawable.ic_star_empty) }
-                    loadReviews(activeUser, etReview, btnSubmit)
-                },
-                onError = {
-                    Toast.makeText(requireContext(), it.message ?: "Gagal mengirim ulasan", Toast.LENGTH_SHORT).show()
-                }
-            )
-        }
-
-        // ===============================
-        // SELLER ACTION
-        // ===============================
         btnAccept.setOnClickListener {
+            if (sellerActionLocked) return@setOnClickListener
+            sellerActionLocked = true
             btnAccept.isEnabled = false
 
             TransactionManager.updateStatus(
@@ -220,97 +260,54 @@ class DetailPesananFragment : Fragment() {
 
 
         btnShip.setOnClickListener {
-            val dialogView = layoutInflater.inflate(
-                R.layout.dialog_input_resi,
-                null,
-                false
-            )
+            if (sellerActionLocked) return@setOnClickListener
 
+            val dialogView = layoutInflater.inflate(R.layout.dialog_input_resi, null)
             val etResi = dialogView.findViewById<EditText>(R.id.et_resi)
-            val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
-            val btnSubmit = dialogView.findViewById<Button>(R.id.btn_submit)
+            val btnKirim = dialogView.findViewById<Button>(R.id.btn_submit)
+            val btnBatal = dialogView.findViewById<Button>(R.id.btn_cancel)
 
             val dialog = android.app.AlertDialog.Builder(requireContext())
                 .setView(dialogView)
-                .setCancelable(false)
                 .create()
 
-            btnCancel.setOnClickListener {
-                dialog.dismiss()
-            }
-
-            btnSubmit.setOnClickListener {
+            btnKirim.setOnClickListener {
                 val resi = etResi.text.toString().trim()
-
                 if (resi.isEmpty()) {
-                    etResi.error = "Nomor resi wajib diisi"
+                    Toast.makeText(requireContext(), "Resi tidak boleh kosong", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
-                btnSubmit.isEnabled = false
+                sellerActionLocked = true
+                btnShip.isEnabled = false
+                btnKirim.isEnabled = false
 
                 TransactionManager.updateStatus(
                     transactionId,
                     "Pesanan Dikirim",
-                    trackingNumber = resi,
-                    onSuccess = {
-                        Toast.makeText(
-                            requireContext(),
-                            "Pesanan berhasil dikirim",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        dialog.dismiss()
-                        findNavController().popBackStack()
-                    },
-                    onError = {
-                        btnSubmit.isEnabled = true
-                        Toast.makeText(
-                            requireContext(),
-                            "Gagal mengirim pesanan",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                )
+                    resi
+                ) {
+                    Toast.makeText(requireContext(), "Pesanan dikirim", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                    findNavController().popBackStack()
+                }
             }
-
+            btnBatal.setOnClickListener {
+                dialog.dismiss()
+            }
             dialog.show()
         }
-
         return v
     }
-
-    private fun loadReviews(
-        activeUser: String,
-        etReview: EditText,
-        btnSubmit: Button
-    ) {
-        if (productName.isEmpty()) return
-
-        ProductRepository.findProductByName(
-            productName,
-            onComplete = { product ->
-                if (product == null) return@findProductByName
-
-                rvReviews.adapter =
-                    ReviewAdapter(product.reviews.sortedByDescending { it.date })
-
-                productAlreadyReviewed =
-                    product.reviews.any {
-                        it.reviewerName == activeUser &&
-                                it.transactionId == transactionId
-                    }
-
-                if (productAlreadyReviewed) disableReview(etReview, btnSubmit)
-            },
-            onError = {
-                Toast.makeText(requireContext(), "Gagal memuat review", Toast.LENGTH_SHORT).show()
-            }
-        )
-    }
-
-    private fun disableReview(et: EditText, btn: Button) {
-        et.isEnabled = false
-        btn.isEnabled = false
-        starViews.forEach { it.isEnabled = false }
-    }
 }
+
+private fun formatDate(time: Long): String {
+    if (time == 0L) return "-"
+    val sdf = java.text.SimpleDateFormat(
+        "dd MMM yyyy, HH:mm",
+        java.util.Locale("id", "ID")
+    )
+    return sdf.format(java.util.Date(time))
+}
+
+

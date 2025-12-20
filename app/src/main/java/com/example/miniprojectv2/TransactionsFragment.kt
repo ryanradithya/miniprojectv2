@@ -55,7 +55,6 @@ class TransactionsFragment : Fragment() {
 
                     trxList.forEach { trx ->
 
-                        val firstItem = trx.items.firstOrNull()
 
                         val card = CardView(requireContext()).apply {
                             radius = 16f
@@ -74,16 +73,24 @@ class TransactionsFragment : Fragment() {
                             orientation = LinearLayout.VERTICAL
                         }
 
-                        // TITLE (Nama produk pertama)
-                        val tvTitle = TextView(requireContext()).apply {
-                            text = if (firstItem != null)
-                                "${firstItem.name} x${firstItem.qty}"
-                            else
-                                "(Item tidak ditemukan)"
-
-                            textSize = 16f
-                            setPadding(0, 0, 0, 8)
+                        trx.items.forEach { item ->
+                            val tvItem = TextView(requireContext()).apply {
+                                text = "- ${item.name} × ${item.qty}"
+                                textSize = 14f
+                                setPadding(0, 0, 0, 4)
+                            }
+                            layout.addView(tvItem)
                         }
+                        // TITLE (Nama produk pertama)
+//                        val tvTitle = TextView(requireContext()).apply {
+//                            text = if (firstItem != null)
+//                                "${firstItem.name} x${firstItem.qty}"
+//                            else
+//                                "(Item tidak ditemukan)"
+//
+//                            textSize = 16f
+//                            setPadding(0, 0, 0, 8)
+//                        }
 
                         // TOTAL BELANJA
                         val total = trx.items.sumOf { it.price * it.qty }
@@ -113,7 +120,7 @@ class TransactionsFragment : Fragment() {
                         }
 
 
-                        layout.addView(tvTitle)
+//                        layout.addView(tvTitle)
                         layout.addView(tvTotal)
                         layout.addView(tvExpedition)
                         layout.addView(tvStatus)
