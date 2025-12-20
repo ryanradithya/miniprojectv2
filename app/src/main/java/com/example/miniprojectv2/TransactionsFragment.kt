@@ -1,5 +1,6 @@
 package com.example.miniprojectv2
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,8 +31,8 @@ class TransactionsFragment : Fragment() {
         btnBack.visibility = if (fromCheckout) View.VISIBLE else View.GONE
         bottomNav.visibility = if (fromCheckout) View.GONE else View.VISIBLE
 
-        val prefs = requireContext().getSharedPreferences("UserPrefs", 0)
-        val activeUser = prefs.getString("active_username", "") ?: ""
+        val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val buyerEmail = prefs.getString("active_email", "") ?: ""
 
         // LOAD TRANSAKSI (FIRESTORE)
         fun refreshList() {
@@ -39,7 +40,7 @@ class TransactionsFragment : Fragment() {
 
 
             TransactionManager.getTransactionsForBuyer(
-                buyer = activeUser,
+                buyer = buyerEmail,
                 onSuccess = { trxList ->
 
                     if (trxList.isEmpty()) {

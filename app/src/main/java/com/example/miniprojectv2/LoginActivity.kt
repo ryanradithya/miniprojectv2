@@ -65,9 +65,9 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
 
 
 
-        IpHelper.autoDetectServer(this) {
-            Log.d("IpHelper", "Server detected: $it")
-        }
+//        IpHelper.autoDetectServer(this) {
+//            Log.d("IpHelper", "Server detected: $it")
+//        }
 
 
         // ===== Status bar =====

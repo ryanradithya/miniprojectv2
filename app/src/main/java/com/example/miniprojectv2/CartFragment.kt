@@ -103,13 +103,15 @@ class CartFragment : Fragment() {
                             }
                         )
 
-                        val selectedItemIds = mutableSetOf<String>()
-
                         cbSelect.setOnCheckedChangeListener { _, isChecked ->
-                            if (isChecked) selectedItemIds.add(itemId)
-                            else selectedItemIds.remove(itemId)
+                            if (isChecked) {
+                                if (!selectedItems.contains(item)) {
+                                    selectedItems.add(item)
+                                }
+                            } else {
+                                selectedItems.remove(item)
+                            }
                         }
-
 
                         btnPlus.setOnClickListener {
                             if (item.qty < stock) {

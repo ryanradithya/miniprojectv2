@@ -162,10 +162,13 @@ class CheckoutFragment : Fragment() {
             expedition = expedition,
             items = transactionItems,
             onSuccess = {
+
                 Toast.makeText(requireContext(), "Checkout berhasil!", Toast.LENGTH_SHORT).show()
 
-                // Kosongkan keranjang
                 CartRepository.clearCart {
+
+                    if (!isAdded) return@clearCart
+
                     findNavController().navigate(
                         R.id.action_checkout_to_transaction,
                         Bundle().apply {
@@ -173,16 +176,6 @@ class CheckoutFragment : Fragment() {
                         }
                     )
                 }
-
-
-                // Pindah ke halaman transaksi
-                val bundle = Bundle().apply {
-                    putBoolean("from_checkout", true)
-                }
-                findNavController().navigate(
-                    R.id.action_checkout_to_transaction,
-                    bundle
-                )
             },
             onError = {
                 Toast.makeText(requireContext(), "Gagal menyimpan transaksi", Toast.LENGTH_SHORT).show()

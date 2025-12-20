@@ -17,7 +17,7 @@ object IpHelper {
     private val client = OkHttpClient()
 
 
-    private var baseUrl: String = "http://192.168.1.25:8000"
+    private var baseUrl: String = "https://umkmmanager.online"
 
     fun getBaseUrl(): String {
 //                return "http://10.0.2.2:8000"
@@ -40,6 +40,7 @@ object IpHelper {
     }
 
     fun autoDetectServer(context: Context, onResult: (Boolean) -> Unit) {
+
         val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val ipInt = wifiManager.connectionInfo.ipAddress
 
@@ -53,7 +54,9 @@ object IpHelper {
             ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(ipInt).array()
         ).hostAddress
 
-        val subnet = deviceIp.substringBeforeLast(".") // "192.168.1"
+        var subnet = deviceIp.substringBeforeLast(".") // "192.168.1"
+
+        subnet = "192.168.1"
 
         Log.d("IpHelper", "Scanning subnet: $subnet.*")
 
