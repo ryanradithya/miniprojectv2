@@ -28,7 +28,7 @@ class CheckoutFragment : Fragment() {
             arguments?.getSerializable("selected_items") as? ArrayList<CartItem> ?: arrayListOf()
 
         val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val buyerUsername = prefs.getString("active_username", "Guest") ?: "Guest"
+        val buyerEmail = prefs.getString("active_email", "") ?: ""
 
         // Tampilkan ringkasan item checkout
         var totalCost = 0
@@ -60,7 +60,7 @@ class CheckoutFragment : Fragment() {
             }
 
             val expedition = spinner.selectedItem?.toString() ?: ""
-            startCheckout(selectedItems, buyerUsername, expedition)
+            startCheckout(selectedItems, buyerEmail, expedition)
         }
 
         return v
@@ -161,11 +161,19 @@ class CheckoutFragment : Fragment() {
             buyer = buyer,
             expedition = expedition,
             items = transactionItems,
-            onComplete = {
+            onSuccess = {
                 Toast.makeText(requireContext(), "Checkout berhasil!", Toast.LENGTH_SHORT).show()
 
                 // Kosongkan keranjang
-                CartManager.items.removeAll(selectedItems)
+                CartRepository.clearCart {
+                    findNavController().navigate(
+                        R.id.action_checkout_to_transaction,
+                        Bundle().apply {
+                            putBoolean("from_checkout", true)
+                        }
+                    )
+                }
+
 
                 // Pindah ke halaman transaksi
                 val bundle = Bundle().apply {

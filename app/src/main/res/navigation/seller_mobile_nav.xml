@@ -40,7 +40,28 @@
         <action
             android:id="@+id/action_ordersFragment_to_accountFragment"
             app:destination="@id/accountFragment" />
+
+        <action
+            android:id="@+id/action_ordersFragment_to_detailPesananSellerFragment"
+            app:destination="@id/detailPesananSellerFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/detailPesananSellerFragment"
+        android:name="com.example.miniprojectv2.DetailPesananFragment"
+        android:label="Detail Pesanan">
+
+        <argument
+            android:name="transaction_id"
+            app:argType="string" />
+
+        <argument
+            android:name="mode"
+            app:argType="string"
+            android:defaultValue="seller" />
+    </fragment>
+
 
     <!-- Account -->
     <fragment

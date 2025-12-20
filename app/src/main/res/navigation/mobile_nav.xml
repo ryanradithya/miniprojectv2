@@ -80,11 +80,19 @@
         tools:layout="@layout/fragment_transactions" />
 
     <fragment
-        android:id="@+id/detailPesananFragment"
+        android:id="@+id/detailPesananBuyerFragment"
         android:name="com.example.miniprojectv2.DetailPesananFragment"
-        android:label="Detail Pesanan"
-        tools:layout="@layout/fragment_detail_pesanan" />
+        android:label="Detail Pesanan">
 
+        <argument
+            android:name="transaction_id"
+            app:argType="string" />
+
+        <argument
+            android:name="mode"
+            app:argType="string"
+            android:defaultValue="buyer" />
+    </fragment>
 
     <!-- Account -->
     <fragment

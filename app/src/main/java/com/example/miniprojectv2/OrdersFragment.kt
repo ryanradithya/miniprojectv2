@@ -1,5 +1,6 @@
 package com.example.miniprojectv2
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,166 +8,90 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 
 class OrdersFragment : Fragment() {
+
+    private lateinit var listLayout: LinearLayout
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         val v = inflater.inflate(R.layout.fragment_orders, container, false)
-        val listLayout: LinearLayout = v.findViewById(R.id.orders_list)
-
-        fun refreshOrders() {
-
-            listLayout.removeAllViews()
-
-            val prefs = requireContext()
-                .getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
-
-            val sellerEmail = prefs.getString("active_email", "") ?: ""
-
-            TransactionManager.getTransactionsForSeller(
-                sellerEmail = sellerEmail,
-
-                onComplete = { transactions ->
-
-                    if (transactions.isEmpty()) {
-                        val tv = TextView(requireContext())
-                        tv.text = "Belum ada pesanan."
-                        tv.textSize = 16f
-                        tv.setPadding(16, 16, 16, 16)
-                        listLayout.addView(tv)
-                        return@getTransactionsForSeller
-                    }
-
-                    transactions.forEach { trx ->
-
-                        val firstItem = trx.items.firstOrNull()
-                        val total = trx.items.sumOf { it.price * it.qty }
-
-                        val card = CardView(requireContext()).apply {
-                            radius = 16f
-                            cardElevation = 8f
-                            setContentPadding(24, 24, 24, 24)
-                        }
-
-                        val layout = LinearLayout(requireContext()).apply {
-                            orientation = LinearLayout.VERTICAL
-                        }
-
-                        val tvTitle = TextView(requireContext()).apply {
-                            text = if (firstItem != null)
-                                "${firstItem.name} x${firstItem.qty}"
-                            else
-                                "(Item kosong)"
-                            textSize = 18f
-                        }
-
-                        val tvBuyer = TextView(requireContext()).apply {
-                            text = "Buyer: ${trx.buyer}"
-                        }
-
-                        val tvPrice = TextView(requireContext()).apply {
-                            text = "Total: Rp $total"
-                        }
-
-                        val tvExpedition = TextView(requireContext()).apply {
-                            text = "Expedition: ${trx.expedition}"
-                        }
-
-                        val tvStatus = TextView(requireContext()).apply {
-                            text =
-                                "Status: ${trx.status}" +
-                                        (trx.trackingNumber?.let { "\nResi: $it" } ?: "")
-                        }
-
-                        val btnAction = Button(requireContext()).apply {
-
-                            when (trx.status) {
-                                "Pesanan Masuk" -> text = "Accept Order"
-                                "Pesanan Diproses" -> text = "Input Tracking Number"
-                                "Pesanan Dikirim" -> {
-                                    text = "Waiting Buyer"
-                                    isEnabled = false
-                                }
-                                "Pesanan Selesai" -> {
-                                    text = "Completed"
-                                    isEnabled = false
-                                }
-                            }
-
-                            setOnClickListener {
-                                when (trx.status) {
-                                    "Pesanan Masuk" -> {
-                                        TransactionManager.updateStatus(
-                                            trx.transactionId,
-                                            "Pesanan Diproses",
-                                            onComplete = { refreshOrders() }
-                                        )
-                                    }
-
-                                    "Pesanan Diproses" -> {
-                                        val input = EditText(requireContext())
-                                        input.hint = "Masukkan nomor resi"
-
-                                        val dialog = android.app.AlertDialog.Builder(requireContext())
-                                            .setTitle("Input Resi")
-                                            .setView(input)
-                                            .setPositiveButton("OK") { _, _ ->
-                                                val resi = input.text.toString().trim()
-                                                if (resi.isNotEmpty()) {
-                                                    TransactionManager.updateStatus(
-                                                        trx.transactionId,
-                                                        "Pesanan Dikirim",
-                                                        trackingNumber = resi,
-                                                        onComplete = { refreshOrders() }
-                                                    )
-                                                }
-                                            }
-                                            .setNegativeButton("Cancel", null)
-                                            .create()
-                                        dialog.show()
-                                    }
-                                }
-                            }
-                        }
-
-                        layout.addView(tvTitle)
-                        layout.addView(tvBuyer)
-                        layout.addView(tvPrice)
-                        layout.addView(tvExpedition)
-                        layout.addView(tvStatus)
-                        layout.addView(btnAction)
-
-                        card.addView(layout)
-                        listLayout.addView(card)
-
-                        card.setOnClickListener {
-
-                            val fragment = DetailPesananFragment().apply {
-                                arguments = Bundle().apply {
-                                    putString("transaction_id", trx.transactionId)
-                                }
-                            }
-
-                            parentFragmentManager.beginTransaction()
-                                .replace(R.id.drawer_layout, fragment)
-                                .addToBackStack(null)
-                                .commit()
-                        }
-
-                    }
-                },
-                onError = {
-                    Toast.makeText(requireContext(), "Gagal memuat pesanan", Toast.LENGTH_SHORT).show()
-                }
-            )
-        }
-
-        refreshOrders()
+        listLayout = v.findViewById(R.id.orders_list)
         return v
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshOrders()
+    }
+
+    private fun refreshOrders() {
+        listLayout.removeAllViews()
+
+        val prefs = requireContext()
+            .getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE)
+
+        val sellerEmail = prefs.getString("active_email", "") ?: ""
+
+        TransactionManager.getTransactionsForSeller(
+            sellerEmail = sellerEmail,
+            onSuccess = { transactions ->
+
+                if (transactions.isEmpty()) {
+                    val tv = TextView(requireContext()).apply {
+                        text = "Belum ada pesanan."
+                        textSize = 16f
+                        setPadding(16, 16, 16, 16)
+                    }
+                    listLayout.addView(tv)
+                    return@getTransactionsForSeller
+                }
+
+                transactions.forEach { trx ->
+                    val itemView = layoutInflater.inflate(
+                        R.layout.item_seller_transaction,
+                        listLayout,
+                        false
+                    )
+
+                    val firstItem = trx.items.firstOrNull()
+                    val total = trx.items.sumOf { it.price * it.qty }
+
+                    itemView.findViewById<TextView>(R.id.tvProduct).text =
+                        firstItem?.let { "${it.name} x${it.qty}" } ?: "(Item kosong)"
+
+                    itemView.findViewById<TextView>(R.id.tvBuyer).text =
+                        "Buyer: ${trx.buyer}"
+
+                    itemView.findViewById<TextView>(R.id.tvTotal).text =
+                        "Total: Rp $total"
+
+                    itemView.findViewById<TextView>(R.id.tvExpedition).text =
+                        "Expedition: ${trx.expedition}"
+
+                    itemView.findViewById<TextView>(R.id.tvStatus).text =
+                        trx.status + (trx.trackingNumber?.let { "\nResi: $it" } ?: "")
+
+                    itemView.setOnClickListener {
+                        findNavController().navigate(
+                            R.id.action_ordersFragment_to_detailPesananSellerFragment,
+                            Bundle().apply {
+                                putString("transaction_id", trx.transactionId)
+                            }
+                        )
+                    }
+
+                    listLayout.addView(itemView)
+                }
+            },
+            onError = {
+                Toast.makeText(requireContext(), "Gagal memuat pesanan", Toast.LENGTH_SHORT).show()
+            }
+        )
     }
 }

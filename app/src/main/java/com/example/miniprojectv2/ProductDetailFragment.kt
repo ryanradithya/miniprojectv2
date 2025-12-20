@@ -12,11 +12,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import java.io.IOException
 
-object CartManager {
-    val items = mutableListOf<CartItem>()
-}
-
-data class CartItem(val name: String, val price: Int, var qty: Int = 1, val sellerEmail: String)
+data class CartItem(
+    val name: String = "",
+    val price: Int = 0,
+    var qty: Int = 1,
+    val sellerEmail: String = "",
+    val imageId: String = ""
+)
 
 class ProductDetailFragment : Fragment() {
 
@@ -37,7 +39,7 @@ class ProductDetailFragment : Fragment() {
     private var currentStock = 0
     private var productName: String = ""
     private var productPrice: Int = 0
-    private var productImageUri: String? = null
+    private var productImageId: String = ""
     private var productDescription: String = ""
 
     override fun onCreateView(
@@ -70,12 +72,16 @@ class ProductDetailFragment : Fragment() {
         productPrice = arguments?.getInt("product_price") ?: 0
         currentStock = arguments?.getInt("product_stock") ?: 0
         productDescription = arguments?.getString("product_description") ?: "-"
-        productImageUri = arguments?.getString("product_image_uri")
+
+        btnAdd.isEnabled = false
+        btnAdd.alpha = 0.5f
 
         setupBasicInfo()
         setupDescriptionToggle()
         setupQtyButtons()
         setupAddToCart()
+
+
 
         loadProductDetailsFirestore()
     }
@@ -137,25 +143,29 @@ class ProductDetailFragment : Fragment() {
     // ADD TO CART
     private fun setupAddToCart() {
         btnAdd.setOnClickListener {
-            val existing = CartManager.items.find { it.name == productName }
-            val totalQty = (existing?.qty ?: 0) + quantity
-
-
-            if (totalQty > currentStock) {
+            if (quantity > currentStock) {
                 Toast.makeText(requireContext(), "Jumlah melebihi stok", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (existing != null) {
-                existing.qty += quantity
-            } else {
-                CartManager.items.add(CartItem(productName, productPrice, quantity, sellerEmail = productSellerEmail))
-            }
+            val item = CartItem(
+                name = productName,
+                price = productPrice,
+                qty = quantity,
+                sellerEmail = productSellerEmail,
+                imageId = productImageId
+            )
+
+            CartRepository.addItem(
+                productId = productName,
+                item = item
+            )
 
             Toast.makeText(requireContext(), "Ditambahkan ke keranjang", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_p_to_cart)
         }
     }
+
 
     // LOAD DETAIL PRODUK DARI FIRESTORE
     private fun loadProductDetailsFirestore() {
@@ -163,12 +173,20 @@ class ProductDetailFragment : Fragment() {
             name = productName,
             onComplete = { product ->
                 if (product == null) return@findProductByName
-                productSellerEmail = product.sellerEmail   // ← SIMPAN
-                loadProductImage(imageView, productImageUri)
+
+                productSellerEmail = product.sellerEmail
+
+                productImageId = product.imageUri
+                    ?.removePrefix("server://") ?: ""
+                btnAdd.isEnabled = true
+                btnAdd.alpha = 1f
+
+                loadProductImage(imageView, product.imageUri)
                 loadReviews()
             },
             onError = {
-                Toast.makeText(requireContext(), "Gagal memuat data produk", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),"Gagal memuat data produk",Toast.LENGTH_SHORT
+                ).show()
             }
         )
     }

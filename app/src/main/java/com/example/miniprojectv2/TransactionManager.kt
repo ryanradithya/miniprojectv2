@@ -6,12 +6,11 @@ object TransactionManager {
 
     private val db = FirebaseFirestore.getInstance()
 
-    // TAMBAH TRANSAKSI BARU (1 transaksi = banyak item)
     fun addTransaction(
         buyer: String,
         expedition: String,
         items: List<TransactionItem>,
-        onComplete: () -> Unit = {},
+        onSuccess: () -> Unit = {},
         onError: (Exception) -> Unit = {}
     ) {
 
@@ -27,107 +26,109 @@ object TransactionManager {
 
         db.collection("transactions")
             .add(data)
-            .addOnSuccessListener { onComplete() }
-            .addOnFailureListener(onError)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onError(it) }
     }
 
-    // BUYER: AMBIL TRANSAKSI MILIKNYA
     fun getTransactionsForBuyer(
         buyer: String,
-        onComplete: (List<Transaction>) -> Unit,
+        onSuccess: (List<Transaction>) -> Unit,
         onError: (Exception) -> Unit
     ) {
+
         db.collection("transactions")
             .whereEqualTo("buyer", buyer)
             .get()
-            .addOnSuccessListener { result ->
+            .addOnSuccessListener { snapshot ->
 
-                val list = result.map { doc ->
+                val transactions = snapshot.map { doc ->
                     val trx = doc.toObject(Transaction::class.java)
                     trx.transactionId = doc.id
                     trx
                 }
 
-                onComplete(list)
+                onSuccess(transactions)
             }
-            .addOnFailureListener(onError)
+            .addOnFailureListener { onError(it) }
     }
 
-    // SELLER: LIHAT SEMUA TRANSAKSI
     fun getTransactionsForSeller(
         sellerEmail: String,
-        onComplete: (List<Transaction>) -> Unit,
+        onSuccess: (List<Transaction>) -> Unit,
         onError: (Exception) -> Unit
     ) {
+
         db.collection("transactions")
             .get()
-            .addOnSuccessListener { result ->
+            .addOnSuccessListener { snapshot ->
 
-                val list = result.mapNotNull { doc ->
-                    val trx = doc.toObject(Transaction::class.java) ?: return@mapNotNull null
+                val result = mutableListOf<Transaction>()
+
+                for (doc in snapshot) {
+                    val trx = doc.toObject(Transaction::class.java)
                     trx.transactionId = doc.id
 
                     val sellerItems = trx.items.filter {
                         it.sellerEmail == sellerEmail
                     }
 
-                    if (sellerItems.isEmpty()) {
-                        null
-                    } else {
+                    if (sellerItems.isNotEmpty()) {
                         trx.items = sellerItems
-                        trx
+                        result.add(trx)
                     }
                 }
 
-                onComplete(list)
-
+                onSuccess(result)
             }
-            .addOnFailureListener(onError)
+            .addOnFailureListener { onError(it) }
     }
 
-    // UPDATE STATUS (Diproses, Dikirim, Selesai)
+
     fun updateStatus(
         transactionId: String,
         newStatus: String,
         trackingNumber: String? = null,
-        onComplete: () -> Unit = {},
+        onSuccess: () -> Unit = {},
         onError: (Exception) -> Unit = {}
     ) {
 
-        val updateData = mapOf(
+        val updateData = mutableMapOf<String, Any>(
             "status" to newStatus,
-            "trackingNumber" to trackingNumber
+            "updatedAt" to System.currentTimeMillis()
         )
+
+        trackingNumber?.let {
+            updateData["trackingNumber"] = it
+        }
 
         db.collection("transactions")
             .document(transactionId)
             .update(updateData)
-            .addOnSuccessListener { onComplete() }
-            .addOnFailureListener(onError)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onError(it) }
     }
+
 
     fun getTransactionById(
         transactionId: String,
-        onComplete: (Transaction?) -> Unit,
+        onSuccess: (Transaction?) -> Unit,
         onError: (Exception) -> Unit
     ) {
+
         db.collection("transactions")
             .document(transactionId)
             .get()
             .addOnSuccessListener { doc ->
+
                 if (!doc.exists()) {
-                    onComplete(null)
+                    onSuccess(null)
                     return@addOnSuccessListener
                 }
 
                 val trx = doc.toObject(Transaction::class.java)
-                if (trx != null) {
-                    trx.transactionId = doc.id
-                }
-
-                onComplete(trx)
+                trx?.transactionId = doc.id
+                onSuccess(trx)
             }
-            .addOnFailureListener(onError)
+            .addOnFailureListener { onError(it) }
     }
-
 }

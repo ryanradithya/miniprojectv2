@@ -16,13 +16,15 @@ class BuyerOrdersFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         val v = inflater.inflate(R.layout.fragment_orders, container, false)
         val listLayout: LinearLayout = v.findViewById(R.id.orders_list)
 
-        val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val buyerUsername = prefs.getString("active_username", "Guest") ?: "Guest"
+        val prefs =
+            requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val buyerUsername =
+            prefs.getString("active_username", "Guest") ?: "Guest"
 
         fun refreshOrders() {
 
@@ -30,24 +32,23 @@ class BuyerOrdersFragment : Fragment() {
 
             TransactionManager.getTransactionsForBuyer(
                 buyer = buyerUsername,
-                onComplete = { transactions ->
-
+                onSuccess = success@{ transactions ->
                     if (transactions.isEmpty()) {
-                        val tv = TextView(requireContext())
-                        tv.text = "Belum ada pesanan."
-                        tv.textSize = 16f
-                        tv.setPadding(16, 16, 16, 16)
+                        val tv = TextView(requireContext()).apply {
+                            text = "Belum ada pesanan."
+                            textSize = 16f
+                            setPadding(16, 16, 16, 16)
+                        }
                         listLayout.addView(tv)
-                        return@getTransactionsForBuyer
+                        return@success
                     }
 
                     transactions.forEach { trx ->
 
                         val firstItem = trx.items.firstOrNull()
+                        val total = trx.items.sumOf { it.price * it.qty }
 
                         val tv = TextView(requireContext()).apply {
-
-                            val total = trx.items.sumOf { it.price * it.qty }
 
                             val sb = StringBuilder()
 
@@ -58,7 +59,7 @@ class BuyerOrdersFragment : Fragment() {
                             }
 
                             sb.append("\nTotal: Rp $total")
-                            sb.append("\nExpedisi: ${trx.expedition}")
+                            sb.append("\nEkspedisi: ${trx.expedition}")
                             sb.append("\nStatus: ${trx.status}")
 
                             if (!trx.trackingNumber.isNullOrEmpty()) {
@@ -73,13 +74,18 @@ class BuyerOrdersFragment : Fragment() {
                         }
 
                         tv.setOnClickListener {
-                            if (trx.status == "Pesanan Dikirim") {
+
+                            if (trx.status == "Dikirim") {
                                 TransactionManager.updateStatus(
                                     transactionId = trx.transactionId,
-                                    newStatus = "Pesanan Selesai",
+                                    newStatus = "Selesai",
                                     trackingNumber = trx.trackingNumber,
-                                    onComplete = {
-                                        Toast.makeText(requireContext(), "Pesanan selesai!", Toast.LENGTH_SHORT).show()
+                                    onSuccess = {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Pesanan selesai!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                         refreshOrders()
                                     }
                                 )
@@ -90,10 +96,11 @@ class BuyerOrdersFragment : Fragment() {
                     }
                 },
                 onError = {
-                    val tv = TextView(requireContext())
-                    tv.text = "Gagal memuat pesanan."
-                    tv.textSize = 16f
-                    tv.setPadding(16, 16, 16, 16)
+                    val tv = TextView(requireContext()).apply {
+                        text = "Gagal memuat pesanan."
+                        textSize = 16f
+                        setPadding(16, 16, 16, 16)
+                    }
                     listLayout.addView(tv)
                 }
             )

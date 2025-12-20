@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -39,7 +40,7 @@ class TransactionsFragment : Fragment() {
 
             TransactionManager.getTransactionsForBuyer(
                 buyer = activeUser,
-                onComplete = { trxList ->
+                onSuccess = { trxList ->
 
                     if (trxList.isEmpty()) {
                         val tv = TextView(requireContext()).apply {
@@ -128,7 +129,7 @@ class TransactionsFragment : Fragment() {
                                         transactionId = trx.transactionId,
                                         newStatus = "Pesanan Selesai",
                                         trackingNumber = trx.trackingNumber,
-                                        onComplete = {
+                                        onSuccess = {
                                             Toast.makeText(
                                                 requireContext(),
                                                 "Pesanan diterima!",
@@ -154,7 +155,13 @@ class TransactionsFragment : Fragment() {
                             val bundle = Bundle().apply {
                                 putString("transaction_id", trx.transactionId)
                             }
-                            findNavController().navigate(R.id.detailPesananFragment, bundle)
+                            findNavController().navigate(
+                                R.id.detailPesananBuyerFragment,
+                                bundleOf(
+                                    "transaction_id" to trx.transactionId,
+                                    "mode" to "buyer"
+                                )
+                            )
                         }
 
                         card.addView(layout)

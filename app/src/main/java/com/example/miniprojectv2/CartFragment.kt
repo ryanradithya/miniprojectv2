@@ -27,125 +27,125 @@ class CartFragment : Fragment() {
             cartList.removeAllViews()
             selectedItems.clear()
 
-            // Jika keranjang kosong, tampilkan pesan
-            if (CartManager.items.isEmpty()) {
-                val tv = TextView(requireContext())
-                tv.text = "Keranjang kosong"
-                cartList.addView(tv)
-                btnCheckout.visibility = View.GONE
-                return
-            }
+            CartRepository.getCart(
+                onSuccess = { result ->
 
-            btnCheckout.visibility = View.VISIBLE
+                    cartList.removeAllViews()
+                    selectedItems.clear()
 
-            // Tambahkan setiap item ke keranjang
-            CartManager.items.forEach { item ->
-                val itemView = layoutInflater.inflate(R.layout.item_cart, cartList, false)
+                    if (result.isEmpty()) {
+                        val tv = TextView(requireContext())
+                        tv.text = "Keranjang kosong"
+                        cartList.addView(tv)
+                        btnCheckout.visibility = View.GONE
+                        return@getCart
+                    }
 
-                val cbSelect = itemView.findViewById<CheckBox>(R.id.checkbox_select)
-                val tvName = itemView.findViewById<TextView>(R.id.cart_item_name)
-                val tvPrice = itemView.findViewById<TextView>(R.id.cart_item_price)
-                val tvQty = itemView.findViewById<TextView>(R.id.tv_qty_cart)
-                val btnMinus = itemView.findViewById<Button>(R.id.btn_minus_cart)
-                val btnPlus = itemView.findViewById<Button>(R.id.btn_plus_cart)
-                val btnDelete = itemView.findViewById<ImageButton>(R.id.btn_delete_cart)
+                    btnCheckout.visibility = View.VISIBLE
 
-                tvName.text = item.name
-                tvQty.text = item.qty.toString()
-                tvPrice.text = "Rp ${item.price * item.qty}"
-
-                // kita akan isi stok dari Firestore
-                var stock = 0
-
-                ProductRepository.findProductByName(
-                    item.name,
-                    onComplete = { product ->
-                        stock = product?.stock ?: 0
-
-                        // Jika stok habis, nonaktifkan pilihan dan tombol plus
-                        if (stock == 0) {
-                            cbSelect.isEnabled = false
-                            btnPlus.isEnabled = false
-                            tvName.text = "${item.name} (Stok habis)"
-                            tvName.setTextColor(
-                                resources.getColor(
-                                    android.R.color.darker_gray,
-                                    null
-                                )
-                            )
-                        }
-                    },
-                    onError = {
-                        // jika gagal ambil stok, anggap saja 0 supaya aman
-                        stock = 0
-                        cbSelect.isEnabled = false
-                        btnPlus.isEnabled = false
-                        tvName.text = "${item.name} (Gagal cek stok)"
-                        tvName.setTextColor(
-                            resources.getColor(
-                                android.R.color.darker_gray,
-                                null
-                            )
+                    result.forEach { (itemId, item) ->
+                        val itemView = layoutInflater.inflate(
+                            R.layout.item_cart,
+                            cartList,
+                            false
                         )
-                    }
-                )
+                        val ivImage = itemView.findViewById<ImageView>(R.id.cart_item_image)
+                        loadCartImage(ivImage, item.imageId)
 
-                cbSelect.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        if (!selectedItems.contains(item)) selectedItems.add(item)
-                    } else {
-                        selectedItems.remove(item)
-                    }
-                }
+                        val cbSelect = itemView.findViewById<CheckBox>(R.id.checkbox_select)
+                        val tvName = itemView.findViewById<TextView>(R.id.cart_item_name)
+                        val tvPrice = itemView.findViewById<TextView>(R.id.cart_item_price)
+                        val tvQty = itemView.findViewById<TextView>(R.id.tv_qty_cart)
+                        val btnMinus = itemView.findViewById<Button>(R.id.btn_minus_cart)
+                        val btnPlus = itemView.findViewById<Button>(R.id.btn_plus_cart)
+                        val btnDelete = itemView.findViewById<ImageButton>(R.id.btn_delete_cart)
 
-                // Tombol tambah qty
-                btnPlus.setOnClickListener {
-                    if (stock == 0) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Stok tidak mencukupi!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return@setOnClickListener
-                    }
-
-                    if (item.qty < stock) {
-                        item.qty++
+                        tvName.text = item.name
                         tvQty.text = item.qty.toString()
                         tvPrice.text = "Rp ${item.price * item.qty}"
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Stok tidak mencukupi!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
 
-                // Tombol kurang qty
-                btnMinus.setOnClickListener {
-                    if (item.qty > 1) {
-                        item.qty--
-                        tvQty.text = item.qty.toString()
-                        tvPrice.text = "Rp ${item.price * item.qty}"
-                    }
-                }
-
-                // Tombol hapus
-                btnDelete.setOnClickListener {
-                    AlertDialog.Builder(requireContext())
-                        .setTitle("Hapus Produk")
-                        .setMessage("Apakah Anda yakin ingin menghapus produk ini?")
-                        .setPositiveButton("Ya") { _, _ ->
-                            CartManager.items.remove(item)
-                            refreshCart()
+                        if (item.imageId.isNotEmpty()) {
+                            ImageHandler.getImage(requireContext(), item.imageId) { bytes ->
+                                if (bytes != null) {
+                                    val bitmap = android.graphics.BitmapFactory
+                                        .decodeByteArray(bytes, 0, bytes.size)
+                                    ivImage.post {
+                                        ivImage.setImageBitmap(bitmap)
+                                    }
+                                } else {
+                                    ivImage.post {
+                                        ivImage.setImageResource(R.drawable.ic_product_placeholder)
+                                    }
+                                }
+                            }
+                        } else {
+                            ivImage.setImageResource(R.drawable.ic_product_placeholder)
                         }
-                        .setNegativeButton("Tidak", null)
-                        .show()
-                }
 
-                cartList.addView(itemView)
-            }
+                        var stock = 0
+
+                        ProductRepository.findProductByName(
+                            item.name,
+                            onComplete = { product ->
+                                stock = product?.stock ?: 0
+                                if (stock == 0) {
+                                    cbSelect.isEnabled = false
+                                    btnPlus.isEnabled = false
+                                    tvName.text = "${item.name} (Stok habis)"
+                                    tvName.setTextColor(
+                                        resources.getColor(android.R.color.darker_gray, null)
+                                    )
+                                }
+                            },
+                            onError = {
+                                cbSelect.isEnabled = false
+                                btnPlus.isEnabled = false
+                            }
+                        )
+
+                        val selectedItemIds = mutableSetOf<String>()
+
+                        cbSelect.setOnCheckedChangeListener { _, isChecked ->
+                            if (isChecked) selectedItemIds.add(itemId)
+                            else selectedItemIds.remove(itemId)
+                        }
+
+
+                        btnPlus.setOnClickListener {
+                            if (item.qty < stock) {
+                                CartRepository.updateQty(itemId, item.qty + 1)
+                                refreshCart()
+                            } else {
+                                Toast.makeText(requireContext(), "Stok tidak mencukupi", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        btnMinus.setOnClickListener {
+                            if (item.qty > 1) {
+                                CartRepository.updateQty(itemId, item.qty - 1)
+                                refreshCart()
+                            }
+                        }
+
+                        btnDelete.setOnClickListener {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Hapus Produk")
+                                .setMessage("Hapus produk dari keranjang?")
+                                .setPositiveButton("Ya") { _, _ ->
+                                    CartRepository.deleteItem(itemId)
+                                    refreshCart()
+                                }
+                                .setNegativeButton("Tidak", null)
+                                .show()
+                        }
+
+                        cartList.addView(itemView)
+                    }
+                },
+                onError = {
+                    Toast.makeText(requireContext(), "Gagal memuat keranjang", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
 
         refreshCart()
@@ -168,5 +168,32 @@ class CartFragment : Fragment() {
         }
 
         return v
+
+
     }
+    private fun loadCartImage(
+        imageView: ImageView,
+        imageId: String
+    ) {
+        if (imageId.isEmpty()) {
+            imageView.setImageResource(R.drawable.ic_product_placeholder)
+            return
+        }
+
+        ImageHandler.getImage(requireContext(), imageId) { bytes ->
+            if (bytes != null) {
+                val bitmap = android.graphics.BitmapFactory.decodeByteArray(
+                    bytes, 0, bytes.size
+                )
+                imageView.post {
+                    imageView.setImageBitmap(bitmap)
+                }
+            } else {
+                imageView.post {
+                    imageView.setImageResource(R.drawable.ic_product_placeholder)
+                }
+            }
+        }
+    }
+
 }

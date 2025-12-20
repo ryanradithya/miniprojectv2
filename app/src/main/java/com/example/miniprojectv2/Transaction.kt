@@ -7,5 +7,6 @@ data class Transaction(
     var status: String = "Pesanan Masuk",
     var trackingNumber: String? = null,
     var items: List<TransactionItem> = emptyList(),
-    var transactionId: String = ""
+    var transactionId: String = "",
+    val updatedAt: Long = 0L
 )

@@ -1,27 +1,31 @@
 package com.example.miniprojectv2
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class DetailPesananFragment : Fragment() {
 
-    private var selectedRating = 0f
-    private val starViews = mutableListOf<ImageView>()
-    private var productAlreadyReviewed = false
-    private var allowReview = false
+    // ===== MODE =====
+    private lateinit var mode: String // "buyer" | "seller"
 
+    // ===== DATA =====
+    private lateinit var transactionId: String
+    private var productName: String = ""
+    private var allowReview = false
+    private var productAlreadyReviewed = false
+    private var selectedRating = 0f
+
+    // ===== UI =====
     private lateinit var rvReviews: RecyclerView
     private lateinit var reviewAdapter: ReviewAdapter
-
-    private var productName: String = ""
-    private var transactionId: String = ""
+    private val starViews = mutableListOf<ImageView>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,27 +36,56 @@ class DetailPesananFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_detail_pesanan, container, false)
 
         // ===============================
-        // Ambil transactionId
+        // Ambil Argument
         // ===============================
         transactionId = arguments?.getString("transaction_id") ?: ""
+        mode = arguments?.getString("mode") ?: "buyer"
 
         if (transactionId.isEmpty()) {
             Toast.makeText(requireContext(), "Transaction ID tidak ditemukan", Toast.LENGTH_LONG).show()
             return v
         }
 
-        // ===============================
-        // User aktif
-        // ===============================
-        val prefs = requireContext().getSharedPreferences("UserPrefs", 0)
+        val prefs = requireContext()
+            .getSharedPreferences("UserPrefs", 0)
         val activeUser = prefs.getString("active_username", "User") ?: "User"
 
         // ===============================
-        // Komponen Review
+        // UI REFERENCES
         // ===============================
-        val etReview: EditText = v.findViewById(R.id.et_review)
-        val ratingStars: LinearLayout = v.findViewById(R.id.rating_stars)
-        val btnSubmit: Button = v.findViewById(R.id.btn_submit_review)
+        val tvName = v.findViewById<TextView>(R.id.tv_product_name)
+        val tvPrice = v.findViewById<TextView>(R.id.tv_product_price)
+        val tvQty = v.findViewById<TextView>(R.id.tv_product_qty)
+        val tvTotal = v.findViewById<TextView>(R.id.tv_product_total)
+        val tvStatus = v.findViewById<TextView>(R.id.tv_product_status)
+        val tvExpedition = v.findViewById<TextView>(R.id.tv_product_expedition)
+        val tvTracking = v.findViewById<TextView>(R.id.tv_product_tracking)
+        val tvDate = v.findViewById<TextView>(R.id.tv_product_date)
+
+        // ===== Review Section =====
+        val reviewSection = v.findViewById<LinearLayout>(R.id.review_section)
+        val etReview = v.findViewById<EditText>(R.id.et_review)
+        val ratingStars = v.findViewById<LinearLayout>(R.id.rating_stars)
+        val btnSubmit = v.findViewById<Button>(R.id.btn_submit_review)
+
+        // ===== Seller Action Section =====
+        val sellerSection = v.findViewById<LinearLayout>(R.id.seller_action_section)
+        val btnAccept = v.findViewById<Button>(R.id.btn_accept_order)
+        val btnShip = v.findViewById<Button>(R.id.btn_ship_order)
+
+        // ===============================
+        // MODE SETUP
+        // ===============================
+        when (mode) {
+            "buyer" -> {
+                reviewSection.visibility = View.VISIBLE
+                sellerSection.visibility = View.GONE
+            }
+            "seller" -> {
+                reviewSection.visibility = View.GONE
+                sellerSection.visibility = View.VISIBLE
+            }
+        }
 
         // ===============================
         // RecyclerView Review
@@ -64,11 +97,11 @@ class DetailPesananFragment : Fragment() {
         rvReviews.adapter = reviewAdapter
 
         // ===============================
-        // LOAD DETAIL PESANAN (INI INTI PERBAIKAN)
+        // LOAD TRANSACTION
         // ===============================
         TransactionManager.getTransactionById(
             transactionId,
-            onComplete = { trx ->
+            onSuccess = { trx ->
 
                 if (trx == null) {
                     Toast.makeText(requireContext(), "Pesanan tidak ditemukan", Toast.LENGTH_SHORT).show()
@@ -80,72 +113,57 @@ class DetailPesananFragment : Fragment() {
 
                 productName = firstItem?.name ?: ""
 
-                v.findViewById<TextView>(R.id.tv_product_name).text =
-                    productName.ifEmpty { "(Item kosong)" }
+                tvName.text = productName.ifEmpty { "(Item kosong)" }
+                tvPrice.text = "Rp ${firstItem?.price ?: 0}"
+                tvQty.text = "x${firstItem?.qty ?: 0}"
+                tvTotal.text = "Total: Rp $total"
+                tvStatus.text = "Status: ${trx.status}"
+                tvExpedition.text = "Ekspedisi: ${trx.expedition}"
+                tvTracking.text = trx.trackingNumber?.let { "Resi: $it" } ?: ""
+                tvDate.text = "Tanggal: ${trx.date}"
 
-                v.findViewById<TextView>(R.id.tv_product_price).text =
-                    "Rp ${firstItem?.price ?: 0}"
+                // ===== Review Permission =====
+                allowReview = trx.status.contains("selesai", true)
+                if (!allowReview) disableReview(etReview, btnSubmit)
 
-                v.findViewById<TextView>(R.id.tv_product_qty).text =
-                    "x${firstItem?.qty ?: 0}"
+                // ===== Seller Button State =====
+                if (mode == "seller") {
+                    btnAccept.isEnabled = false
+                    btnShip.isEnabled = false
 
-                v.findViewById<TextView>(R.id.tv_product_total).text =
-                    "Total: Rp $total"
+                    when (trx.status) {
+                        "Pesanan Masuk" -> {
+                            btnAccept.isEnabled = true
+                        }
 
-                v.findViewById<TextView>(R.id.tv_product_status).text =
-                    "Status: ${trx.status}"
-
-                v.findViewById<TextView>(R.id.tv_product_expedition).text =
-                    "Expedisi: ${trx.expedition}"
-
-                v.findViewById<TextView>(R.id.tv_product_tracking).text =
-                    trx.trackingNumber?.let { "Resi: $it" } ?: ""
-
-                v.findViewById<TextView>(R.id.tv_product_date).text =
-                    "Tanggal: ${trx.date}"
-
-                // ===============================
-                // Review permission
-                // ===============================
-                allowReview = trx.status.contains("selesai", ignoreCase = true)
-
-                if (!allowReview) {
-                    disableReview(etReview, btnSubmit)
+                        "Pesanan Diproses" -> {
+                            btnShip.isEnabled = true
+                        }
+                    }
                 }
 
-                // load review setelah productName valid
                 loadReviews(activeUser, etReview, btnSubmit)
             },
             onError = {
-                Toast.makeText(requireContext(), "Gagal memuat pesanan", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Gagal memuat detail pesanan", Toast.LENGTH_SHORT).show()
             }
         )
 
         // ===============================
-        // Generate Bintang Rating
+        // Generate Rating Stars
         // ===============================
         for (i in 1..5) {
             val star = ImageView(requireContext())
             val size = (32 * resources.displayMetrics.density).toInt()
-            val params = LinearLayout.LayoutParams(size, size)
-            params.setMargins(6, 0, 6, 0)
-            star.layoutParams = params
+            star.layoutParams = LinearLayout.LayoutParams(size, size)
             star.setImageResource(R.drawable.ic_star_empty)
 
             star.setOnClickListener {
-                if (!allowReview || productAlreadyReviewed) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Rating hanya bisa setelah pesanan selesai.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-
+                if (!allowReview || productAlreadyReviewed) return@setOnClickListener
                 selectedRating = i.toFloat()
-                starViews.forEachIndexed { index, img ->
+                starViews.forEachIndexed { idx, img ->
                     img.setImageResource(
-                        if (index < i) R.drawable.ic_star_full
+                        if (idx < i) R.drawable.ic_star_full
                         else R.drawable.ic_star_empty
                     )
                 }
@@ -156,11 +174,10 @@ class DetailPesananFragment : Fragment() {
         }
 
         // ===============================
-        // Submit Review
+        // Submit Review (BUYER)
         // ===============================
         btnSubmit.setOnClickListener {
             val comment = etReview.text.toString().trim()
-
             if (selectedRating == 0f || comment.isEmpty()) {
                 Toast.makeText(requireContext(), "Isi rating dan komentar dulu!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -173,7 +190,7 @@ class DetailPesananFragment : Fragment() {
                 comment = comment,
                 rating = selectedRating,
                 onComplete = {
-                    Toast.makeText(requireContext(), "Ulasan berhasil dikirim!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Ulasan dikirim!", Toast.LENGTH_SHORT).show()
                     etReview.setText("")
                     selectedRating = 0f
                     starViews.forEach { it.setImageResource(R.drawable.ic_star_empty) }
@@ -183,6 +200,80 @@ class DetailPesananFragment : Fragment() {
                     Toast.makeText(requireContext(), it.message ?: "Gagal mengirim ulasan", Toast.LENGTH_SHORT).show()
                 }
             )
+        }
+
+        // ===============================
+        // SELLER ACTION
+        // ===============================
+        btnAccept.setOnClickListener {
+            btnAccept.isEnabled = false
+
+            TransactionManager.updateStatus(
+                transactionId,
+                "Pesanan Diproses",
+                onSuccess = {
+                    Toast.makeText(requireContext(), "Pesanan diterima", Toast.LENGTH_SHORT).show()
+                    findNavController().popBackStack()
+                }
+            )
+        }
+
+
+        btnShip.setOnClickListener {
+            val dialogView = layoutInflater.inflate(
+                R.layout.dialog_input_resi,
+                null,
+                false
+            )
+
+            val etResi = dialogView.findViewById<EditText>(R.id.et_resi)
+            val btnCancel = dialogView.findViewById<Button>(R.id.btn_cancel)
+            val btnSubmit = dialogView.findViewById<Button>(R.id.btn_submit)
+
+            val dialog = android.app.AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+
+            btnCancel.setOnClickListener {
+                dialog.dismiss()
+            }
+
+            btnSubmit.setOnClickListener {
+                val resi = etResi.text.toString().trim()
+
+                if (resi.isEmpty()) {
+                    etResi.error = "Nomor resi wajib diisi"
+                    return@setOnClickListener
+                }
+
+                btnSubmit.isEnabled = false
+
+                TransactionManager.updateStatus(
+                    transactionId,
+                    "Pesanan Dikirim",
+                    trackingNumber = resi,
+                    onSuccess = {
+                        Toast.makeText(
+                            requireContext(),
+                            "Pesanan berhasil dikirim",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        dialog.dismiss()
+                        findNavController().popBackStack()
+                    },
+                    onError = {
+                        btnSubmit.isEnabled = true
+                        Toast.makeText(
+                            requireContext(),
+                            "Gagal mengirim pesanan",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
+            }
+
+            dialog.show()
         }
 
         return v
@@ -200,8 +291,8 @@ class DetailPesananFragment : Fragment() {
             onComplete = { product ->
                 if (product == null) return@findProductByName
 
-                val sortedReviews = product.reviews.sortedByDescending { it.date }
-                rvReviews.adapter = ReviewAdapter(sortedReviews)
+                rvReviews.adapter =
+                    ReviewAdapter(product.reviews.sortedByDescending { it.date })
 
                 productAlreadyReviewed =
                     product.reviews.any {
@@ -209,9 +300,7 @@ class DetailPesananFragment : Fragment() {
                                 it.transactionId == transactionId
                     }
 
-                if (productAlreadyReviewed) {
-                    disableReview(etReview, btnSubmit)
-                }
+                if (productAlreadyReviewed) disableReview(etReview, btnSubmit)
             },
             onError = {
                 Toast.makeText(requireContext(), "Gagal memuat review", Toast.LENGTH_SHORT).show()
