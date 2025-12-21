@@ -36,7 +36,7 @@ class ForgotPasswordFragment : Fragment() {
         // Kembali ke login
         backText.setOnClickListener {
             (requireActivity() as? LoginLayoutController)?.restoreLoginLayout()
-            parentFragmentManager.popBackStack()
+            //parentFragmentManager.popBackStack()
         }
 
         // Kirim email reset password
@@ -57,7 +57,6 @@ class ForgotPasswordFragment : Fragment() {
             .addOnSuccessListener {
                 showToast("Link reset password telah dikirim ke email")
                 (requireActivity() as? LoginLayoutController)?.restoreLoginLayout()
-                parentFragmentManager.popBackStack()
             }
             .addOnFailureListener {
                 showToast("Email tidak terdaftar")

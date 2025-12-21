@@ -123,9 +123,10 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (supportFragmentManager.backStackEntryCount > 0)
+                if (supportFragmentManager.backStackEntryCount > 0) {
                     supportFragmentManager.popBackStack()
-                else finish()
+                    restoreLoginLayout()
+                } else finish()
             }
         })
     }
