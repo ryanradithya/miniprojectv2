@@ -68,7 +68,7 @@ class BuyerOrdersFragment : Fragment() {
                                 sb.append("\nResi: ${trx.trackingNumber}")
                             }
 
-                            sb.append("\nTanggal: ${formatTimestamp(trx.date)}")
+                            sb.append("\nTanggal: ${formatDate(trx.date)}")
 
                             text = sb.toString()
                             textSize = 14f

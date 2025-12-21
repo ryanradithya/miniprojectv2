@@ -115,7 +115,7 @@ class TransactionsFragment : Fragment() {
                         }
 
                         val tvDate = TextView(requireContext()).apply {
-                            text = "Tanggal: ${trx.date}"
+                            text = "Tanggal: ${formatDate(trx.date)}"
                             setPadding(0, 0, 0, 8)
                         }
 

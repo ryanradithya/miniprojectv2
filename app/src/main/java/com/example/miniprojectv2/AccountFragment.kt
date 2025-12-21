@@ -337,10 +337,28 @@ class AccountFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            (activity as? SellerActivity)
-                ?.addDeliveryExpedition(expeditionName)
+            saveExpeditionToFirestore(
+                expeditionName = expeditionName,
+                onSuccess = {
+                    Toast.makeText(
+                        requireContext(),
+                        "Ekspedisi berhasil ditambahkan",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-            dialog.dismiss()
+                    (activity as? SellerActivity)
+                        ?.addDeliveryExpedition(expeditionName)
+
+                    dialog.dismiss()
+                },
+                onError = {
+                    Toast.makeText(
+                        requireContext(),
+                        "Gagal menyimpan ekspedisi",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
         }
 
         dialog.show()
@@ -488,4 +506,36 @@ class AccountFragment : Fragment() {
             "Gagal mendapatkan alamat"
         }
     }
+
+    private fun saveExpeditionToFirestore(
+        expeditionName: String,
+        onSuccess: () -> Unit = {},
+        onError: (Exception) -> Unit = {}
+    ) {
+
+        val db = FirebaseFirestore.getInstance()
+
+        val data = hashMapOf(
+            "name" to expeditionName,
+            "createdAt" to System.currentTimeMillis()
+        )
+
+        db.collection("expeditions")
+            .add(data)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onError(it) }
+    }
+
+    fun saveExpedition(expeditionName: String) {
+
+        val expedition = Expedition(
+            name = expeditionName,
+            createdAt = System.currentTimeMillis()
+        )
+
+        FirebaseFirestore.getInstance()
+            .collection("expeditions")
+            .add(expedition)
+    }
+
 }

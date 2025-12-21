@@ -300,8 +300,7 @@ class DetailPesananFragment : Fragment() {
         return v
     }
 }
-
-private fun formatDate(time: Long): String {
+fun formatDate(time: Long): String {
     if (time == 0L) return "-"
     val sdf = java.text.SimpleDateFormat(
         "dd MMM yyyy, HH:mm",
@@ -309,5 +308,6 @@ private fun formatDate(time: Long): String {
     )
     return sdf.format(java.util.Date(time))
 }
+
 
 

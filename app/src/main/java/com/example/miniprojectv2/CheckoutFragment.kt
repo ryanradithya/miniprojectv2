@@ -10,11 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class CheckoutFragment : Fragment() {
 
     private lateinit var spinnerAdapter: ArrayAdapter<String>
     private lateinit var spinner: Spinner
+    private val expeditionList = mutableListOf<Expedition>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,23 +64,71 @@ class CheckoutFragment : Fragment() {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = spinnerAdapter
 
+        loadExpeditions()
+
         btnConfirm.setOnClickListener {
-            val expedition = spinner.selectedItem?.toString() ?: ""
-            startCheckout(selectedItems, buyerEmail, expedition)
+
+            if (expeditionList.isEmpty()) {
+                Toast.makeText(
+                    requireContext(),
+                    "Ekspedisi belum tersedia",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            val selectedIndex = spinner.selectedItemPosition
+            if (selectedIndex < 0) {
+                Toast.makeText(
+                    requireContext(),
+                    "Pilih ekspedisi terlebih dahulu",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            val expedition = expeditionList[selectedIndex].name
+
+            startCheckout(
+                selectedItems = selectedItems,
+                buyer = buyerEmail,
+                expedition = expedition
+            )
         }
+
 
         return v
     }
 
+    private fun loadExpeditions() {
 
-    override fun onResume() {
-        super.onResume()
-        val prefs = requireContext().getSharedPreferences("ExpeditionPrefs", Context.MODE_PRIVATE)
-        val expeditions = prefs.getStringSet("expeditions_set", setOf("JNE","Tiki","SiCepat"))?.toList() ?: listOf()
-        spinnerAdapter.clear()
-        spinnerAdapter.addAll(expeditions)
-        spinnerAdapter.notifyDataSetChanged()
+        FirebaseFirestore.getInstance()
+            .collection("expeditions")
+            .orderBy("name")
+            .get()
+            .addOnSuccessListener { snapshot ->
+
+                expeditionList.clear()
+                spinnerAdapter.clear()
+
+                snapshot.forEach { doc ->
+                    val e = doc.toObject(Expedition::class.java)
+                    e.id = doc.id
+                    expeditionList.add(e)
+                    spinnerAdapter.add(e.name)
+                }
+
+                spinnerAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    requireContext(),
+                    "Gagal memuat ekspedisi",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
+
 
     //checkout fs
     private fun startCheckout(
