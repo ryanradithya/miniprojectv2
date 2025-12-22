@@ -3,7 +3,6 @@ package com.example.miniprojectv2
 import android.app.Activity
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,9 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.DocumentId
-import okhttp3.OkHttpClient
-import okio.IOException
 import android.widget.Button
 
 
@@ -29,7 +25,6 @@ class ProductAdapter(
     private val isSeller: Boolean = false
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
-//    view
     inner class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val card: CardView? =
             view.findViewById(R.id.product_tile) ?: view.findViewById(R.id.rekomendasi_tile)
@@ -42,7 +37,7 @@ class ProductAdapter(
 
         val stock: TextView? = view.findViewById(R.id.product_stock)
 
-//        tombol untuk seller
+        // tombol untuk seller
         val btnEdit: ImageButton? = view.findViewById(R.id.btn_edit)
         val btnDelete: ImageButton? = view.findViewById(R.id.btn_delete)
     }
@@ -73,65 +68,6 @@ class ProductAdapter(
 
         // gambar produk
         if (!product.imageUri.isNullOrEmpty()) {
-//            try {
-//
-//                val imageView = holder.image
-//
-//                if (!product.imageUri.isNullOrEmpty()) {
-//
-//                    val imageId = product.imageUri!!
-//                    val url = "http://10.0.2.2:8000/image/$imageId"
-//
-//                    // Cache key = imageId
-//                    val cached = ImageCache.get(imageId)
-//                    if (cached != null) {
-//                        val bitmap = BitmapFactory.decodeByteArray(cached, 0, cached.size)
-//                        imageView?.setImageBitmap(bitmap)
-//                        return
-//                    }
-//
-//                    val request = okhttp3.Request.Builder()
-//                        .url(url)
-//                        .build()
-//
-//                    OkHttpClient().newCall(request).enqueue(object : okhttp3.Callback {
-//                        override fun onFailure(call: okhttp3.Call, e: IOException) {
-//                            e.printStackTrace()
-//                            imageView?.post {
-//                                imageView.setImageResource(R.drawable.ic_product_placeholder)
-//                            }
-//                        }
-//
-//                        override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-//                            val bytes = response.body?.bytes()
-//                            if (bytes != null) {
-//
-//                                // Save in cache
-//                                ImageCache.put(imageId, bytes)
-//
-//                                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-//                                imageView?.post {
-//                                    imageView.setImageBitmap(bitmap)
-//                                }
-//                            } else {
-//                                imageView?.post {
-//                                    imageView.setImageResource(R.drawable.ic_product_placeholder)
-//                                }
-//                            }
-//                        }
-//                    })
-//
-//                } else {
-//                    imageView?.setImageResource(R.drawable.ic_product_placeholder)
-//                }
-//
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//                // placeholder klo exc
-//                holder.image?.setImageResource(R.drawable.ic_product_placeholder)
-//            }
-
-            // gambar produk
             if (!product.imageUri.isNullOrEmpty()) {
                 val imageId = product.imageUri!!
 

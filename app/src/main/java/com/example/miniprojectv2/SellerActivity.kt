@@ -13,9 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
@@ -25,7 +23,6 @@ import com.google.firebase.firestore.ListenerRegistration
 
 class SellerActivity : AppCompatActivity() {
 
-//    private lateinit var appBarConfiguration: AppBarConfiguration
     private var transactionListener: ListenerRegistration? = null
 
 
@@ -45,53 +42,41 @@ class SellerActivity : AppCompatActivity() {
 
         startTransactionRealtimeListener()
 
-        // Status bar
         val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.statusBarColor = ContextCompat.getColor(this, R.color.my_custom_status_bar)
 
-        // Toolbar
         val toolbar = findViewById<Toolbar>(R.id.seller_toolbar)
         setSupportActionBar(toolbar)
 
-        // NavHost
+        // navHost
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_seller) as NavHostFragment
         val navController = navHostFragment.navController
 
-//        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout_seller)
         val navigationView = findViewById<NavigationView>(R.id.nav_view_seller)
 
-//        appBarConfiguration = AppBarConfiguration(
-//            setOf(R.id.beliFragment, R.id.jualFragment, R.id.ordersFragment, R.id.accountFragment),
-//            drawerLayout
-//        )
 
         NavigationUI.setupActionBarWithNavController(this, navController)
         navigationView.setupWithNavController(navController)
 
-        // CUSTOM NAVBAR
-
-        // Tabs
+        // navbar
         val tabList = findViewById<View>(R.id.nav_list_produk)
         val tabAdd = findViewById<View>(R.id.nav_tambah_produk)
         val tabOrders = findViewById<View>(R.id.nav_pesanan)
         val tabAccount = findViewById<View>(R.id.nav_account_seller)
 
-        // Circles
         val circleList = findViewById<View>(R.id.nav_list_produk_circle)
         val circleAdd = findViewById<View>(R.id.nav_tambah_produk_circle)
         val circleOrders = findViewById<View>(R.id.nav_pesanan_circle)
         val circleAccount = findViewById<View>(R.id.nav_account_seller_circle)
 
-        // Icons
         val iconList = findViewById<ImageView>(R.id.nav_list_produk_icon)
         val iconAdd = findViewById<ImageView>(R.id.nav_tambah_produk_icon)
         val iconOrders = findViewById<ImageView>(R.id.nav_pesanan_icon)
         val iconAccount = findViewById<ImageView>(R.id.nav_account_seller_icon)
 
-        // Labels
         val labelList = findViewById<TextView>(R.id.nav_list_produk_label)
         val labelAdd = findViewById<TextView>(R.id.nav_tambah_produk_label)
         val labelOrders = findViewById<TextView>(R.id.nav_pesanan_label)
@@ -123,7 +108,6 @@ class SellerActivity : AppCompatActivity() {
             apply(circleAccount, iconAccount, labelAccount, tab == SellerTab.ACCOUNT)
         }
 
-        // On Click Listeners
         tabList.setOnClickListener {
             if (navController.currentDestination?.id != R.id.beliFragment) {
                 navController.navigate(R.id.beliFragment)
@@ -152,7 +136,7 @@ class SellerActivity : AppCompatActivity() {
             setSelectedTab(SellerTab.ACCOUNT)
         }
 
-        // Auto-sync when navigating
+        // auto sinkronisasi
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.beliFragment -> setSelectedTab(SellerTab.LIST)
@@ -162,10 +146,10 @@ class SellerActivity : AppCompatActivity() {
             }
         }
 
-        // Default tab
+        // default tab
         setSelectedTab(SellerTab.LIST)
 
-        // Drawer header
+        // drawer header
         val prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         sellerUsername = prefs.getString("active_username", sellerUsername) ?: sellerUsername
         sellerEmail = prefs.getString("active_email", sellerEmail) ?: sellerEmail

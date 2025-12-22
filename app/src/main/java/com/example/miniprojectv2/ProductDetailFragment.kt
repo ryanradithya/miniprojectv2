@@ -1,16 +1,13 @@
 package com.example.miniprojectv2
 
-import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import java.io.IOException
 
 data class CartItem(
     val id: String = "",
@@ -68,7 +65,7 @@ class ProductDetailFragment : Fragment() {
         tvAverageRating = view.findViewById(R.id.tv_average_rating)
         reviewContainer = view.findViewById(R.id.review_container)
 
-        // Ambil data dari Bundle
+        // ambil data dari Bundle
         productName = arguments?.getString("product_name") ?: "Produk"
         productPrice = arguments?.getInt("product_price") ?: 0
         currentStock = arguments?.getInt("product_stock") ?: 0
@@ -87,7 +84,7 @@ class ProductDetailFragment : Fragment() {
         loadProductDetailsFirestore()
     }
 
-    // TAMPILKAN INFO DASAR PRODUK
+    // tampilan info produk
     private fun setupBasicInfo() {
         tvTitle.text = productName
         tvPrice.text = "Rp $productPrice"
@@ -101,7 +98,7 @@ class ProductDetailFragment : Fragment() {
         }
     }
 
-    // DESKRIPSI BISA EXPAND
+    // deskripsi
     private fun setupDescriptionToggle() {
         tvDesc.maxLines = 2
         tvDesc.ellipsize = TextUtils.TruncateAt.END
@@ -114,7 +111,7 @@ class ProductDetailFragment : Fragment() {
         }
     }
 
-    // QUANTITY COUNTER
+    // counter untuk quantity
     private fun setupQtyButtons() {
         updateQtyText()
 
@@ -141,7 +138,7 @@ class ProductDetailFragment : Fragment() {
 
     private var productSellerEmail: String = ""
 
-    // ADD TO CART
+    // masukin ke cart
     private fun setupAddToCart() {
         btnAdd.setOnClickListener {
             if (quantity > currentStock) {
@@ -168,7 +165,7 @@ class ProductDetailFragment : Fragment() {
     }
 
 
-    // LOAD DETAIL PRODUK DARI FIRESTORE
+    // load detail product dari firestore
     private fun loadProductDetailsFirestore() {
         ProductRepository.findProductByName(
             name = productName,
@@ -192,7 +189,7 @@ class ProductDetailFragment : Fragment() {
         )
     }
 
-    // LOAD REVIEW DARI FIRESTORE
+    // load review dari firestore
     private fun loadReviews() {
         ProductRepository.findProductByName(
             name = productName,
@@ -206,7 +203,7 @@ class ProductDetailFragment : Fragment() {
 
                 val reviews = product.reviews
 
-                // ===== RATING RATA-RATA =====
+                // rata-rata rating
                 if (reviews.isEmpty()) {
                     tvAverageRating.text = "Belum ada ulasan"
                     ratingStars.removeAllViews()
@@ -216,7 +213,7 @@ class ProductDetailFragment : Fragment() {
                     showStars(avg)
                 }
 
-                // ===== LIST REVIEW =====
+                // list review
                 reviewContainer.removeAllViews()
 
                 if (reviews.isEmpty()) {
@@ -255,7 +252,7 @@ class ProductDetailFragment : Fragment() {
     }
 
 
-    // MENAMPILKAN BINTANG RATING
+    // menampilkan rating pake bintang
     private fun showStars(avg: Float) {
         ratingStars.removeAllViews()
 
