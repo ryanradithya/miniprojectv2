@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Disabled -->
+    <!-- buat kalo disabled -->
     <item android:state_enabled="false">
         <shape android:shape="rectangle">
             <solid android:color="#BDBDBD"/>
@@ -9,7 +9,7 @@
         </shape>
     </item>
 
-    <!-- Enabled -->
+    <!-- enabled -->
     <item>
         <shape android:shape="rectangle">
             <solid android:color="@color/green_variant"/>
