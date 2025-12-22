@@ -6,6 +6,7 @@ import com.example.miniprojectv2.model.PredictionResponse
 
 class MLRepository {
 
+    //fun untuk melakukan prediksi (api)
     suspend fun predictLoan(request: LoanRequest): Result<PredictionResponse> {
         return try {
             val response = RetrofitClient.api.predict(request)

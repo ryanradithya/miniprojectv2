@@ -186,11 +186,11 @@ class JualFragment : Fragment() {
 
             if (editMode && productIdToEdit != null) {
                 if (isServerImage) {
-                    // Existing image, no upload needed
+                    //gambar udh ada
                     val existingImageId = selectedImageUri.toString().removePrefix("server://")
                     proceedToSave(existingImageId)
                 } else {
-                    // New image selected, upload first
+                    //upload
                     ImageHandler.uploadImage(requireContext(), selectedImageUri!!) { imageId ->
                         if (imageId == null) {
                             Toast.makeText(requireContext(), "Gagal upload gambar!", Toast.LENGTH_SHORT).show()
@@ -246,7 +246,6 @@ class JualFragment : Fragment() {
                     }
                 }
 
-                // HANDLE EDIT MODE
                 args?.let {
                     if (it.getString("edit_mode") == "true") {
                         val productCategory = it.getString("product_category") ?: return@let

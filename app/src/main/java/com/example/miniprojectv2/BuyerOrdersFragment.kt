@@ -28,6 +28,7 @@ class BuyerOrdersFragment : Fragment() {
         val buyerUsername =
             prefs.getString("active_username", "Guest") ?: "Guest"
 
+        //refresh
         fun refreshOrders() {
 
             listLayout.removeAllViews()

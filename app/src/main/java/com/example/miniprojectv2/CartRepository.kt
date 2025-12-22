@@ -11,6 +11,7 @@ object CartRepository {
     private fun userEmail(): String? =
         auth.currentUser?.email
 
+    //firestore referensi
     private fun cartRef() =
         userEmail()?.let { email ->
             db.collection("carts")
@@ -30,6 +31,7 @@ object CartRepository {
         cartRef()?.document(itemId)?.delete()
     }
 
+    //kosongkan semua
     fun clearCart(onComplete: () -> Unit = {}) {
         val ref = cartRef() ?: return
         ref.get().addOnSuccessListener { snap ->

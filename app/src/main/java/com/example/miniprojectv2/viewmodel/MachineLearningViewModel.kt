@@ -16,6 +16,7 @@ class MachineLearningViewModel : ViewModel() {
     private val _state = MutableLiveData<PredictionState>(PredictionState.Idle)
     val state: LiveData<PredictionState> = _state
 
+    //fun untuk melakukan prediksi ke repo
     fun predict(request: LoanRequest) {
         _state.value = PredictionState.Loading
 
@@ -37,6 +38,7 @@ class MachineLearningViewModel : ViewModel() {
         "Prediksi ini merepresentasikan kategori suku bunga yang diperkirakan berdasarkan informasi pinjaman dan peminjam yang diberikan." +
                 "Hasil ini dihasilkan menggunakan model machine learning yang dilatih dengan data pinjaman historis dan hanya digunakan sebagai referensi, bukan sebagai jaminan atau keputusan final."
 
+    //desc
     private fun getDescription(prediction: String): String {
         return when (prediction) {
             "Low" ->

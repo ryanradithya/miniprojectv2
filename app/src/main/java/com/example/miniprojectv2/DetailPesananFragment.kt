@@ -61,6 +61,7 @@ class DetailPesananFragment : Fragment() {
         }
 
 
+        //ambil detail pesanan
         TransactionManager.getTransactionById(
             transactionId,
             onSuccess = { trx ->

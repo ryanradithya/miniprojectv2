@@ -139,7 +139,6 @@ class CheckoutFragment : Fragment() {
 
         Toast.makeText(requireContext(), "Memproses checkout...", Toast.LENGTH_SHORT).show()
 
-        // 1) CEK STOK SATU PERSATU
         var checked = 0
         selectedItems.forEach { item ->
             ProductRepository.findProductByName(
@@ -158,7 +157,6 @@ class CheckoutFragment : Fragment() {
 
                     checked++
                     if (checked == selectedItems.size) {
-                        // Semua stok aman → lanjut proses
                         reduceAllStock(selectedItems, buyer, expedition)
                     }
                 },
@@ -185,7 +183,7 @@ class CheckoutFragment : Fragment() {
                 onComplete = {
                     completed++
                     if (completed == totalItems) {
-                        // Semua stok berhasil dikurangi
+                        //semua stok berhasil dikurangi
                         createOneTransaction(selectedItems, buyer, expedition)
                     }
                 },

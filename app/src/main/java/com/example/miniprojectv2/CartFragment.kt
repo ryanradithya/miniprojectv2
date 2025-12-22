@@ -25,6 +25,7 @@ class CartFragment : Fragment() {
 
         val selectedItems = mutableListOf<CartItem>()
 
+        //refresh cart
         fun refreshCart() {
 
             cartList.removeAllViews()
@@ -79,6 +80,7 @@ class CartFragment : Fragment() {
                         tvQty.text = item.qty.toString()
                         tvPrice.text = "Rp ${item.price * item.qty}"
 
+                        //ambil img
                         if (item.imageId.isNotEmpty()) {
                             ImageHandler.getImage(requireContext(), item.imageId) { bytes ->
                                 if (bytes != null) {
@@ -99,6 +101,7 @@ class CartFragment : Fragment() {
 
                         var stock = 0
 
+                        //cek stok
                         ProductRepository.findProductByName(
                             item.name,
                             onComplete = { product ->
@@ -173,7 +176,6 @@ class CartFragment : Fragment() {
 
         refreshCart()
 
-        // Tombol checkout → pindah ke CheckoutFragment
         btnCheckout.setOnClickListener {
             if (selectedItems.isEmpty()) {
                 Toast.makeText(
@@ -199,10 +201,12 @@ class CartFragment : Fragment() {
         imageId: String
     ) {
         if (imageId.isEmpty()) {
+            //kalau tdk ada
             imageView.setImageResource(R.drawable.ic_product_placeholder)
             return
         }
 
+        //ambil dari funct di ImageHandler
         ImageHandler.getImage(requireContext(), imageId) { bytes ->
             if (bytes != null) {
                 val bitmap = android.graphics.BitmapFactory.decodeByteArray(

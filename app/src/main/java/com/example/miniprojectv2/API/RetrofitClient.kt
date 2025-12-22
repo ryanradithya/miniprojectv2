@@ -8,8 +8,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
+    //ambil url
     private var BASE_URL = IpHelper.getBaseUrl()
-    // 10.0.2.2 = localhost for emulator
 
     val api: MLApiService by lazy {
         Retrofit.Builder()

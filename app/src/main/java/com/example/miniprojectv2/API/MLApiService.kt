@@ -7,6 +7,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface MLApiService {
+    //buat request dengan autentikasi
     @Headers("Authorization: Bearer diggiggidawgdawg")
     @POST("/predict")
     suspend fun predict(@Body request: LoanRequest): PredictionResponse

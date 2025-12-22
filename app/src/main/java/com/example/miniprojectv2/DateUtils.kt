@@ -7,6 +7,7 @@ import java.util.Locale
 fun formatTimestamp(timestamp: Long): String {
     if (timestamp <= 0) return "-"
 
+    //format tanggal
     val sdf = SimpleDateFormat(
         "dd MMM yyyy, HH:mm",
         Locale("id", "ID")

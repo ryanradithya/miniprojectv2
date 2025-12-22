@@ -84,6 +84,7 @@ class MachineLearningFragment : Fragment(R.layout.fragment_machine_learning) {
                 return@setOnClickListener
             }
 
+            //field untuk dikirim
             val request = LoanRequest(
                 loan_amnt = loanAmount,
                 term = spinnerTerm.text.toString(),
@@ -93,7 +94,7 @@ class MachineLearningFragment : Fragment(R.layout.fragment_machine_learning) {
                 annual_inc = annualIncome.toDouble(),
                 verification_status = spinnerVerification.text.toString(),
                 purpose = spinnerPurpose.text.toString(),
-                delinq_2yrs = 0,
+                delinq_2yrs = 0, //default parameter model
                 inq_last_6mths = 0,
                 open_acc = 0,
                 pub_rec = 0,
