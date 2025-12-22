@@ -46,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-    // Tab enum sederhana
     private enum class BottomTab { HOME, TRANSACTIONS, ACCOUNT }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.MODE_NIGHT_NO
         )
 
-        // Status bar
+        //status bar
         askNotificationPermission()
         startTransactionRealtimeListener()
 
@@ -67,14 +66,12 @@ class MainActivity : AppCompatActivity() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.statusBarColor = ContextCompat.getColor(this, R.color.my_custom_status_bar)
 
-        // Toolbar
+        //toolbar
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.navigationIcon?.setTint(getColor(android.R.color.white))
 
-        // Drawer & Nav
-//        val drawerLayout = findViewById<androidx.drawerlayout.widget.DrawerLayout>(R.id.drawer_layout)
-//        val navView = findViewById<NavigationView>(R.id.nav_view)
+
         val bottomNavContainer = findViewById<View>(R.id.bottom_nav)
 
         val navHostFragment =
@@ -89,14 +86,11 @@ class MainActivity : AppCompatActivity() {
                 R.id.transactionsFragment,
                 R.id.accountFragment
             ),
-//            drawerLayout
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-//        navView.setupWithNavController(navController)
 
 
-        // Custom bottom navigation
         val homeTab = findViewById<View>(R.id.nav_home)
         val transTab = findViewById<View>(R.id.nav_transactions)
         val accountTab = findViewById<View>(R.id.nav_account)
@@ -145,7 +139,6 @@ class MainActivity : AppCompatActivity() {
             apply(accountCircle, accountIcon, accountLabel, tab == BottomTab.ACCOUNT)
         }
 
-        // Klik tab -> navigate
         homeTab.setOnClickListener {
             if (navController.currentDestination?.id != R.id.homeFragment) {
                 navController.navigate(R.id.homeFragment)
@@ -167,7 +160,7 @@ class MainActivity : AppCompatActivity() {
             setSelectedTab(BottomTab.ACCOUNT)
         }
 
-        // Sinkronkan tab ketika destination berubah (misal dari checkout balik ke home)
+        //sinkronkan tab ketika destination berubah (misal dari checkout balik ke home)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.homeFragment,
@@ -195,21 +188,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Set tab awal
         setSelectedTab(BottomTab.HOME)
 
-        // Drawer header
         val prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val username = prefs.getString("active_username", "John Doe")
         val email = prefs.getString("active_email", "johndoe@example.com")
 
-//        val headerView = navView.getHeaderView(0)
-//        headerView.findViewById<TextView>(R.id.header_title).text = username
-//        headerView.findViewById<TextView>(R.id.header_subtitle).text = email
     }
 
     private fun askNotificationPermission() {
-        // Notification permission only exists on API 33+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val permission = Manifest.permission.POST_NOTIFICATIONS
 
@@ -292,7 +279,6 @@ class MainActivity : AppCompatActivity() {
         manager.notify(System.currentTimeMillis().toInt(), notif)
     }
 
-    // Handle Up Navigation
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()

@@ -33,13 +33,11 @@ class ForgotPasswordFragment : Fragment() {
         val resetButton = view.findViewById<Button>(R.id.btn_reset)
         val backText = view.findViewById<TextView>(R.id.textView_back_login)
 
-        // Kembali ke login
         backText.setOnClickListener {
             (requireActivity() as? LoginLayoutController)?.restoreLoginLayout()
-            //parentFragmentManager.popBackStack()
         }
 
-        // Kirim email reset password
+        //reset menggunakan email
         resetButton.setOnClickListener {
             val email = emailInput.text.toString().trim()
 

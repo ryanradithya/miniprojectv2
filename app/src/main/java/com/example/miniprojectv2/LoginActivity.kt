@@ -65,12 +65,7 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
 
 
 
-//        IpHelper.autoDetectServer(this) {
-//            Log.d("IpHelper", "Server detected: $it")
-//        }
 
-
-        // ===== Status bar =====
         val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -80,7 +75,7 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
         prefs = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         auth = FirebaseAuth.getInstance()
 
-        // ===== Google Sign-In config =====
+        //google signin
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -94,7 +89,6 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
             startActivityForResult(googleClient.signInIntent, RC_GOOGLE_SIGN_IN)
         }
 
-        // ===== Login Email / Legacy =====
         val usernameInput = findViewById<EditText>(R.id.username_input)
         val passwordInput = findViewById<EditText>(R.id.password_input)
         val loginButton = findViewById<Button>(R.id.login_button)
@@ -131,7 +125,6 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
         })
     }
 
-    // ================= GOOGLE RESULT =================
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -158,7 +151,6 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
             }
     }
 
-    // ================= GOOGLE LOGIN / AUTO REGISTER =================
     private fun handleGoogleUser(user: FirebaseUser) {
 
         val uid = user.uid
@@ -311,7 +303,6 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
 
     private fun requestGpsAndTagLocation() {
 
-        // Permission check
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -325,7 +316,7 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
             return
         }
 
-        // GPS enabled check
+        //gps
         val locationManager =
             getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
 
@@ -333,7 +324,7 @@ class LoginActivity : AppCompatActivity(), LoginLayoutController {
             return
         }
 
-        // Get current location (reliable)
+        // ambil loc sekarang
         val request = CurrentLocationRequest.Builder()
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .build()

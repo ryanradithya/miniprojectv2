@@ -24,7 +24,7 @@ class BeliFragment : Fragment() {
     private lateinit var adapter: ProductAdapter
     private lateinit var productRecycler: RecyclerView
 
-    private var allProducts = mutableListOf<Product>()   // FIRESTORE DATA
+    private var allProducts = mutableListOf<Product>()   // data firestore
     private var currentFilter: String = "Semua Harga"
     private var currentCategory: String = "Semua Produk"
 
@@ -59,7 +59,6 @@ class BeliFragment : Fragment() {
                 rekomendasiRecycler.layoutManager = layoutManager
                 rekomendasiRecycler.adapter = rekomendasiAdapter
 
-                // Auto-scroll animation
                 val handler = Handler()
                 var isUserTouching = false
                 val scrollStep = 1

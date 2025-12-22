@@ -129,6 +129,7 @@ class AccountFragment : Fragment() {
         }
 
 
+        //fun seller
         if (isSeller) {
             headerExpedition.visibility = View.VISIBLE
             btnAddExpedition.visibility = View.VISIBLE
@@ -174,6 +175,7 @@ class AccountFragment : Fragment() {
     }
 
 
+    //firebase userdata
     private fun loadUserData(tvName: TextView, tvEmail: TextView) {
         db.collection("users")
             .document(userUID)
@@ -184,9 +186,8 @@ class AccountFragment : Fragment() {
                 tvName.text = doc.getString("nama") ?: ""
                 tvEmail.text = doc.getString("email") ?: ""
 
-                // Optional future use
-                val dob = doc.getString("dob")       // buyer only
-                val region = doc.getString("region") // seller only
+                val dob = doc.getString("dob")
+                val region = doc.getString("region")
             }
             .addOnFailureListener {
                 Toast.makeText(requireContext(), "Gagal memuat profil", Toast.LENGTH_SHORT).show()
@@ -365,6 +366,7 @@ class AccountFragment : Fragment() {
     }
 
 
+    //update profile
     private fun updateProfile(
         newName: String,
         newEmail: String,
@@ -390,6 +392,7 @@ class AccountFragment : Fragment() {
         }
     }
 
+    //fun firestore
     private fun updateFirestoreProfile(
         newName: String,
         newEmail: String,
@@ -417,8 +420,7 @@ class AccountFragment : Fragment() {
 
     private fun requestGpsAndTagLocation() {
 
-        // Update UI immediately
-        tvLocation.text = "📡 Mengambil lokasi..."
+        tvLocation.text = "Mengambil lokasi..."
 
         Snackbar.make(
             requireView(),
@@ -484,6 +486,7 @@ class AccountFragment : Fragment() {
         }
     }
 
+    //get locaiton
     private fun getAddressFromLocation(lat: Double, lon: Double): String {
         return try {
             val geocoder = Geocoder(requireContext(), Locale.getDefault())
@@ -507,6 +510,7 @@ class AccountFragment : Fragment() {
         }
     }
 
+    //save expedition ke firestore
     private fun saveExpeditionToFirestore(
         expeditionName: String,
         onSuccess: () -> Unit = {},

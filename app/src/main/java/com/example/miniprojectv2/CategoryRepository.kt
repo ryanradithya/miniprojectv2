@@ -10,6 +10,7 @@ object CategoryRepository {
         onSuccess: (List<String>) -> Unit,
         onError: (Exception) -> Unit
     ) {
+        //ambil dari firestore
         Firebase.firestore
             .collection("products")
             .get()

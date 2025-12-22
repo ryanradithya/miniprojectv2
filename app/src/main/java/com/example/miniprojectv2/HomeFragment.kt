@@ -44,6 +44,7 @@ class HomeFragment : Fragment() {
         setGreetingTitle()
     }
 
+    //sapa dari userprefs
     private fun setGreetingTitle() {
         val prefs = requireContext()
             .getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)

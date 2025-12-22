@@ -15,6 +15,7 @@ object ImageHandler {
     private val client = OkHttpClient()
 
 
+    //upload gambar ke api
     fun uploadImage(context: Context, uri: Uri, callback: (String?) -> Unit) {
         Log.d("ImageHandler", "uploadImage() START uri=$uri")
 
@@ -80,6 +81,7 @@ object ImageHandler {
     }
 
 
+    //ambil gambar (id di fstore)
     fun getImage(context: Context, id: String, callback: (ByteArray?) -> Unit) {
         val baseUrl = IpHelper.getBaseUrl()
         if (baseUrl == null) {

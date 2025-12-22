@@ -22,7 +22,7 @@ class CheckoutAdapter(private val items: List<CheckoutItem>) :
         return ViewHolder(view)
     }
 
-    // Isi ViewHolder dengan data (pakai bind)
+    //isi data ke viewholder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.tvName.text = "${item.name} x${item.qty}"
