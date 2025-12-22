@@ -211,8 +211,6 @@
             android:backgroundTint="@color/green_variant"
             app:cornerRadius="16dp" />
 
-
-        <!-- Status -->
         <TextView
             android:id="@+id/tvStatus"
             android:text="Idle"
@@ -220,7 +218,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"/>
 
-        <!-- Prediction -->
         <TextView
             android:id="@+id/tvPrediction"
             android:textSize="32sp"
@@ -231,7 +228,6 @@
             android:layout_marginBottom="10dp"
             android:textAlignment="center"/>
 
-        <!-- Explanation -->
         <TextView
             android:id="@+id/tvExplanation"
             android:text=""

@@ -6,7 +6,7 @@
     android:paddingTop="16dp"
     android:paddingHorizontal="16dp">
 
-    <!-- tombol balik -->
+<!--    tombol back-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

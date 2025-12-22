@@ -19,7 +19,7 @@
         >
 
 
-    <!-- HOME TAB -->
+<!--home-->
         <LinearLayout
             android:id="@+id/nav_home"
             android:layout_width="0dp"
@@ -65,7 +65,7 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <!-- TRANSAKSI TAB -->
+<!--transaksi-->
         <LinearLayout
             android:id="@+id/nav_transactions"
             android:layout_width="0dp"
@@ -111,7 +111,7 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <!-- AKUN TAB -->
+<!--        akun-->
         <LinearLayout
             android:id="@+id/nav_account"
             android:layout_width="0dp"

@@ -17,9 +17,7 @@
         android:clipToPadding="false"
         android:clipChildren="false">
 
-        <!-- ============================= -->
-        <!-- LIST PRODUK -->
-        <!-- ============================= -->
+<!--home-->
         <LinearLayout
             android:id="@+id/nav_list_produk"
             android:layout_width="0dp"
@@ -65,9 +63,7 @@
 
         </LinearLayout>
 
-        <!-- ============================ -->
-        <!-- TAMBAH PRODUK -->
-        <!-- ============================ -->
+<!--tambah-->
         <LinearLayout
             android:id="@+id/nav_tambah_produk"
             android:layout_width="0dp"
@@ -114,9 +110,7 @@
 
         </LinearLayout>
 
-        <!-- ============================= -->
-        <!-- PESANAN -->
-        <!-- ============================= -->
+<!--pesanan-->
         <LinearLayout
             android:id="@+id/nav_pesanan"
             android:layout_width="0dp"
@@ -162,9 +156,7 @@
 
         </LinearLayout>
 
-        <!-- ============================= -->
-        <!-- AKUN -->
-        <!-- ============================= -->
+<!--account-->
         <LinearLayout
             android:id="@+id/nav_account_seller"
             android:layout_width="0dp"

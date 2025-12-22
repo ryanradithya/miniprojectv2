@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
+<!--detail produk-->
         <LinearLayout
             android:id="@+id/layout_products"
             android:orientation="vertical"
@@ -86,6 +86,7 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
+<!--        ulasan-->
         <LinearLayout
             android:id="@+id/review_container"
             android:orientation="vertical"
@@ -130,6 +131,7 @@
                 android:textColor="@android:color/white"/>
         </LinearLayout>
 
+<!--        review-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_reviews"
             android:layout_width="match_parent"

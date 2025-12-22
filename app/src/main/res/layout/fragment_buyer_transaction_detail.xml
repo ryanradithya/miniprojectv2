@@ -21,7 +21,6 @@
             android:layout_height="wrap_content"
             android:text="No Resi"/>
 
-        <!-- Items -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvBuyerItems"
             android:layout_width="match_parent"
