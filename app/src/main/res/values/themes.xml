@@ -3,8 +3,9 @@
 
 
     <!-- Tema utama aplikasi -->
-    <style name="Theme.App" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Warna utama -->
+    <style name="Theme.App" parent="Theme.MaterialComponents.Light.NoActionBar">
+
+    <!-- Warna utama -->
         <item name="colorPrimary">#0C3B2E</item>
         <item name="colorPrimaryVariant">#6D9773</item>
         <item name="colorOnPrimary">@android:color/white</item>
@@ -25,7 +26,7 @@
     </style>
 
     <!-- Tema tanpa ActionBar (dipakai di AndroidManifest) -->
-    <style name="Theme.App.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.App.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:fontFamily">@font/app_font</item>
         <item name="fontFamily">@font/app_font</item>
 
@@ -50,7 +51,7 @@
     </style>
 
     <!-- Tema overlay untuk Toolbar -->
-    <style name="ThemeOverlay.App.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+    <style name="ThemeOverlay.App.Toolbar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="android:colorControlNormal">@android:color/white</item>
@@ -76,7 +77,7 @@
         <item name="colorOnSurface">@android:color/black</item>
     </style>
 
-    <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.MyApp" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorControlActivated">#0C3B2E</item>
     </style>
 
