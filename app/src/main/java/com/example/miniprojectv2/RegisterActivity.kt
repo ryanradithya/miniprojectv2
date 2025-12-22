@@ -4,16 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
-import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -102,7 +99,7 @@ class RegisterActivity : AppCompatActivity() {
         val region = findViewById<EditText>(R.id.input_region).text.toString().trim()
 
 
-        // ===== VALIDASI UMUM =====
+        // validasi test
         if (name.isEmpty()) {
             toast("Nama tidak boleh kosong")
             return

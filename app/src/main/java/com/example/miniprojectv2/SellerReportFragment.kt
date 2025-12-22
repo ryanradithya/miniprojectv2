@@ -44,7 +44,7 @@ class SellerReportFragment : Fragment() {
         btnWeekly = v.findViewById(R.id.btn_weekly)
         btnMonthly = v.findViewById(R.id.btn_monthly)
 
-        // Ambil email seller
+        // ambil email seller
         val prefs = requireContext()
             .getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
 
@@ -54,11 +54,11 @@ class SellerReportFragment : Fragment() {
             Toast.makeText(requireContext(), "Email seller tidak ditemukan", Toast.LENGTH_SHORT).show()
         }
 
-        // Default → laporan harian
+        // laporan harian
         loadDailyReport()
         setActiveButton(btnDaily)
 
-        // Listener
+        // listener
         btnDaily.setOnClickListener {
             setActiveButton(btnDaily)
             loadDailyReport()
@@ -77,9 +77,7 @@ class SellerReportFragment : Fragment() {
         return v
     }
 
-    /* =========================
-       LOAD REPORT
-       ========================= */
+    // load report
 
     private fun loadDailyReport() {
         val cal = Calendar.getInstance()
@@ -112,10 +110,6 @@ class SellerReportFragment : Fragment() {
 
         loadReport(cal.timeInMillis, System.currentTimeMillis())
     }
-
-    /* =========================
-       CORE QUERY
-       ========================= */
 
     private fun loadReport(startTime: Long, endTime: Long) {
 
@@ -163,9 +157,7 @@ class SellerReportFragment : Fragment() {
             }
     }
 
-    /* =========================
-       UI HELPER
-       ========================= */
+    // ui helper
 
     private fun updateUI(revenue: Long, items: Int, transactions: Int) {
 

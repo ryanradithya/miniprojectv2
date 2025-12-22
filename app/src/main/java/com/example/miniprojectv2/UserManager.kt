@@ -38,7 +38,7 @@ object UserManager {
             .addOnFailureListener(onError)
     }
 
-    // REGISTER USER
+    // register user
     fun registerUser(
         nama: String,
         email: String,
@@ -66,7 +66,7 @@ object UserManager {
             onError = onError)
     }
 
-    // LOGIN
+    // login
     fun login(
         usernameOrEmail: String,
         password: String,
@@ -90,7 +90,7 @@ object UserManager {
             .addOnFailureListener(onError)
     }
 
-    // UPDATE DATA
+    // update data
     fun updateUser(
         userId: String,
         newName: String,

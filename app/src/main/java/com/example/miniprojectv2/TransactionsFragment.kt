@@ -10,7 +10,6 @@ import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class TransactionsFragment : Fragment() {
 
@@ -34,7 +33,7 @@ class TransactionsFragment : Fragment() {
         val prefs = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val buyerEmail = prefs.getString("active_email", "") ?: ""
 
-        // LOAD TRANSAKSI (FIRESTORE)
+        // load transaksi dari firestore
         fun refreshList() {
             transactionList.removeAllViews()
 
@@ -81,7 +80,6 @@ class TransactionsFragment : Fragment() {
                             }
                             layout.addView(tvItem)
                         }
-                        // TITLE (Nama produk pertama)
 //                        val tvTitle = TextView(requireContext()).apply {
 //                            text = if (firstItem != null)
 //                                "${firstItem.name} x${firstItem.qty}"
@@ -120,7 +118,6 @@ class TransactionsFragment : Fragment() {
                         }
 
 
-//                        layout.addView(tvTitle)
                         layout.addView(tvTotal)
                         layout.addView(tvExpedition)
                         layout.addView(tvStatus)
@@ -128,7 +125,7 @@ class TransactionsFragment : Fragment() {
                         layout.addView(tvDate)
 
 
-                        // BUTTON KONFIRMASI PENERIMAAN BARANG
+                        // tombol konfirmasi
                         if (trx.status == "Pesanan Dikirim") {
                             val btnConfirm = Button(requireContext()).apply {
                                 text = "Konfirmasi Terima"
@@ -158,7 +155,7 @@ class TransactionsFragment : Fragment() {
                             layout.addView(btnConfirm)
                         }
 
-                        // Klik card -> buka detail transaksi
+                        // kalo di klik ke detail transaksi
                         card.setOnClickListener {
                             val bundle = Bundle().apply {
                                 putString("transaction_id", trx.transactionId)

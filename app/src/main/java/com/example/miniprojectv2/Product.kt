@@ -1,7 +1,7 @@
 package com.example.miniprojectv2
 
 data class Product(
-    var id: String? = null,   // <-- new field
+    var id: String? = null,
     val name: String = "",
     val price: Int = 0,
     var imageUri: String? = null,
