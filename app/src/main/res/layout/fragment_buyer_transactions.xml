@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
-
-    <!-- Title -->
+<!--judul-->
     <TextView
         android:id="@+id/tvTitleBuyer"
         android:layout_width="match_parent"
@@ -15,7 +14,7 @@
         android:textStyle="bold"
         android:layout_marginBottom="12dp"/>
 
-    <!-- Empty State -->
+<!--kosong-->
     <TextView
         android:id="@+id/tvEmptyBuyer"
         android:layout_width="match_parent"
@@ -25,7 +24,7 @@
         android:visibility="gone"
         android:layout_marginTop="24dp"/>
 
-    <!-- Transaction List -->
+<!--list-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBuyerTransactions"
         android:layout_width="match_parent"

@@ -61,7 +61,6 @@ class SellerActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
 //        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout_seller)
-        val navigationView = findViewById<NavigationView>(R.id.nav_view_seller)
 
 //        appBarConfiguration = AppBarConfiguration(
 //            setOf(R.id.beliFragment, R.id.jualFragment, R.id.ordersFragment, R.id.accountFragment),
@@ -69,7 +68,6 @@ class SellerActivity : AppCompatActivity() {
 //        )
 
         NavigationUI.setupActionBarWithNavController(this, navController)
-        navigationView.setupWithNavController(navController)
 
         // CUSTOM NAVBAR
 
@@ -170,9 +168,6 @@ class SellerActivity : AppCompatActivity() {
         sellerUsername = prefs.getString("active_username", sellerUsername) ?: sellerUsername
         sellerEmail = prefs.getString("active_email", sellerEmail) ?: sellerEmail
 
-        val headerView = navigationView.getHeaderView(0)
-        headerView.findViewById<TextView>(R.id.header_title).text = sellerUsername
-        headerView.findViewById<TextView>(R.id.header_subtitle).text = sellerEmail
     }
 
     // ini notif ya

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:padding="24dp">
 
-        <!-- PROFILE -->
+<!--profile-->
         <ImageView
             android:id="@+id/profile_image"
             android:layout_width="100dp"
@@ -47,9 +47,6 @@
             android:layout_marginBottom="24dp"/>
 
 
-        <!-- ===============================
-             HEADER 1: PENGATURAN AKUN
-        ================================ -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,7 +56,7 @@
             android:textColor="@color/green_primary"
             android:layout_marginBottom="8dp"/>
 
-        <!-- EDIT AKUN -->
+<!--edit akun-->
         <LinearLayout
             android:id="@+id/btn_edit"
             android:layout_width="match_parent"
@@ -99,7 +96,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- UBH PASSWORD -->
+<!--ubah pasword-->
         <LinearLayout
             android:id="@+id/btn_change_password"
             android:layout_width="match_parent"
@@ -139,7 +136,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- UBH LOKASI -->
+<!--        lokasi-->
         <LinearLayout
             android:id="@+id/btn_change_location"
             android:layout_width="match_parent"
@@ -179,9 +176,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- ===============================
-             HEADER 2: PENGATURAN EKSPEDISI
-        ================================ -->
+<!--ekspedisi-->
         <TextView
             android:id="@+id/header_expedition"
             android:layout_width="match_parent"
@@ -192,7 +187,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="8dp"/>
 
-        <!-- TAMBAH EKSPEDISI -->
         <LinearLayout
             android:id="@+id/btn_add_expedition"
             android:layout_width="match_parent"
@@ -280,9 +274,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- ===============================
-        HEADER 3: MACHINE LEARNING
-        =============================== -->
+<!--machine learning-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -291,8 +283,6 @@
             android:textStyle="bold"
             android:textColor="@color/green_primary"
             android:layout_marginBottom="8dp"/>
-
-        <!-- MODEL MACHINE LEARNING -->
         <LinearLayout
             android:id="@+id/btn_ml_model"
             android:layout_width="match_parent"
@@ -332,12 +322,7 @@
             </LinearLayout>
         </LinearLayout>
 
-
-
-
-        <!-- ===============================
-             HEADER 3: LAINNYA
-        ================================ -->
+<!--logout-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -347,7 +332,6 @@
             android:textColor="@color/green_primary"
             android:layout_marginBottom="8dp"/>
 
-        <!-- LOGOUT -->
         <LinearLayout
             android:id="@+id/btn_logout"
             android:layout_width="match_parent"
@@ -385,32 +369,5 @@
                     android:textColor="@color/my_custom_status_bar"/>
             </LinearLayout>
         </LinearLayout>
-
-<!--    <LinearLayout-->
-<!--        android:id="@+id/ip_input_container"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:padding="8dp">-->
-
-<!--        <EditText-->
-<!--            android:id="@+id/et_ip"-->
-<!--            android:hint="Enter server IP"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:inputType="text"-->
-<!--            android:singleLine="true"/>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/btn_save_ip"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Save"/>-->
-<!--    </LinearLayout>-->
-
-
-
-</LinearLayout>
-
+    </LinearLayout>
 </ScrollView>

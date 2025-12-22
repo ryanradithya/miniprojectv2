@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="8dp" />
 
-        <!-- IMAGE PRODUK -->
+<!--        produk-->
         <ImageView
             android:id="@+id/cart_item_image"
             android:layout_width="64dp"
@@ -32,8 +32,6 @@
             android:scaleType="centerCrop"
             android:background="@drawable/bg_image_rounded"
             android:src="@mipmap/ic_launcher" />
-
-        <!-- INFO PRODUK -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -50,16 +48,6 @@
                 android:ellipsize="end"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"/>
-
-<!--            <TextView-->
-<!--                android:id="@+id/cart_item_variant"-->
-<!--                android:text="Stok"-->
-<!--                android:textSize="12sp"-->
-<!--                android:textColor="#888"-->
-<!--                android:layout_marginTop="2dp"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:layout_width="match_parent"/>-->
-
             <TextView
                 android:id="@+id/cart_item_price"
                 android:text="Rp 385.000"
@@ -70,6 +58,7 @@
                 android:layout_width="match_parent"/>
         </LinearLayout>
 
+<!--        hapus cart-->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,7 +73,6 @@
                 android:layout_gravity="end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-        <!-- QTY CONTROL -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,8 +87,7 @@
                     android:layout_height="wrap_content"
                     android:backgroundTint="#6D9773"
                     android:text="-"
-                    android:textColor="@color/white" />                     />
-
+                    android:textColor="@color/white" />
                 <TextView
                     android:id="@+id/tv_qty_cart"
                     android:text="1"

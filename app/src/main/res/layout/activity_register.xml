@@ -187,8 +187,6 @@
                         android:clickable="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-
                 <!-- SELLER ONLY -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/layout_region"
@@ -210,8 +208,6 @@
                         android:hint="Daerah"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-
                 <Button
                     android:id="@+id/save_button"
                     android:text="Buat Akun"
@@ -223,7 +219,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="-------- Atau buat akun dengan --------"
+                    android:text="--- Atau buat akun dengan ---"
                     />
 
                 <com.google.android.material.card.MaterialCardView

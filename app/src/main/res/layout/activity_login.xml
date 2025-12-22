@@ -16,10 +16,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-    <!-- ============================= -->
-    <!--  FRAGMENT FOR FORGOT PASSWORD -->
-    <!-- ============================= -->
 
+<!--forgot password-->
     <FrameLayout
         android:id="@+id/login_fragment_container"
         android:layout_width="match_parent"
@@ -30,10 +28,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ============================= -->
-    <!--             LOGIN CARD        -->
-    <!-- ============================= -->
-
+<!--login-->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottom_half"
         android:layout_width="0dp"
@@ -64,7 +59,7 @@
                 android:textSize="34sp"
                 android:textStyle="bold" />
 
-            <!-- Username input -->
+<!--            input nama-->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -88,7 +83,7 @@
                     android:textCursorDrawable="@null"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Password input -->
+<!--            input password-->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -202,7 +197,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Title UMKM Manager -->
+<!--judul-->
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
